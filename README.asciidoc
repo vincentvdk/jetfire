@@ -1,0 +1,26 @@
+= jetfire
+
+An Ansible inventory tool based on LDAP
+
+== Overview
+Jetfire is a web based Flask application with an LDAP backend to manage an Ansible inventory.
+It works in conjunction with the [ldap inventory script](https://github.com/vincentvdk/ansible_inventory.git)
+
+It is currently in early stage and lacks fearures and proper documentation. It can currently do the following
+
+* add host with vars and add it to available groups
+* add groups with vars and available members
+* get host info (hostvars)
+* get group info (groupvars and members)
+
+== Usage
+
+You need a working LDAP server that has the ansible schema loaded. Check the  [ldap inventory script](https://github.com/vincentvdk/ansible_inventory.git) repository for more info on this.
+
+clone the repository and edit the config.cfg file in the app folder. Then run python app.py to launch the application.
+Open a browser and point to http://<yourhost>:5000
+
+
+
+
+

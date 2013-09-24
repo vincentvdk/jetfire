@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <title>Ansible web mgmt</title>
+        <link rel="stylesheet" type="text/css" href="/static/style.css" />
+        <script src="/static/jquery-1.4.4.min.js"></script>
+        <script type=text/javascript>var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>    
+    </head>
+
+    <body>
+        <div id="content">
+            {% block body %} {% endblock %}
+        </div>
+
+        <div id="nav">
+    	    <img src="/static/jetfire.png" height="160" width="120">
+            <h3>Navigation</h3>
+            <ul>
+                <li><a href="{{url_for('index')}}"> Home </a></li>
+                <li><a href="{{url_for('addhost')}}"> Add host </a></li>
+                <li><a href="{{url_for('gethostinfo')}}"> Get host </a></li>
+                <li><a href="{{url_for('getgroup')}}"> Get group </a></li>
+                <li><a href="{{url_for('addgroup')}}"> Add group </a></li>
+        </div>
+    </body>
+
+</html>

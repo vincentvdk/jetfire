@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<!--<script src="/static/jquery-1.4.4.min.js"></script>-->
+<script type="text/javascript">
+$(function() {
+    var addDiv = $('#addvarinput');
+    var i = $('#addvarinput p').size() + 1;
+
+$('#addNew').live('click', function() {
+    //$('<p><input type="text" id="p_new" name="pnew' + 1 +'" value="" placeholder="add Ansible var" /><a href="#" id="remNew">Remove</a> </p>').appendTo(addDiv);
+    $('<p><input type="text" id="g_new" name="gnew" value="" placeholder="add Ansible Groupvar" /><a href="#" id="remNew">Remove</a> </p>').appendTo(addDiv);
+i++;
+
+return false;
+});
+
+$('#remNew').live('click', function() {
+if( i > 2 ) {
+$(this).parents('p').remove();
+i--;
+}
+return false;
+});
+});
+</script>
+
+
+    <h2> Add Group</h2>
+    <form action="{{url_for('addgroup')}}" method="post">
+    <input type="text" name="add_group" />
+    <div id="addvarinput">
+        <input type="text" id="g_new" name="gnew" value="" placeholder="Ansible Groupvar" /><a href="#" id="addNew">Add</a></p>
+    </div>
+    <select name="selectedhosts" multiple="multiple" style="width:300px;height:300px">                                        
+        {% for item in hosts %}
+            <option value="{{ item }}">{{ item }}</option>
+        {% endfor %}
+    </select></br>
+
+    <input type="submit" value="Add Group" name="submitBTN"/>
+    </form>
+
+
+ {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    Results:
+        <pre>
+        {% for message in messages %}
+{{ message }}
+        {% endfor %}
+        </pre>
+    {% endif %}
+ {% endwith %}
+
+{% endblock %}

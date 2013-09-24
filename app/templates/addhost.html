@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h2> Add Host </h2>
+<!--<script src="/static/jquery-1.4.4.min.js"></script>-->
+<script type="text/javascript">
+$(function() {
+    var addDiv = $('#addvarinput');
+    var i = $('#addvarinput p').size() + 1;
+
+$('#addNew').live('click', function() {
+    //$('<p><input type="text" id="p_new" name="pnew' + 1 +'" value="" placeholder="add Ansible var" /><a href="#" id="remNew">Remove</a> </p>').appendTo(addDiv);
+    $('<p><input type="text" id="p_new" name="pnew" value="" placeholder="add Ansible var" /><a href="#" id="remNew">Remove</a> </p>').appendTo(addDiv);
+i++;
+
+return false;
+});
+
+$('#remNew').live('click', function() {
+if( i > 2 ) {
+$(this).parents('p').remove();
+i--;
+}
+return false;
+});
+});
+</script>
+
+
+    Enter the fqdn of the hostname:
+    <form action="{{url_for('addhost')}}" method="post">
+        <input type="text" name="add_host" placeholder="Host's FQDN" /></br>
+        <div id="addvarinput">
+        <input type="text" id="p_new" name="pnew" value="" placeholder="Ansible var" /><a href="#" id="addNew">Add</a></p>
+        </div>
+    Select a group or multiple groups</br>
+        <!-- Multiple group select build from available ansible groups -->
+        <select name="selectedgroups" multiple="multiple" style="width:300px;height:300px">
+            {% for item in groups %}
+                <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+        </select></br>
+
+        <input type="submit" value="Add host" />
+    </form>
+        <!-- Flash message when host has been added -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            Results:
+            <pre>
+                {% for message in messages %}
+{{ message }}
+                {% endfor %}
+            </pre>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
+
+
