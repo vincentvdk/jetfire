@@ -20,7 +20,7 @@ from add_host import AddHost
 from get_host import GetHost, GetAllHosts
 from get_group import GetGroup, GetAllGroups
 from add_group import AddGroup
-
+from edit_host import EditHost, EditHostSubmit
 #class AddHost(flask.views.MethodView):
 #    def get(self):
 #        return flask.render_template('addhost.html')
@@ -45,6 +45,14 @@ app.add_url_rule('/gethost',
 app.add_url_rule('/gethosts',
                 view_func=GetAllHosts.as_view('getallhosts'),
                 methods=['POST'])
+
+app.add_url_rule('/edithost',
+                view_func=EditHost.as_view('edithost'),
+                methods=['GET', 'POST'])
+
+app.add_url_rule('/edithost',
+                view_func=EditHostSubmit.as_view('edithost'),
+                methods=['GET', 'POST'])
 
 app.add_url_rule('/getgroup',
                 view_func=GetGroup.as_view('getgroup'),

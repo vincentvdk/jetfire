@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<!--<script src="/static/jquery-1.4.4.min.js"></script>-->
+<script type="text/javascript">
+$(function() {
+    var addDiv = $('#addvarinput');
+    var i = $('#addvarinput p').size() + 1;
+
+$('#addNew').live('click', function() {
+    //$('<p><input type="text" id="p_new" name="pnew' + 1 +'" value="" placeholder="add Ansible var" /><a href="#" id="remNew">Remove</a> </p>').appendTo(addDiv);
+    $('<p><input type="text" id="p_new" name="pnew" value="" placeholder="add Ansible var" /><a href="#" id="remNew">Remove</a> </p>').appendTo(addDiv);
+i++;
+
+return false;
+});
+
+$('#remNew').live('click', function() {
+if( i > 2 ) {
+$(this).parents('p').remove();
+i--;
+}
+return false;
+});
+});
+</script>
+
+
+
+    <h2> Edit Host Settings </h2>
+    <form action="{{url_for('edithost')}}" method="post">
+    <input type="text" name="p_get" />
+    <input type="submit" value="Get host" name='submitBTN'/>
+    </form>
+
+
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            Results:
+            <pre>
+            {% for message in messages %}
+{{ message }}
+            {% endfor %}
+            </pre>
+        {% endif %}
+    {% endwith %}
+
+<h3>Host : {{ host }}</h3>
+
+<p>
+{# do net iterate if no list with ansible vars is returned #}
+{% if res is none %}
+    <pre>None</pre>
+{% else %}
+
+<form action="{{ url_for('edithost')}}" method="post">
+
+<b>Ansiblevars :</b><br>
+{# get the ansible vars #}
+{% for item in result %}
+    <input type="text" value="{{ item }}" /><br>
+{% endfor %}
+</p>
+
+{# get the groups #}
+<p>
+<b>Groups :</b><br>
+{% for item in groups %}
+    <input typ="text" value="{{ item }}" /><br>
+{% endfor %}
+</p>
+</form>
+
+<form action="{{url_for('edithost_submit')}}"
+<input type="submit" value="Edit host" name="edithosttest" />
+</form>
+
+{% endif %}
+
+{#
+</p>
+#}
+{#
+<p>
+<b>Groups :</b>
+{% for item in groupres %}
+<ul>
+<li>{{ item }}</li>
+</ul>
+{% endfor %}
+</p>
+#}
+
+{# get all hosts button #}
+{#
+<form action="{{url_for('getallhosts')}}" method="post">
+<input type="submit" value="Get all hosts" name="allHOSTS"/>
+</form>
+
+{% for item in allhosts %}
+<ul>
+<li>{{ item }}</li>
+</ul>
+{% endfor %} 
+#}
+{% endblock %}
+
+{# insert a block to show host results #}
+{# to render a block in the parent template use {{ super() }} #}
