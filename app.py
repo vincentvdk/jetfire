@@ -50,8 +50,8 @@ app.add_url_rule('/edithost',
                 view_func=EditHost.as_view('edithost'),
                 methods=['GET', 'POST'])
 
-app.add_url_rule('/edithost',
-                view_func=EditHostSubmit.as_view('edithost'),
+app.add_url_rule('/edithostsubmit',
+                view_func=EditHostSubmit.as_view('edithostsubmit'),
                 methods=['GET', 'POST'])
 
 app.add_url_rule('/getgroup',
