@@ -19,6 +19,8 @@
 import flask, flask.views
 import os
 import pymongo
+import json
+import yaml
 from functools import wraps
 from app import app
 
@@ -43,24 +45,11 @@ class AddGroup(flask.views.MethodView):
             self.add_group(groupname)
             return flask.render_template('addgroup.html')
 
-    #def get_hostdn(self, hostname):
-        # get the DN from the hostname selected in the form
-        #members = flask.request.form.getlist('selectedhosts')
-        #filter = '(cn=' + hostname +')'
-        #result = l.search_s(baseDN, searchScope, filter)
-        #hostdn = result[0][0]
-        #return hostdn
-
-    #def get_groupname(self, groupname):
-    #    filter = '(cn=' + groupname + ')'
-    #    result = l.search_s(baseDN, searchScope, filter)
-    #    if result:
-    #        grouname = ''.join(map(str, result[0][1]['cn']))
-    #        return groupname
 
     def add_group(self, groupname):
-        ansivars = flask.request.form.getlist('gnew')
-        print ansivars
+        #ansivars = flask.request.form.getlist('gnew')
+        yamlvars = flask.request.form['gyaml']
+        y = yaml.load(yamlvars)
         selectedhosts = flask.request.form.getlist('selectedhosts')
         # create a list with the DNs from the selected hostnames
         children = []
@@ -70,10 +59,13 @@ class AddGroup(flask.views.MethodView):
         attrs = {}
         post = {"groupname": groupname,
                 "hosts": members,
-                "vars": ansivars,
+                "vars": y,
                 "children": children
         }
-        db.groups.insert(post)
+        try:
+            db.groups.insert(post)
+        except:
+            pass
         #try:
         #    l.add_s(dn, ldif)
         #except ldap.LDAPError, e:
