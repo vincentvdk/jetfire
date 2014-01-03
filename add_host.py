@@ -17,45 +17,27 @@
 #
 
 import flask, flask.views
-import ldap
-import ldap.modlist as modlist
+#import ldap
+#import ldap.modlist as modlist
 import os
+import pymongo
 from app import app
-# establish connection with LDAP server
 
-try:
-    l = ldap.initialize(os.getenv("LDAPHOST", app.config['LDAPHOST']))
-    username = os.getenv("LDAPBINDDN", app.config['LDAPBINDDN'])
-    password = os.getenv("LDAPBINDPW", app.config['LDAPBINDPW'])
-    l.set_option(ldap.OPT_PROTOCOL_VERSION,ldap.VERSION3)
-    l.bind_s(username, password, ldap.AUTH_SIMPLE)
 
-except ldap.LDAPError, e:
-    print e
+# establish connection
+conn = pymongo.Connection('192.168.122.240', 27017)
+db = conn['ansible']
 
-# LDAP variables
-
-#baseDN = os.getenv("LDAPBASEDN", 'ou=ansible-dev, dc=ansible, dc=local')
-baseDN = os.getenv("LDAPBASEDN", app.config['LDAPBASEDN'])
-searchScope = ldap.SCOPE_SUBTREE
-attrs = None
 
 class AddHost(flask.views.MethodView):
 
     def get(self):
-        # logic to return list with all groups in the form
-        filter = '(objectClass=ansibleGroup)'
-        result = l.search_s(baseDN, searchScope, filter)
-        groups = []
-        for item in result:
-            group = ''.join(map(str, item[1]['cn']))
-            groups.append(group)
+        groups =  db.groups.find().distinct("groupname")
         # return everything to the template
         return flask.render_template('addhost.html', groups=groups)
 
     def post(self):
         hostname = str(flask.request.form['add_host'])
-        #print hostname
         # check if hostname already exists
         if len(hostname) == 0:
             flask.flash('Empty hostname given')
@@ -74,35 +56,29 @@ class AddHost(flask.views.MethodView):
     def add_host(self,hostname):
         # Get the ansible vars from the form
         ansivars = flask.request.form.getlist('pnew')
-        # build ldif to add host + vars in LDAP
-        dn = str('cn=' + hostname + ',' + app.config['LDAPBASEDN'])
-        attrs = {}
-        if ansivars == [u'']:
-            attrs['objectclass'] = ['ansibleHost', 'top', 'device']
-            attrs['cn'] = [hostname]
-        else:
-            attrs['ansibleVar'] = [str(var) for var in ansivars]
-            attrs['objectclass'] = ['ansibleHost', 'top', 'device']
-            attrs['cn'] = [hostname]
-        ldif = modlist.addModlist(attrs)
-        try:
-            l.add_s(dn, ldif)
-        except ldap.LDAPError, e:
-            print e
+        #attrs = {}
+        post = {"hostname": hostname,
+                "vars": ansivars
+        }
+        db.hosts.insert(post)
+        #try:
+        #    l.add_s(dn, ldif)
+        #except ldap.LDAPError, e:
+        #    print e
 
-    def get_hostname(self,hostname):
-        filter = '(cn=' + hostname +')'
-        result = l.search_s(baseDN, searchScope, filter)
-        if result:
-            hostname = ''.join(map(str, result[0][1]['cn']))
-            return hostname
+    #def get_hostname(self,hostname):
+    #    filter = '(cn=' + hostname +')'
+    #    result = l.search_s(baseDN, searchScope, filter)
+    #    if result:
+    #        hostname = ''.join(map(str, result[0][1]['cn']))
+    #        return hostname
 
-    def get_hostdn(self,hostname):
-        # this will fail if hostname is not created previously
-        filter = '(cn=' + hostname +')'
-        result = l.search_s(baseDN, searchScope, filter)
-        dn = result[0][0]
-        return dn
+    #def get_hostdn(self,hostname):
+    #    # this will fail if hostname is not created previously
+    #    filter = '(cn=' + hostname +')'
+    #    result = l.search_s(baseDN, searchScope, filter)
+    #    dn = result[0][0]
+    #    return dn
 
 
     def add_host_togroups(self, hostname):
