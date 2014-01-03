@@ -51,15 +51,16 @@ class AddGroup(flask.views.MethodView):
         #hostdn = result[0][0]
         #return hostdn
 
-    def get_groupname(self, groupname):
-        filter = '(cn=' + groupname + ')'
-        result = l.search_s(baseDN, searchScope, filter)
-        if result:
-            grouname = ''.join(map(str, result[0][1]['cn']))
-            return groupname
+    #def get_groupname(self, groupname):
+    #    filter = '(cn=' + groupname + ')'
+    #    result = l.search_s(baseDN, searchScope, filter)
+    #    if result:
+    #        grouname = ''.join(map(str, result[0][1]['cn']))
+    #        return groupname
 
     def add_group(self, groupname):
         ansivars = flask.request.form.getlist('gnew')
+        print ansivars
         selectedhosts = flask.request.form.getlist('selectedhosts')
         # create a list with the DNs from the selected hostnames
         children = []
