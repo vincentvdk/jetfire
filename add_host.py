@@ -21,6 +21,8 @@ import flask, flask.views
 #import ldap.modlist as modlist
 import os
 import pymongo
+import yaml
+import json
 from app import app
 
 
@@ -53,33 +55,25 @@ class AddHost(flask.views.MethodView):
             flask.flash('Host added successfully')
             return flask.redirect(flask.url_for('addhost'))
 
+    def get_hostname(self,hostname):
+        host = [str(item) for item in db.hosts.find({"hostname": hostname}).distinct("hostname")]
+        if not host:
+            host = None
+        else:
+            host = host[0]
+        return host
+
     def add_host(self,hostname):
         # Get the ansible vars from the form
-        ansivars = flask.request.form.getlist('pnew')
-        #attrs = {}
+        yamlvars = flask.request.form['hyaml']
+        y = yaml.load(yamlvars)
         post = {"hostname": hostname,
-                "vars": ansivars
+                "vars": y
         }
-        db.hosts.insert(post)
-        #try:
-        #    l.add_s(dn, ldif)
-        #except ldap.LDAPError, e:
-        #    print e
-
-    #def get_hostname(self,hostname):
-    #    filter = '(cn=' + hostname +')'
-    #    result = l.search_s(baseDN, searchScope, filter)
-    #    if result:
-    #        hostname = ''.join(map(str, result[0][1]['cn']))
-    #        return hostname
-
-    #def get_hostdn(self,hostname):
-    #    # this will fail if hostname is not created previously
-    #    filter = '(cn=' + hostname +')'
-    #    result = l.search_s(baseDN, searchScope, filter)
-    #    dn = result[0][0]
-    #    return dn
-
+        try:
+            db.hosts.insert(post)
+        except:
+            pass
 
     def add_host_togroups(self, hostname):
         selectgroups = flask.request.form.getlist('selectedgroups')
@@ -87,13 +81,7 @@ class AddHost(flask.views.MethodView):
         selectgroups = [str(group) for group in selectgroups]
         # Add host as member to each selecred group
         for group in selectgroups:
-            filter = '(cn=' + group +')'
-            result = l.search_s(baseDN, searchScope, filter)
-            groupdn = result[0][0]
-            hostdn = self.get_hostdn(hostname)
-            mod_attrs = [( ldap.MOD_ADD, 'member', hostdn )]
-            try:
-                l.modify_s(groupdn,mod_attrs)
-            except ldap.LDAPError, e:
-                print e
+            # get group ObjectId for insert
+            objectid = db.groups.find({"groupname": group}).distinct("_id")
+            db.groups.update({'groupname': group}, {'$push':{'hosts': hostname}},upsert=False,multi=False)
 

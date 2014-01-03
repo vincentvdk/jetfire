@@ -31,7 +31,8 @@ return false;
     <form action="{{url_for('addgroup')}}" method="post">
     <input type="text" name="add_group" />
     <div id="addvarinput">
-        <input type="text" id="g_new" name="gnew" value="" placeholder="Ansible Groupvar" /><a href="#" id="addNew">Add</a></p>
+    <!--    <input type="text" id="g_new" name="gnew" value=""
+    placeholder="Ansible Groupvar" /><a href="#" id="addNew">Add</a></p>-->
     </div>
     <select name="selectedhosts" multiple="multiple" style="width:300px;height:300px">                                     {% for item in hosts %}
             <option value="{{ item }}">{{ item }}</option>
