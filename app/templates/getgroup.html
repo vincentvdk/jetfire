@@ -35,9 +35,14 @@
 {% if groupvars is none %}
     <pre> none </pre>
 {% else %}
-    {% for item in groupvars %}
-        <ul><li> {{ item }} </li></ul>
+{# don't execute when groupvars is not set#}
+{% if groupvars %}
+    {#{% for item in groupvars %}#}
+    {% for key ,value in groupvars.iteritems() %}
+        {#<ul><li> {{ item }} </li></ul>#}
+        <ul><li> {{ key|e }} : {{ value|e }}</li></ul>
     {% endfor %}
+{% endif %}
 {% endif %}
 </p>
 

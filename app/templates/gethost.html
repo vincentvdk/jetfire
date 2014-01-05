@@ -29,12 +29,15 @@
 {% if res is none %}
     <pre>None</pre>
 {% else %}
-{# print all ansible vars #}
-{% for item in res %}
+{# print all ansible vars if res has values or on GET request#}
+{% if res %}
+{% for key, value in res.iteritems() %}
 <ul> 
-<li>{{ item }}</li>
+{#<li>{{ item }}</li>#}
+    <li>{{ key|e }} : {{ value|e }}</li>
 </ul>
 {% endfor %}
+{% endif %}
 {% endif %}
 </p>
 

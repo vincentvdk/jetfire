@@ -17,29 +17,18 @@
 #
 
 import flask, flask.views
-import ldap
-import ldap.modlist as modlist
 import os
 import re
+import pymongo
 from functools import wraps
 from app import app
+
+# -----------------------------------------------------------------------------------
 # establish connection with LDAP server
+conn = pymongo.Connection('192.168.122.240', 27017)
+db = conn['ansible']
 
-try:
-    #l = ldap.initialize(os.getenv("LDAPHOST", "ldap://infra-08.prod.btr.local"))
-    l = ldap.initialize(os.getenv("LDAPHOST", app.config['LDAPHOST']))
-    username = os.getenv("LDAPBINDDN", app.config['LDAPBINDDN'])
-    password = os.getenv("LDAPBINDPW", app.config['LDAPBINDPW'])
-    l.set_option(ldap.OPT_PROTOCOL_VERSION,ldap.VERSION3)
-    l.bind_s(username, password, ldap.AUTH_SIMPLE)
-
-except ldap.LDAPError, e:
-    print e
-
-baseDN = os.getenv("LDAPBASEDN", app.config['LDAPBASEDN'])
-searchScope = ldap.SCOPE_SUBTREE
-attrs = None
-
+# -----------------------------------------------------------------------------------
 class GetGroup(flask.views.MethodView):
 
     def get(self):
@@ -47,10 +36,9 @@ class GetGroup(flask.views.MethodView):
 
     def post(self):
         groupname = str(flask.request.form['get_group'])
-        filter = '(&(objectclass=ansibleGroup)(cn=' + groupname + '))'
-        result = l.search_s(baseDN, searchScope, filter)
-        #self.get_allgroups()
-        if not result:
+        result = db.groups.find({"groupname": groupname}, {'groupname': 1, '_id': 0})
+        group = [ item for item in result]
+        if not group:
             flask.flash('Group ' + groupname + ' not found')
             return flask.redirect(flask.url_for('getgroup'))
         else:
@@ -59,30 +47,31 @@ class GetGroup(flask.views.MethodView):
             return flask.render_template('getgroup.html', groupname=groupname, members=groupmembers, groupvars=groupvars)
 
     def get_groupmembers(self,groupname):
-        filter = '(&(objectclass=ansibleGroup)(cn=' + groupname + '))'
-        result = l.search_s(baseDN, searchScope, filter)
-        # return notfound when group does not exists
-        if not result:
+        result = db.groups.find({"groupname": groupname}, {'children': 1, '_id': 0})
+        children = [ item for item in result]
+        print children
+        # return none if no group is entered in form
+        if len(groupname) == 0:
+            members = None
+        # return none if group has no children
+        if not children:
             members = None
         else:
-            memberlist = result[0][1]['member']
-            members = []
-            for item in memberlist:
-                member = item.split(",")
-                members.append(member[0][3:])
+            for item in children:
+                members = item["children"]
         return members
 
     def get_groupvars(self,groupname):
-        filter = '(&(objectclass=ansibleGroup)(cn=' + groupname + '))'
-        result = l.search_s(baseDN, searchScope, filter)
+        result = db.groups.find({"groupname": groupname}, {'vars': 1, '_id': 0})
+        vars = [item for item in result]
         # return none when no vars found
-        if not result:
+        if len(groupname) == 0:
             groupvars = None
-        elif 'ansibleGroupVar' in result[0][1]:
-            groupvars = result[0][1]['ansibleGroupVar']
-            #print groupvars
+        elif not vars:
+            groupvars = None
         else:
-            groupvars = None
+            for item in vars:
+                groupvars = item["vars"]
         return groupvars
 
 class GetAllGroups(flask.views.MethodView):
@@ -92,12 +81,9 @@ class GetAllGroups(flask.views.MethodView):
         return flask.render_template('getgroup.html', allgroups=allgroups)
 
     def get_allgroups(self):
-        filter = '(objectclass=ansibleGroup)'
-        result = l.search_s(baseDN, searchScope, filter)
+        result = db.groups.find().distinct("groupname")
         allgroups = []
         for item in result:
-            group = ''.join(map(str, item[1]['cn']))
-            #print group
-            allgroups.append(group)
+            allgroups.append(item)
         return allgroups
 

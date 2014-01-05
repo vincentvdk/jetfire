@@ -17,28 +17,14 @@
 #
 
 import flask, flask.views
-import ldap
-import ldap.modlist as modlist
 import os
+import pymongo
 from functools import wraps
 from app import app
-# establish connection with LDAP server
 
-try:
-    l = ldap.initialize(os.getenv("LDAPHOST", app.config['LDAPHOST']))
-    username = os.getenv("LDAPBINDDN", app.config['LDAPBINDDN'])
-    password = os.getenv("LDAPBINDPW", app.config['LDAPBINDPW'])
-    l.set_option(ldap.OPT_PROTOCOL_VERSION,ldap.VERSION3)
-    l.bind_s(username, password, ldap.AUTH_SIMPLE)
-
-except ldap.LDAPError, e:
-    print e
-
-# LDAP variables
-#baseDN = os.getenv("LDAPBASEDN", 'ou=ansible-dev, dc=ansible, dc=local')
-baseDN = os.getenv("LDAPBASEDN", app.config['LDAPBASEDN'])
-searchScope = ldap.SCOPE_SUBTREE
-attrs = None
+# establish connection with Mongo server
+conn = pymongo.Connection('192.168.122.240', 27017)
+db = conn['ansible']
 
 class GetHost(flask.views.MethodView):
 
@@ -57,45 +43,34 @@ class GetHost(flask.views.MethodView):
             return flask.redirect(flask.url_for('gethostinfo'))
 
     def get_hostinfo(self, hostname):
-        filter = '(cn=' + hostname +')'
-        result = l.search_s(baseDN, searchScope, filter)
-        if not result:
+        result = db.hosts.find({"hostname": hostname}, {'hostname': 0, '_id': 0})
+        host = [item for item in result]
+        print host
+        if len(hostname) == 0:
             return "notfound"
+        elif not host:
+            return "notfound"
+        elif host[0]["vars"] == None:
+            ansiblevars = None
+            return ansiblevars
         else:
             for item in result:
-                # if ansiblevar is not available return None
-                if 'ansibleVar' in item[1]:
-                    ansiblevar = item[1]['ansibleVar']
-                else:
-                    ansiblevar = None
-            return ansiblevar
+                print item
+                ansiblevars = item
+            return ansiblevars
 
-    def get_dn(self,hostname):
-        filter = '(cn=' + hostname +')'
-        result = l.search_s(baseDN, searchScope, filter)
-        if not result:
-            return None
-        else:
-            dn = result[0][0]
-            print dn
-            return dn
 
     def get_hostgroups(self, hostname):
-        dn = self.get_dn(hostname)
+        result = db.groups.find({"hosts": hostname}, {'groupname': 1, '_id': 0})
+        groups = [ item for item in result]
+        grouplist = []
         # if host does not exists return None
-        if dn == None:
+        if not groups:
             return None
         else:
-            filter = '(&(objectClass=groupOfNames)(member=' + dn + '))'
-            result = l.search_s(baseDN, searchScope, filter)
-            groups = []
-            # if host does not exist return None
-            for item in result:
-                '''convert the lists(item) to a string'''
-                group_string = ''.join(map(str, item[1]['cn']))
-                ''' append to the group list '''
-                groups.append(group_string)
-            return groups
+            for item in groups:
+                grouplist.append(item["groupname"])
+            return grouplist
 
 
 class GetAllHosts(flask.views.MethodView):
@@ -105,14 +80,9 @@ class GetAllHosts(flask.views.MethodView):
         return flask.render_template('gethost.html', allhosts=allhosts)
 
     def get_allhosts(self):
-        filter = '(objectclass=ansibleHost)'
-        result = l.search_s(baseDN, searchScope, filter)
-        print result
+        result = db.hosts.find().distinct("hostname")
         allhosts = []
         for item in result:
-            host = ''.join(map(str, item[1]['cn']))
-            print host
-            allhosts.append(host)
-        #ansiblevar = item[1]['ansibleVar']
-        #print ansiblevar
+            allhosts.append(item)
+        print allhosts
         return allhosts
