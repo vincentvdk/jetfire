@@ -49,7 +49,6 @@ class GetGroup(flask.views.MethodView):
     def get_groupmembers(self,groupname):
         result = db.groups.find({"groupname": groupname}, {'children': 1, '_id': 0})
         children = [ item for item in result]
-        print children
         # return none if no group is entered in form
         if len(groupname) == 0:
             members = None

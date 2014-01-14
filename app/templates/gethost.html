@@ -43,11 +43,15 @@
 
 <p>
 <b>Groups :</b>
+{% if res is none %}
+    <pre>None</pre>
+{% else %}
 {% for item in groupres %}
 <ul>
 <li>{{ item }}</li>
 </ul>
 {% endfor %}
+{% endif %}
 </p>
 
 

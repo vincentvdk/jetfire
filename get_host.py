@@ -45,7 +45,6 @@ class GetHost(flask.views.MethodView):
     def get_hostinfo(self, hostname):
         result = db.hosts.find({"hostname": hostname}, {'hostname': 0, '_id': 0})
         host = [item for item in result]
-        print host
         if len(hostname) == 0:
             return "notfound"
         elif not host:
@@ -54,9 +53,9 @@ class GetHost(flask.views.MethodView):
             ansiblevars = None
             return ansiblevars
         else:
-            for item in result:
+            for item in host:
                 print item
-                ansiblevars = item
+                ansiblevars = item["vars"]
             return ansiblevars
 
 
@@ -64,9 +63,9 @@ class GetHost(flask.views.MethodView):
         result = db.groups.find({"hosts": hostname}, {'groupname': 1, '_id': 0})
         groups = [ item for item in result]
         grouplist = []
-        # if host does not exists return None
+        # return empty list when host is not in a group
         if not groups:
-            return None
+            return grouplist
         else:
             for item in groups:
                 grouplist.append(item["groupname"])
@@ -84,5 +83,4 @@ class GetAllHosts(flask.views.MethodView):
         allhosts = []
         for item in result:
             allhosts.append(item)
-        print allhosts
         return allhosts

@@ -17,8 +17,6 @@
 #
 
 import flask, flask.views
-#import ldap
-#import ldap.modlist as modlist
 import os
 import pymongo
 import yaml
@@ -45,6 +43,7 @@ class AddHost(flask.views.MethodView):
             flask.flash('Empty hostname given')
             return flask.redirect(flask.url_for('addhost'))
         elif hostname == self.get_hostname(hostname):
+# add the option to edit the given hostname
             flask.flash('Host already exists')
             return flask.redirect(flask.url_for('addhost'))
         else:
@@ -67,6 +66,7 @@ class AddHost(flask.views.MethodView):
         # Get the ansible vars from the form
         yamlvars = flask.request.form['hyaml']
         y = yaml.load(yamlvars)
+        print y
         post = {"hostname": hostname,
                 "vars": y
         }

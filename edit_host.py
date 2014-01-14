@@ -17,85 +17,63 @@
 #
 
 import flask, flask.views
-import ldap
-import ldap.modlist as modlist
 import os
+import pymongo
 from functools import wraps
 from app import app
-# establish connection with LDAP server
+from get_host import GetHost
+# establish connection with mongodb server
 
-try:
-    l = ldap.initialize(os.getenv("LDAPHOST", app.config['LDAPHOST']))
-    username = os.getenv("LDAPBINDDN", app.config['LDAPBINDDN'])
-    password = os.getenv("LDAPBINDPW", app.config['LDAPBINDPW'])
-    l.set_option(ldap.OPT_PROTOCOL_VERSION,ldap.VERSION3)
-    l.bind_s(username, password, ldap.AUTH_SIMPLE)
+conn = pymongo.Connection('192.168.122.240', 27017)
+db = conn['ansible']
 
-except ldap.LDAPError, e:
-    print e
 
-# LDAP variables
-#baseDN = os.getenv("LDAPBASEDN", 'ou=ansible-dev, dc=ansible, dc=local')
-baseDN = os.getenv("LDAPBASEDN", app.config['LDAPBASEDN'])
-searchScope = ldap.SCOPE_SUBTREE
-attrs = None
+#class GetHost(flask.views.MethodView):
+#
+#    def get(self):
+#        return flask.render_template('gethost.html')
+#
+#    def post(self):
+#        hostname = str(flask.request.form['p_get'])
+#        result = self.get_hostinfo(hostname)
+#        groups = self.get_hostgroups(hostname)
+#        if result != 'notfound':
+#            hostinfo = result
+#            return flask.render_template('gethost.html', res=result, groupres=groups, host=hostname)
+#        else:
+#            flask.flash('Host ' + hostname + ' not found')
+#            return flask.redirect(flask.url_for('gethostinfo'))
 
-class GetHost(flask.views.MethodView):
+#    def get_hostinfo(self, hostname):
+#        filter = '(cn=' + hostname +')'
+#        result = l.search_s(baseDN, searchScope, filter)
+#        if not result:
+#            return "notfound"
+#        else:
+#            for item in result:
+#                # if ansiblevar is not available return None
+#                if 'ansibleVar' in item[1]:
+#                    ansiblevar = item[1]['ansibleVar']
+#                else:
+#                    ansiblevar = None
+#            return ansiblevar
 
-    def get(self):
-        return flask.render_template('gethost.html')
-
-    def post(self):
-        hostname = str(flask.request.form['p_get'])
-        result = self.get_hostinfo(hostname)
-        groups = self.get_hostgroups(hostname)
-        if result != 'notfound':
-            hostinfo = result
-            return flask.render_template('gethost.html', res=result, groupres=groups, host=hostname)
-        else:
-            flask.flash('Host ' + hostname + ' not found')
-            return flask.redirect(flask.url_for('gethostinfo'))
-
-    def get_hostinfo(self, hostname):
-        filter = '(cn=' + hostname +')'
-        result = l.search_s(baseDN, searchScope, filter)
-        if not result:
-            return "notfound"
-        else:
-            for item in result:
-                # if ansiblevar is not available return None
-                if 'ansibleVar' in item[1]:
-                    ansiblevar = item[1]['ansibleVar']
-                else:
-                    ansiblevar = None
-            return ansiblevar
-
-    def get_dn(self,hostname):
-        filter = '(cn=' + hostname +')'
-        result = l.search_s(baseDN, searchScope, filter)
-        if not result:
-            return None
-        else:
-            dn = result[0][0]
-            print dn
-            return dn
-
-    def get_hostgroups(self, hostname):
-        dn = self.get_dn(hostname)
-        # if host does not exists return None
-        if dn == None:
-            return None
-        else:
-            filter = '(&(objectClass=groupOfNames)(member=' + dn + '))'
-            result = l.search_s(baseDN, searchScope, filter)
-            groups = []
-            # if host does not exist return None
-            for item in result:
-                '''convert the lists(item) to a string'''
-                group_string = ''.join(map(str, item[1]['cn']))
-                ''' append to the group list '''
-                groups.append(group_string)
-            return groups
+#    def get_hostgroups(self, hostname):
+#        dn = self.get_dn(hostname)
+#        # if host does not exists return None
+#        if dn == None:
+#            return None
+#        else:
+#            filter = '(&(objectClass=groupOfNames)(member=' + dn + '))'
+#            result = l.search_s(baseDN, searchScope, filter)
+#            groups = []
+#            # if host does not exist return None
+#            for item in result:
+#                '''convert the lists(item) to a string'''
+#                group_string = ''.join(map(str, item[1]['cn']))
+#                ''' append to the group list '''
+#                groups.append(group_string)
+#            return groups
 
 # import the above classes rather then put them above.
 class EditHost(flask.views.MethodView):

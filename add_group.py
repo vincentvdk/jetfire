@@ -43,13 +43,18 @@ class AddGroup(flask.views.MethodView):
         else:
             # insert logic to see if group already exists (get_groupname)
             self.add_group(groupname)
+            flask.flash('Group added successfully')
             return flask.render_template('addgroup.html')
 
 
     def add_group(self, groupname):
-        #ansivars = flask.request.form.getlist('gnew')
         yamlvars = flask.request.form['gyaml']
-        y = yaml.load(yamlvars)
+        # return empty list in inventory output when no vars
+        if not yamlvars:
+            y = []
+        else:
+            y = yaml.load(yamlvars)
+            #print y
         selectedhosts = flask.request.form.getlist('selectedhosts')
         # create a list with the DNs from the selected hostnames
         children = []
@@ -66,7 +71,3 @@ class AddGroup(flask.views.MethodView):
             db.groups.insert(post)
         except:
             pass
-        #try:
-        #    l.add_s(dn, ldif)
-        #except ldap.LDAPError, e:
-        #    print e
