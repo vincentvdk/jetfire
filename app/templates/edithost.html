@@ -59,17 +59,21 @@ return false;
 
 <b>Ansiblevars :</b><br>
 {# get the ansible vars #}
-{% for item in result %}
-    <input type="text" value="{{ item }}" /><br>
-{% endfor %}
+{#{% for item in result %}#}
+    <textarea type="area" value="" style="width:300px;height:300px">{{result}}</textarea><br>
+{#{% endfor %}#}
 </p>
 
 {# get the groups #}
 <p>
 <b>Groups :</b><br>
-{% for item in groups %}
-    <input typ="text" value="{{ item }}" /><br>
-{% endfor %}
+{% if groups %}
+{#{% for item in groups %}#}
+    <textarea typ="text" value="{{ item }}" style="width:300px;height:300px">---</textarea></br>
+{#{% endfor %}#}
+{% else %}
+<pre> none </pre>
+{% endif %}
 </p>
 </form>
 

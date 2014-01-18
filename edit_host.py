@@ -18,6 +18,8 @@
 
 import flask, flask.views
 import os
+import yaml
+import json
 import pymongo
 from functools import wraps
 from app import app
@@ -43,22 +45,19 @@ db = conn['ansible']
 #        else:
 #            flask.flash('Host ' + hostname + ' not found')
 #            return flask.redirect(flask.url_for('gethostinfo'))
-
+#
 #    def get_hostinfo(self, hostname):
-#        filter = '(cn=' + hostname +')'
-#        result = l.search_s(baseDN, searchScope, filter)
+#        result = db.hosts.find({"hostname": hostname}).distinct("vars")
+#        #print result[0]
 #        if not result:
 #            return "notfound"
 #        else:
-#            for item in result:
-#                # if ansiblevar is not available return None
-#                if 'ansibleVar' in item[1]:
-#                    ansiblevar = item[1]['ansibleVar']
-#                else:
-#                    ansiblevar = None
+#            j = json.dumps(result[0], sort_keys=True, indent=2)
+#            ansiblevar = yaml.dump(yaml.load(j), default_flow_style=False)
 #            return ansiblevar
-
+#
 #    def get_hostgroups(self, hostname):
+#        pass
 #        dn = self.get_dn(hostname)
 #        # if host does not exists return None
 #        if dn == None:
@@ -80,13 +79,28 @@ class EditHost(flask.views.MethodView):
 
     def post(self):
         hostname = str(flask.request.form['p_get'])
-        res = GetHost()
-        result = res.get_hostinfo(hostname)
-        groups = res.get_hostgroups(hostname)
+        #res = GetHost()
+        #result = res.get_hostinfo(hostname)
+        result = self.get_hostinfo(hostname)
+        #groups = res.get_hostgroups(hostname)
+        groups = self.get_hostgroups(hostname)
         return flask.render_template('edithost.html', host=hostname, result=result, groups=groups)
 
     def get(self):
         return flask.render_template('edithost.html')
+
+    def get_hostinfo(self, hostname):
+        result = db.hosts.find({"hostname": hostname}).distinct("vars")
+        #print result[0]
+        if not result:
+            return "notfound"
+        else:
+            j = json.dumps(result[0], sort_keys=True, indent=2)
+            ansiblevar = yaml.dump(yaml.load(j), default_flow_style=False)
+            return ansiblevar
+
+    def get_hostgroups(self, hostname):
+        pass
 
 class EditHostSubmit(flask.views.MethodView):
 
