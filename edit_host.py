@@ -100,7 +100,7 @@ class EditHost(flask.views.MethodView):
             return ansiblevar
 
     def get_hostgroups(self, hostname):
-        pass
+        groups = db.hosts.find({"hostname": hostname}).distinct("group")
 
 class EditHostSubmit(flask.views.MethodView):
 
