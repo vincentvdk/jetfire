@@ -109,7 +109,7 @@ class EditHostSubmit(flask.views.MethodView):
         return flask.render_template('edithost.html')
 
     # new stuff added
-        vars = flas.request.form.getlist('p_get')
+        vars = flask.request.form.getlist('p_get')
         dn = str('cn=' + hostname + ',' + app.config['LDAPBASEDN'])
         atrrs = {}
         ldif = modlist.addModlist(attrs)

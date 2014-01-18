@@ -44,20 +44,35 @@ class GetGroup(flask.views.MethodView):
         else:
             groupmembers = self.get_groupmembers(groupname)
             groupvars = self.get_groupvars(groupname)
-            return flask.render_template('getgroup.html', groupname=groupname, members=groupmembers, groupvars=groupvars)
+            grouphosts = self.get_grouphosts(groupname)
+            return flask.render_template('getgroup.html', groupname=groupname, members=groupmembers, groupvars=groupvars, grouphosts=grouphosts)
 
     def get_groupmembers(self,groupname):
         result = db.groups.find({"groupname": groupname}, {'children': 1, '_id': 0})
         children = [ item for item in result]
         # return none if no group is entered in form
-        if len(groupname) == 0:
-            members = None
+        #if len(groupname) == 0:
+        #    members = None
         # return none if group has no children
         if not children:
             members = None
         else:
             for item in children:
                 members = item["children"]
+        return members
+
+    def get_grouphosts(self,groupname):
+        result = db.groups.find({"groupname": groupname}, {'hosts': 1, '_id': 0})
+        hosts = [ item for item in result]
+        # return none if no group is entered in form
+        #if len(groupname) == 0:
+        #    members = None
+        # return none if group has no children
+        if not hosts:
+            hosts = None
+        else:
+            for item in hosts:
+                members = item["hosts"]
         return members
 
     def get_groupvars(self,groupname):

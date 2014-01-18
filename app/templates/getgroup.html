@@ -20,7 +20,7 @@
 
 <h3>Group : {{ groupname }} </h3>
 <p>
-<b>Members :</b>
+<b>Child groups :</b>
 {% if members is none %}
     <pre> none </pre>
 {% else %}
@@ -29,7 +29,16 @@
     {% endfor %}
 {% endif %}
 </p>
-
+<p>
+<b>Hosts:</b>
+{% if grouphosts is none %}
+    <pre> none </pre>
+{% else %}
+    {% for item in grouphosts %}
+        <ul><li> {{ item }} </li></ul>
+    {% endfor %}
+{% endif %}
+</p>
 <p>
 <b>Variables :</b>
 {% if groupvars is none %}
