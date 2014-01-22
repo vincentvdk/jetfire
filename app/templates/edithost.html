@@ -1,32 +1,7 @@
 {% extends "base.html" %}
 
+
 {% block body %}
-
-<!--<script src="/static/jquery-1.4.4.min.js"></script>-->
-<script type="text/javascript">
-$(function() {
-    var addDiv = $('#addvarinput');
-    var i = $('#addvarinput p').size() + 1;
-
-$('#addNew').live('click', function() {
-    //$('<p><input type="text" id="p_new" name="pnew' + 1 +'" value="" placeholder="add Ansible var" /><a href="#" id="remNew">Remove</a> </p>').appendTo(addDiv);
-    $('<p><input type="text" id="p_new" name="pnew" value="" placeholder="add Ansible var" /><a href="#" id="remNew">Remove</a> </p>').appendTo(addDiv);
-i++;
-
-return false;
-});
-
-$('#remNew').live('click', function() {
-if( i > 2 ) {
-$(this).parents('p').remove();
-i--;
-}
-return false;
-});
-});
-</script>
-
-
 
     <h2> Edit Host Settings </h2>
     <form action="{{url_for('edithost')}}" method="post">
@@ -47,7 +22,6 @@ return false;
         {% endif %}
     {% endwith %}
 
-<h3>Host : {{ host }}</h3>
 
 <p>
 {# do net iterate if no list with ansible vars is returned #}
@@ -55,61 +29,46 @@ return false;
     <pre>None</pre>
 {% else %}
 
-<form action="{{ url_for('edithost')}}" method="post">
+<form action="{{ url_for('edithostsubmit')}}" method="post">
+
+<h3>Host : {{ host }} </h3>
+<input type="hidden" name="p_get2" value="{{ host }}"/>
 
 <b>Ansiblevars :</b><br>
 {# get the ansible vars #}
-{#{% for item in result %}#}
-    <textarea type="area" value="" style="width:300px;height:300px">{{result}}</textarea><br>
-{#{% endfor %}#}
+    <textarea type="area" name="ehyaml" value="" style="width:300px;height:200px">{{result}}</textarea><br>
 </p>
 
 {# get the groups #}
 <p>
 <b>Groups :</b><br>
 {% if groups %}
-{#{% for item in groups %}#}
-    <textarea typ="text" value="{{ item }}" style="width:300px;height:300px">---</textarea></br>
-{#{% endfor %}#}
+<!--<form>-->
+    <select id="groupselect" name="groupselect" multiple="multiple">
+    {% for item in groups %}
+        <option value="{{ item }}" selected>{{ item }}</option>
+    {% endfor %}
+    {% for item in available_groups %}
+        <option value="{{ item }}">{{ item }}</option>
+    {% endfor %}
+    </select></br>
+<!--</form>-->
+
 {% else %}
-<pre> none </pre>
+    <pre> none </p>
 {% endif %}
 </p>
-</form>
 
-<form action="{{url_for('edithostsubmit')}}">
-<input type="submit" value="Edit host" name="edithosttest" />
+<!--<form action="{{url_for('edithostsubmit')}}" method="post">-->
+<input type="submit" value="Edit host" name="edithostBTN" />
 </form>
 
 {% endif %}
 
-{#
-</p>
-#}
-{#
-<p>
-<b>Groups :</b>
-{% for item in groupres %}
-<ul>
-<li>{{ item }}</li>
-</ul>
-{% endfor %}
-</p>
-#}
+<!-- javascript -->
+<script type="text/javascript">
+$('#groupselect').multiSelect();
+</script>
 
-{# get all hosts button #}
-{#
-<form action="{{url_for('getallhosts')}}" method="post">
-<input type="submit" value="Get all hosts" name="allHOSTS"/>
-</form>
-
-{% for item in allhosts %}
-<ul>
-<li>{{ item }}</li>
-</ul>
-{% endfor %} 
-#}
 {% endblock %}
 
-{# insert a block to show host results #}
-{# to render a block in the parent template use {{ super() }} #}

@@ -82,16 +82,15 @@ class EditHost(flask.views.MethodView):
         #res = GetHost()
         #result = res.get_hostinfo(hostname)
         result = self.get_hostinfo(hostname)
-        #groups = res.get_hostgroups(hostname)
+        available_groups = self.get_availablegroups()
         groups = self.get_hostgroups(hostname)
-        return flask.render_template('edithost.html', host=hostname, result=result, groups=groups)
+        return flask.render_template('edithost.html', host=hostname, result=result, groups=groups, available_groups=available_groups)
 
     def get(self):
         return flask.render_template('edithost.html')
 
     def get_hostinfo(self, hostname):
         result = db.hosts.find({"hostname": hostname}).distinct("vars")
-        #print result[0]
         if not result:
             return "notfound"
         else:
@@ -100,19 +99,58 @@ class EditHost(flask.views.MethodView):
             return ansiblevar
 
     def get_hostgroups(self, hostname):
-        groups = db.hosts.find({"hostname": hostname}).distinct("group")
+        result = db.groups.find({"hosts": hostname}, {'groupname': 1, '_id': 0})
+        groups = [ item["groupname"] for item in result]
+        return groups
+
+    def get_availablegroups(self):
+        allgroups = db.groups.find().distinct("groupname")
+        # build compared list 
+        hostname = str(flask.request.form['p_get'])
+        groups = self.get_hostgroups(hostname)
+        s = set(groups)
+        availablegroups = [ x for x in allgroups if x not in s ]
+        return availablegroups
 
 class EditHostSubmit(flask.views.MethodView):
 
     def post(self):
-        hostname = str(flask.request.form['p_get'])
+        hostname = str(flask.request.form['p_get2'])
+        #vars = yaml.load(flask.request.form['ehyaml'])
+        self.update_host(hostname)
+        self.update_groups(hostname)
         return flask.render_template('edithost.html')
 
-    # new stuff added
-        vars = flask.request.form.getlist('p_get')
-        dn = str('cn=' + hostname + ',' + app.config['LDAPBASEDN'])
-        atrrs = {}
-        ldif = modlist.addModlist(attrs)
+    def update_host(self,hostname):
+            yamlvars = flask.request.form['ehyaml']
+            #groups = flask.request.form.getlist('groupselect')
+            try:
+                y = yaml.load(yamlvars)
+            except yaml.YAMLError, exc:
+                print "Yaml syntax error"
+            #print y
+            #post = {"hostname": hostname,
+            #        "vars": y
+            #}
+            try:
+                db.hosts.update({"hostname": hostname}, {"$set": {'vars': y}}, upsert=False,multi=False)
+            except:
+                pass
+    def update_groups(self,hostname):
+            g = EditHost()
+            current_groups = g.get_hostgroups(hostname)
+            updated_groups = flask.request.form.getlist('groupselect')
+            ah = set(current_groups)
+            rh = set(updated_groups)
+            add_hosts_group = [ x for x in updated_groups if x not in ah ]
+            remove_hosts_group = [ x for x in current_groups if x not in rh ]
+            print remove_hosts_group
+            #for item in add_hosts_group:
+            #    db.groups.update({"groupname": item}, {"$push": {"hosts": hostname}})
+            for item in remove_hosts_group:
+                db.groups.update({"groupname": item}, {"$pull": {"hosts": hostname}})
+            pass
+
 
     def get(self):
-         return flask.render_template('edithost.html')
+        return flask.render_template('edithost.html')

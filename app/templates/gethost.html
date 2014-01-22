@@ -33,7 +33,6 @@
 {% if res %}
 {% for key, value in res.iteritems() %}
 <ul> 
-{#<li>{{ item }}</li>#}
     <li>{{ key|e }} : {{ value|e }}</li>
 </ul>
 {% endfor %}
@@ -43,7 +42,7 @@
 
 <p>
 <b>Groups :</b>
-{% if res is none %}
+{% if groupres is none %}
     <pre>None</pre>
 {% else %}
 {% for item in groupres %}
@@ -68,5 +67,3 @@
 
 {% endblock %}
 
-{# insert a block to show host results #}
-{# to render a block in the parent template use {{ super() }} #}

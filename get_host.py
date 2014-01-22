@@ -35,6 +35,7 @@ class GetHost(flask.views.MethodView):
         hostname = str(flask.request.form['p_get'])
         result = self.get_hostinfo(hostname)
         groups = self.get_hostgroups(hostname)
+        print groups
         if result != 'notfound':
             hostinfo = result
             return flask.render_template('gethost.html', res=result, groupres=groups, host=hostname)
