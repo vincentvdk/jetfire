@@ -25,8 +25,14 @@ from functools import wraps
 from app import app
 
 # establish connection with mongod
-conn = pymongo.Connection('192.168.122.240', 27017)
-db = conn['ansible']
+#conn = pymongo.Connection('192.168.122.240', 27017)
+#db = conn['ansible']
+dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
+database = os.getenv("DATABASE", app.config['DATABASE'])
+dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
+
+conn = pymongo.Connection(dbserver, dbserverport)
+db = conn[database]
 
 class AddGroup(flask.views.MethodView):
 

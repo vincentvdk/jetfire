@@ -25,8 +25,12 @@ from functools import wraps
 from app import app
 from get_host import GetHost
 
-conn = pymongo.Connection('192.168.122.240', 27017)
-db = conn['ansible']
+dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
+database = os.getenv("DATABASE", app.config['DATABASE'])
+dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
+
+conn = pymongo.Connection(dbserver, dbserverport)
+db = conn[database]
 
 class EditGroup(flask.views.MethodView):
 
