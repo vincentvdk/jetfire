@@ -99,13 +99,15 @@ class EditHost(flask.views.MethodView):
             return ansiblevar
 
     def get_hostgroups(self, hostname):
+        '''retrieve all groups the host is a member of'''
         result = db.groups.find({"hosts": hostname}, {'groupname': 1, '_id': 0})
         groups = [ item["groupname"] for item in result]
         return groups
 
     def get_availablegroups(self):
+        ''' return all groups this host is not a member of'''
         allgroups = db.groups.find().distinct("groupname")
-        # build compared list 
+        # build compared list
         hostname = str(flask.request.form['p_get'])
         groups = self.get_hostgroups(hostname)
         s = set(groups)
@@ -139,14 +141,16 @@ class EditHostSubmit(flask.views.MethodView):
     def update_groups(self,hostname):
             g = EditHost()
             current_groups = g.get_hostgroups(hostname)
+            #print current_groups
             updated_groups = flask.request.form.getlist('groupselect')
-            ah = set(current_groups)
-            rh = set(updated_groups)
-            add_hosts_group = [ x for x in updated_groups if x not in ah ]
-            remove_hosts_group = [ x for x in current_groups if x not in rh ]
-            print remove_hosts_group
-            #for item in add_hosts_group:
-            #    db.groups.update({"groupname": item}, {"$push": {"hosts": hostname}})
+            #print updated_groups
+            addh = set(current_groups)
+            remh = set(updated_groups)
+            add_hosts_group = [ x for x in updated_groups if x not in addh ]
+            remove_hosts_group = [ x for x in current_groups if x not in remh ]
+            #print remove_hosts_group
+            for item in add_hosts_group:
+                db.groups.update({"groupname": item}, {"$push": {"hosts": hostname}})
             for item in remove_hosts_group:
                 db.groups.update({"groupname": item}, {"$pull": {"hosts": hostname}})
             pass

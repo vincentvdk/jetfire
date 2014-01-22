@@ -42,7 +42,7 @@
 {# get the groups #}
 <p>
 <b>Groups :</b><br>
-{% if groups %}
+{#{% if groups %}#}
 <!--<form>-->
     <select id="groupselect" name="groupselect" multiple="multiple">
     {% for item in groups %}
@@ -53,10 +53,11 @@
     {% endfor %}
     </select></br>
 <!--</form>-->
-
+{#
 {% else %}
     <pre> none </p>
 {% endif %}
+#}
 </p>
 
 <!--<form action="{{url_for('edithostsubmit')}}" method="post">-->

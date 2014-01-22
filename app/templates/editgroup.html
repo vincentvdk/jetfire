@@ -1,0 +1,52 @@
+{% extends "base.html" %}                                                                                              
+
+
+{% block body %}
+<h2> Edit group </h2>
+<form action="{{url_for('editgroup')}}" method="post">
+    <input type="text" name="group_get" />
+    <input type="submit" value="Get group" name='submitBTN'/>
+</form>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+      Results:
+      <pre>
+        {% for message in messages %}
+{{ message }}
+        {% endfor %}
+      </pre>
+    {% endif %}
+{% endwith %}
+
+
+
+<form action="{{ url_for('editgroupsubmit')}}" method="post">
+
+    <h3>Group : {{ group }} </h3>
+    <input type="hidden" name="group_get2" value="{{ group }}"/>
+
+    <b>Ansible vars:</b></br>
+    <textarea type="area" name="egyaml" value="" style="width:300px;height:200px">{{result}}</textarea><br>
+
+    <b>Hosts: </b></br>
+    <select id="hostselect" name="hostselect" multiple="multiple">
+        {% for item in hosts %}
+        ¦   <option value="{{ item }}" selected>{{ item }}</option>
+        {% endfor %}
+        {% for item in available_hosts %}
+        ¦   <option value="{{ item }}">{{ item }}</option>
+        {% endfor %}
+    </select></br>
+
+    <input type="submit" value="Edit Group" name="edithostBTN" />
+</form>
+
+
+
+<!-- javascript -->
+<script type="text/javascript">
+$('#hostselect').multiSelect();
+</script>
+
+{% endblock %}
