@@ -1,11 +1,12 @@
-= jetfire
+== jetfire
 
 An Ansible inventory tool.
 
-== Overview
+=== Overview
 Jetfire is a web based Flask application with a MongoDB backend to manage an Ansible inventory.
 
-It is currently in early stage and lacks fearures and proper documentation. It currently has the following features :
+It is currently in early stage and lacks fearures and proper documentation. It currently has the 
+following features:
 
 * add host with vars and add it to available groups
 * add groups with vars and available members
@@ -14,14 +15,14 @@ It is currently in early stage and lacks fearures and proper documentation. It c
 * edit host vars and groups
 * edit groups vars and hosts
 
-== Usage
+=== Usage
 
 You'll need a running MongoDB instance and create a DB that you will use for your inventory.
 
 clone the repository and edit the config.cfg file in the +app+ folder (specify mongodb server, port and database). Then run python app.py to launch the application.
 Open a browser and point to http://<yourhost>:5000
 
-== TODO
+=== TODO
 * list required Python packages
 * add and edit children of a group
 * enable versioning in MongoDB
