@@ -22,6 +22,8 @@ You'll need a running MongoDB instance and create a DB that you will use for you
 clone the repository and edit the config.cfg file in the +app+ folder (specify mongodb server, port and database). Then run python app.py to launch the application.
 Open a browser and point to http://<yourhost>:5000
 
+The +inventory.py+ script is used as inventory script. It must be edited to point to the same MongoDB instance and database to function.
+
 === TODO
 * list required Python packages
 * add and edit children of a group
