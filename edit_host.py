@@ -39,10 +39,17 @@ class EditHost(flask.views.MethodView):
         hostname = str(flask.request.form['p_get'])
         #res = GetHost()
         #result = res.get_hostinfo(hostname)
-        result = self.get_hostinfo(hostname)
-        available_groups = self.get_availablegroups()
-        groups = self.get_hostgroups(hostname)
-        return flask.render_template('edithost.html', host=hostname, result=result, groups=groups, available_groups=available_groups)
+        if len(hostname) == 0:
+            flask.flash('empty hostname given')
+            return flask.render_template('edithost.html')
+        elif self.get_hostinfo(hostname) == "notfound":
+            flask.flash('hostname not found')
+            return flask.render_template('edithost.html')
+        else:
+            result = self.get_hostinfo(hostname)
+            available_groups = self.get_availablegroups()
+            groups = self.get_hostgroups(hostname)
+            return flask.render_template('edithost.html', host=hostname, result=result, groups=groups, available_groups=available_groups)
 
     def get(self):
         return flask.render_template('edithost.html')
