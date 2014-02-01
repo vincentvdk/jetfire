@@ -36,10 +36,18 @@ class EditGroup(flask.views.MethodView):
 
     def post(self):
         groupname = str(flask.request.form['group_get'])
-        result = self.get_groupinfo(groupname)
-        hosts = self.get_grouphosts(groupname)
-        available_hosts = self.get_availablehosts()
-        return flask.render_template('editgroup.html', group=groupname, result=result, hosts=hosts, available_hosts=available_hosts)
+        #result = self.get_groupinfo(groupname)
+        if len(groupname) == 0:
+            flask.flash('empty hostname given')
+            return flask.render_template('editgroup.html')
+        elif self.get_groupinfo(groupname) == "notfound":
+            flask.flash('host does not exist')
+            return flask.redirect(flask.url_for('editgroup'))
+        else:
+            result = self.get_groupinfo(groupname)
+            hosts = self.get_grouphosts(groupname)
+            available_hosts = self.get_availablehosts()
+            return flask.render_template('editgroup.html', group=groupname, result=result, hosts=hosts, available_hosts=available_hosts)
 
     def get(self):
         return flask.render_template('editgroup.html')
@@ -47,29 +55,30 @@ class EditGroup(flask.views.MethodView):
     def get_groupinfo(self, groupname):
         result = db.groups.find({"groupname": groupname}).distinct("vars")
         if not result:
-            return "notfound"
+            ansiblevar = "notfound"
         else:
             j = json.dumps(result[0], sort_keys=True, indent=2)
             ansiblevar = yaml.dump(yaml.load(j), default_flow_style=False)
-            return ansiblevar
+        return ansiblevar
 
     def get_grouphosts(self, groupname):
         '''retrieve all hosts from the group'''
         result = db.groups.find({"groupname": groupname}, {'hosts': 1, '_id': 0})
         hosts = result[0]["hosts"]
-        return hosts
+        print hosts
+        if not hosts:
+            return "notfound"
+        else:
+            return hosts
 
     def get_availablehosts(self):
         ''' return all hosts not a member of this group'''
         allhosts = db.hosts.find().distinct("hostname")
-        #print allhosts
         # build compared list
         groupname = str(flask.request.form['group_get'])
         hosts = self.get_grouphosts(groupname)
-        #print hosts
         s = set(hosts)
         availablehosts = [ x for x in allhosts if x not in s ]
-        #print availablehosts
         return availablehosts
 
 class EditGroupSubmit(flask.views.MethodView):
@@ -102,8 +111,6 @@ class EditGroupSubmit(flask.views.MethodView):
         h = EditGroup()
         current_hosts = h.get_grouphosts(groupname)
         updated_hosts = flask.request.form.getlist('hostselect')
-        print current_hosts
-        print updated_hosts
         addh = set(current_hosts)
         remh = set(updated_hosts)
         add_hosts = [x for x in updated_hosts if x not in addh]
@@ -115,5 +122,4 @@ class EditGroupSubmit(flask.views.MethodView):
         for item in rem_hosts:
             db.groups.update({"groupname": groupname}, {"$pull": {"hosts": item}})
         pass
-
 
