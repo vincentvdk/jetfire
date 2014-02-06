@@ -13,3 +13,7 @@ body {
 #content {
   margin-left: 10em;
 }
+
+td {
+    padding:20px;
+}

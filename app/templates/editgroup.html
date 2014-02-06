@@ -29,7 +29,7 @@
     <b>Ansible vars:</b></br>
     <textarea type="area" name="egyaml" value="" style="width:300px;height:200px">{{result}}</textarea><br>
 
-    <b>Hosts: </b></br>
+    <table><tr><td><b>Available hosts</b></td><td style="text-align:left;"><b>Current hosts</b></td></tr></table>
     <select id="hostselect" name="hostselect" multiple="multiple">
         {% for item in hosts %}
         ¦   <option value="{{ item }}" selected>{{ item }}</option>

@@ -40,8 +40,7 @@
 </p>
 
 {# get the groups #}
-<p>
-<b>Groups :</b><br>
+<table><tr><td><b>Available groups</b></td><td><b>Current groups</b><td></tr></table>
 {#{% if groups %}#}
 <!--<form>-->
     <select id="groupselect" name="groupselect" multiple="multiple">
@@ -58,7 +57,6 @@
     <pre> none </p>
 {% endif %}
 #}
-</p>
 
 <!--<form action="{{url_for('edithostsubmit')}}" method="post">-->
 <input type="submit" value="Edit host" name="edithostBTN" />
