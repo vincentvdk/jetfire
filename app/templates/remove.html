@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<h2>Remove Items from inventory</h2>
+
+<form action="{{url_for('remove')}}" method="post">
+    Select host(s) to remove:</br>
+        <select name="selectedhostsremove" multiple="multiple" style="width:300px;height:300px">
+            {% for item in allhosts %}
+                <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+        </select></br>
+    
+    Select group(s) to remove</br>
+        <select name="selectedgroupsremove" multiple="multiple" style="width:300px;height:300px">
+            {% for item in allgroups %}
+                <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+        </select></br>
+
+        <input type="submit" value="Remove" />
+</form>
+
+
+<!-- Flash message when host has been added -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            Results:
+            <pre>
+                {% for message in messages %}
+{{ message }}
+                {% endfor %}
+            </pre>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
+
+

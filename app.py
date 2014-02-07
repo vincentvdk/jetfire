@@ -22,6 +22,8 @@ from get_group import GetGroup, GetAllGroups
 from add_group import AddGroup
 from edit_host import EditHost, EditHostSubmit
 from edit_group import EditGroup, EditGroupSubmit
+#from remove import RemoveGroup, RemoveHost
+from remove import Remove
 #class AddHost(flask.views.MethodView):
 #    def get(self):
 #        return flask.render_template('addhost.html')
@@ -75,6 +77,14 @@ app.add_url_rule('/addgroups',
                 view_func=AddGroup.as_view('addgroup'),
                 methods=['GET', 'POST'])
 
+app.add_url_rule('/remove',
+                view_func=Remove.as_view('remove'),
+                methods=['GET', 'POST'])
+
+
+#app.add_url_rule('/removehost',
+#                view_func=RemoveHost.as_view('removehost'),
+#                methods=['GET', 'POST'])
 
 
 app.debug = True
