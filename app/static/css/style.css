@@ -1,0 +1,19 @@
+body {
+  font-family: arial;
+  color:#3E4349;
+}
+
+#nav {
+  position: absolute;
+  top: 20px;
+  left: 5px;
+  width: 10em;
+}
+
+#content {
+  margin-left: 10em;
+}
+
+td {
+    padding:20px;
+}
