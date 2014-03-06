@@ -57,7 +57,7 @@ class AddGroup(flask.views.MethodView):
         yamlvars = flask.request.form['gyaml']
         # return empty list in inventory output when no vars
         if not yamlvars:
-            y = []
+            y = {}
         else:
             y = yaml.load(yamlvars)
             #print y
