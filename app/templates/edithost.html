@@ -1,15 +1,17 @@
-{% extends "base.html" %}
+{#{% extends "base.html" %}#}
+{% extends "gethost.html" %}
 
 
-{% block body %}
-
+{#{% block body %}#}
+{% block action %}
+{#
     <h2> Edit Host Settings </h2>
     <form action="{{url_for('edithost')}}" method="post">
     <input type="text" name="p_get" />
     <input type="submit" value="Get host" name='submitBTN'/>
     </form>
 
-
+#}
 
     {% with messages = get_flashed_messages() %}
         {% if messages %}

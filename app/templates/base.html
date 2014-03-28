@@ -6,19 +6,39 @@
         <link rel="stylesheet" type="text/css" href="static/css/multi-select.css" />
         <!--<link href="static/css/multi-select.css" media="screen" rel="stylesheet" type="text/css">-->
         <!--<script src="/static/jquery-1.4.4.min.js"></script>-->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script src="/static/js/bootstrap.min.js"></script>
-        <script src="static/jquery.multi-select.js" type="text/javascript"></script>
+        <script src="ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="../static/js/bootstrap.min.js"></script>
+        <script src="/static/jquery.multi-select.js" type="text/javascript"></script>
         <script type=text/javascript>var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>  
     </head>
 
     <body>
-        <div id="content">
+    <div class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="container">
+            <div class=navbar-header">
+                <button class="navbar-toggle" data-target=".navbar-collapse"
+                data-toggle="collapse" type="button"></button>
+                <a class="navbar-brand" href="/">JetFIRE</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    {%- for endpoint, caption in
+                    [('gethostinfo','Hosts'),('getgroup','Groups')] %}
+                      <li {% if endpoint == request.endpoint %} class="active" {% endif %}><a href="{{url_for(endpoint)}}">{{ caption }}</a></li>
+                    {%- endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+        
+        
+        
+        <div class="container">
             {% block body %} {% endblock %}
         </div>
 
-        <div id="nav">
           <!--<img src="/static/img/jetfire.png" height="160" width="120">-->
+{#
             <h3>Navigation</h3>
             <ul>
                 <li><a href="{{url_for('index')}}"> Home </a></li>
@@ -29,6 +49,7 @@
                 <li><a href="{{url_for('edithost')}}"> Edit Host </a></li>
                 <li><a href="{{url_for('editgroup')}}"> Edit Group </a></li>
                 <li><a href="{{url_for('remove')}}"> Remove Group/Host </a></li>
+#}
         </div>
     </body>
 

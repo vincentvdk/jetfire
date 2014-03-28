@@ -41,7 +41,7 @@ class EditGroup(flask.views.MethodView):
             flask.flash('empty groupname given')
             return flask.render_template('editgroup.html')
         elif self.get_groupinfo(groupname) == "notfound":
-            flask.flash('host does not exist')
+            flask.flash('Group does not exist')
             return flask.redirect(flask.url_for('editgroup'))
         else:
             result = self.get_groupinfo(groupname)

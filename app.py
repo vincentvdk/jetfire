@@ -41,13 +41,13 @@ app.add_url_rule('/addhost',
                 view_func=AddHost.as_view('addhost'),
                 methods=['GET', 'POST'])
 
-app.add_url_rule('/gethost',
+app.add_url_rule('/gethostinfo',
                 view_func=GetHost.as_view('gethostinfo'),
                 methods=['GET', 'POST'])
 
-app.add_url_rule('/gethosts',
+app.add_url_rule('/getallhosts',
                 view_func=GetAllHosts.as_view('getallhosts'),
-                methods=['POST'])
+                methods=['POST','GET'])
 
 app.add_url_rule('/edithost',
                 view_func=EditHost.as_view('edithost'),
@@ -69,9 +69,9 @@ app.add_url_rule('/getgroup',
                 view_func=GetGroup.as_view('getgroup'),
                 methods=['GET', 'POST'])
 
-app.add_url_rule('/getgroups',
+app.add_url_rule('/getallgroups',
                 view_func=GetAllGroups.as_view('getallgroups'),
-                methods=['POST'])
+                methods=['POST','GET'])
 
 app.add_url_rule('/addgroups',
                 view_func=AddGroup.as_view('addgroup'),

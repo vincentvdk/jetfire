@@ -21,6 +21,7 @@ import os
 import pymongo
 from functools import wraps
 from app import app
+import re
 
 # establish connection with Mongo server
 dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
@@ -40,10 +41,10 @@ class GetHost(flask.views.MethodView):
         hostname = str(flask.request.form['p_get'])
         result = self.get_hostinfo(hostname)
         groups = self.get_hostgroups(hostname)
-        print groups
+        #print groups
         if result != 'notfound':
             hostinfo = result
-            return flask.render_template('gethost.html', res=result, groupres=groups, host=hostname)
+            return flask.render_template('gethost.html', res=result, groupres=groups, hostname=hostname)
         else:
             flask.flash('Host ' + hostname + ' not found')
             return flask.redirect(flask.url_for('gethostinfo'))
@@ -80,13 +81,17 @@ class GetHost(flask.views.MethodView):
 
 class GetAllHosts(flask.views.MethodView):
 
-    def post(self):
+    def get(self):
         allhosts = self.get_allhosts()
         return flask.render_template('gethost.html', allhosts=allhosts)
 
     def get_allhosts(self):
         result = db.hosts.find().distinct("hostname")
-        allhosts = []
+        #allhosts = []
+        allhosts = {}
+        host = GetHost()
         for item in result:
-            allhosts.append(item)
+            itemgroups = host.get_hostgroups(item)
+            #allhosts.append(item)
+            allhosts[item] = [str(x) for x in itemgroups]
         return allhosts
