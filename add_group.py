@@ -43,14 +43,15 @@ class AddGroup(flask.views.MethodView):
 
     def post(self):
         groupname = str(flask.request.form['add_group'])
+        hosts = db.hosts.find().distinct("hostname")
         if len(groupname) == 0:
             flask.flash('empty groupname')
-            return flask.render_template('addgroup.html')
+            return flask.render_template('addgroup.html', hosts=hosts)
         else:
             # insert logic to see if group already exists (get_groupname)
             self.add_group(groupname)
             flask.flash('Group added successfully')
-            return flask.render_template('addgroup.html')
+            return flask.render_template('addgroup.html', hosts=hosts)
 
 
     def add_group(self, groupname):

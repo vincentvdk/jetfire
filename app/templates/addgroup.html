@@ -26,32 +26,57 @@ return false;
 });
 </script>
 
-
-    <h2> Add Group</h2>
-    <form action="{{url_for('addgroup')}}" method="post">
-    <input type="text" name="add_group" />
-    <div id="addvarinput">
-    <!--    <input type="text" id="g_new" name="gnew" value=""
-    placeholder="Ansible Groupvar" /><a href="#" id="addNew">Add</a></p>-->
-    </div>
-    <select name="selectedhosts" multiple="multiple" style="width:300px;height:300px">                                     {% for item in hosts %}
-            <option value="{{ item }}">{{ item }}</option>
-        {% endfor %}
-    </select>
-    <textarea id=g_yaml" name="gyaml" value=""style="width:300px;height:300px"></textarea></br>
-    <input type="submit" value="Add Group" name="submitBTN"/>
-    </form>
-
-
+<div class="col-md-6">
+ 
  {% with messages = get_flashed_messages() %}
     {% if messages %}
-    Results:
-        <pre>
         {% for message in messages %}
+<pre>
 {{ message }}
+</pre>
         {% endfor %}
-        </pre>
     {% endif %}
  {% endwith %}
+
+<form class="form form-horizontal" action="{{url_for('addgroup')}}" method="post">
+    <h3>Add group</h3>
+    <!-- Text input -->
+    <div class="form-group">
+      <div class="col-md-6">
+        <label for="groupname">Group name</label>
+        <input id="groupname" type="text" name="add_group" class="form-control"/>
+      </div>
+    </div>
+    
+    <!-- Multi select -->
+    <div class="form-group">
+      <div class="col-md-6">
+        <label for="hostselect">Select host(s)</label>
+          <select id="hostselect" class="form-control" name="selectedhosts" multiple="multiple">
+            {% for item in hosts %}
+              <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+          </select>
+      </div>
+    </div>
+
+    <!-- Multi select -->
+    <div class="form-group">
+      <div class="col-md-6">
+        <label for="g_yaml">Variables</label>
+          <textarea class="form-control" id=g_yaml" name="gyaml" value="" style="width:358px;height:300px"></textarea>
+      </div>
+    </div>
+    
+    <!-- Button -->
+    <div class="form-group">
+      <div class="col-md-6">
+        <label for=""></label>
+          <input class="btn btn-primary" type="submit" value="Add Group" name="submitBTN"/>
+      </div>
+    </div>
+</form>
+
+</div> <!-- end column -->
 
 {% endblock %}
