@@ -39,7 +39,7 @@ class Remove(flask.views.MethodView):
     def get(self):
         g = GetAllGroups()
         h = GetAllHosts()
-        allgroups = g.get_allgroups()
+        allgroups = [item["groupname"] for item in g.get_allgroups()]
         allhosts = h.get_allhosts()
         return flask.render_template('remove.html', allgroups=allgroups, allhosts=allhosts)
 
