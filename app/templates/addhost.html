@@ -3,7 +3,6 @@
 
 {% block body %}
 {#{% block action %}#}
-    <h2> Add Host </h2>
 <!--<script src="/static/jquery-1.4.4.min.js"></script>-->
 <script type="text/javascript">
 $(function() {
@@ -27,36 +26,65 @@ return false;
 });
 });
 </script>
+<div class="col-md-6">
+<!-- Flash message when host has been added -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+<pre>
+{{ message }}
+</pre>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
-
-    Enter the fqdn of the hostname:
-    <form action="{{url_for('addhost')}}" method="post">
-        <input type="text" name="add_host" placeholder="Host's FQDN" /></br>
-        <div id="addvarinput">
+<form class="form form-horizontal" action="{{url_for('addhost')}}" method="post">
+  <h3>Add host</h3>
+  <!-- text input -->
+    <div class="form-group">
+      <div class="col-md-6">
+        <label for="hostname">FQDN of the hostname</label>
+    {#<form action="{{url_for('addhost')}}" method="post">#}
+        <input id="hostname" class="form-control" type="text" name="add_host" placeholder="Host's FQDN"/>
+        {#<div id="addvarinput">
         <!--<input type="text" id="p_new" name="pnew" value=""
         placeholder="Ansible var" /><a href="#" id="addNew">Add</a></p>-->
-        </div>
-    Select a group or multiple groups</br>
+        </div>#}
+     </div>
+    </div>
+    <div class="form-group">
+      <div class="col-md-6">
+        <label for="groupselect">Select group(s)</label>
         <!-- Multiple group select build from available ansible groups -->
-        <select name="selectedgroups" multiple="multiple" style="width:300px;height:300px">
+        <select id="groupselect" class="form-control" name="selectedgroups" multiple="multiple">
             {% for item in groups %}
                 <option value="{{ item }}">{{ item }}</option>
             {% endfor %}
         </select>
-        <textarea id=h_yaml" name="hyaml" value=""style="width:300px;height:300px"></textarea></br>
-        <input type="submit" value="Add host" />
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-md-6">
+        <label for="hostvars">Host variables</label>
+        <textarea class="form-control" id="h_yaml" name="hyaml"
+        style="height: 200px"></textarea>
+      </div>
+    </div>
+        <input class="btn btn-primary" type="submit" value="Add host" />
     </form>
-        <!-- Flash message when host has been added -->
-        {% with messages = get_flashed_messages() %}
+</div> <!-- end col md-6 -->
+
+<!-- Flash message when host has been added -->
+{#    {% with messages = get_flashed_messages() %}
         {% if messages %}
-            Results:
-            <pre>
-                {% for message in messages %}
+            {% for message in messages %}
+<pre>
 {{ message }}
-                {% endfor %}
-            </pre>
+</pre>
+            {% endfor %}
         {% endif %}
     {% endwith %}
+#}
 {% endblock %}
 
 

@@ -65,7 +65,7 @@ class EditGroup(flask.views.MethodView):
         '''retrieve all hosts from the group'''
         result = db.groups.find({"groupname": groupname}, {'hosts': 1, '_id': 0})
         hosts = result[0]["hosts"]
-        print hosts
+        #print hosts
         if not hosts:
             return "notfound"
         else:

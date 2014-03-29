@@ -13,12 +13,11 @@
 #}
 {% with messages = get_flashed_messages() %}
     {% if messages %}
-      Results:
-      <pre>
         {% for message in messages %}
+<pre>
 {{ message }}
+</pre>
         {% endfor %}
-      </pre>
     {% endif %}
 {% endwith %}
 

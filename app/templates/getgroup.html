@@ -5,7 +5,6 @@
 
 <div class="row">
   <div class="col-md-6">
-{# print message when host not found #}
 {% with messages = get_flashed_messages() %}
     {% if messages %}
         {% for message in messages %}
@@ -30,7 +29,7 @@
           href="{{url_for('getallgroups')}}"><i class="glyphicon glyphicon-circle-arrow-down"></i></a>
           {#<input class="btn btn-info btn-small" type="submit" value="All
           Groups" name="allGROUPS"/>#}
-        {#</form>#}
+        </form>
         </div><!-- end btn group -->
       </div>
     
@@ -44,6 +43,7 @@
     <th></th>
   </tr>
   <tr>
+  {{ groupname }}
   <td> {{ groupname }} </td>
   <td> {% for host in grouphosts %} {{ host }} {%endfor %} </td>
   <td> {% for member in members %} {{ member }} {% endfor %}</td>
@@ -68,20 +68,20 @@
       <tr>
         <th>Group</th>
         <th>Hosts</th>
-        <th>Child Groups</th>
+        <th>Child groups</th>
         <th></th>
       </tr>
     {#{% for item in allgroups %}#}
     {% for item in allgroups %}
       <tr>
-      <td> {{ item.groupname }}</td>
+      <td><b> {{ item.groupname }} </b></td>
       <td> {% for host in item.hosts %} {{ host }} {% endfor %}</td>
       <td> {% for child in item.children %} {{ child }} {% endfor %}</td>
       <td>
         <div class="btn-group pull-right">
           <form action="{{url_for('editgroup')}}" method="post">
           <input type="hidden" name="group_get" value="{{ item.groupname }}">
-          <button class="btn btn-info btn-small" type="submit"name='submitBTN'><i
+          <button class="btn btn-info btn-small" type="submit" name='submitBTN'><i
           class="glyphicon glyphicon-pencil"></i></button>
           </form>
           {#<form action="{{url_for('remove')}}" method="post">#}
