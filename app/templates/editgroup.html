@@ -23,15 +23,20 @@
 
 
 
-<form action="{{ url_for('editgroupsubmit')}}" method="post">
+<form class="form form-horizontal" action="{{ url_for('editgroupsubmit')}}" method="post">
 
     <h3>Group : {{ group }} </h3>
     <input type="hidden" name="group_get2" value="{{ group }}"/>
+    <div class="form-group">
+      <div class="col-md-6">
+    {#<b>Ansible vars:</b></br>#}
+        <label for="groupvars">Variables</label>
+        <textarea class="form-control" type="area" name="egyaml" value="" style="height:200px">{{result}}</textarea>
+      </div>
+    </div>
 
-    <b>Ansible vars:</b></br>
-    <textarea type="area" name="egyaml" value="" style="width:300px;height:200px">{{result}}</textarea><br>
-
-    <table><tr><td><b>Available hosts</b></td><td style="text-align:left;"><b>Current hosts</b></td></tr></table>
+    <!--<table><tr><td><b>Available hosts</b></td><td
+    style="text-align:left;"><b>Current hosts</b></td></tr></table>-->
     <select id="hostselect" name="hostselect" multiple="multiple">
         {% for item in hosts %}
         ¦   <option value="{{ item }}" selected>{{ item }}</option>
@@ -41,14 +46,14 @@
         {% endfor %}
     </select></br>
 
-    <input type="submit" value="Edit Group" name="edithostBTN" />
+    <input class="btn btn-primary" type="submit" value="Edit Group" name="edithostBTN" />
 </form>
 
 
 
 <!-- javascript -->
 <script type="text/javascript">
-$('#hostselect').multiSelect();
+$('#hostselect').multiSelect({selectableHeader: "<b>Available hosts</b>",selectionHeader: "<b>Current hosts</b>"});
 </script>
 
 {% endblock %}

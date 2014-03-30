@@ -31,21 +31,32 @@
     <pre>None</pre>
 {% else %}
 
-<form action="{{ url_for('edithostsubmit')}}" method="post">
-
-<h3>Host : {{ host }} </h3>
-<input type="hidden" name="p_get2" value="{{ host }}"/>
-
-<b>Ansiblevars :</b><br>
+<form class="form form-horizontal" action="{{url_for('edithostsubmit')}}" method="post">
+{#<form action="{{ url_for('edithostsubmit')}}" method="post">#}
+  <h3>Host : {{ host }} </h3>
+  {#<div class="form-group">
+    <div class="col-md-6">
+      <label for="hostvars">Variables</label>#}
+      <input type="hidden" name="p_get2" value="{{ host }}"/>
+  <div class="form-group">
+    <div class="col-md-6">
+      <label for="hostvars">Variables</label>
+{#<b>Ansiblevars :</b><br>#}
 {# get the ansible vars #}
-    <textarea type="area" name="ehyaml" value="" style="width:300px;height:200px">{{result}}</textarea><br>
-</p>
+      <textarea class="form-control" type="area" name="ehyaml" value="" style="height:200px">{{result}}</textarea>
+    </div>
+  </div>
 
 {# get the groups #}
-<table><tr><td><b>Available groups</b></td><td><b>Current groups</b><td></tr></table>
+<!--<table><tr><td><b>Available groups</b></td><td><b>Current
+groups</b><td></tr></table>-->
 {#{% if groups %}#}
 <!--<form>-->
-    <select id="groupselect" name="groupselect" multiple="multiple">
+  <div class="form-group">
+    <div class="col-md-6">
+    {#<select class="form-control" id="groupselect" name="groupselect"
+    multiple="multiple">#}
+    <select class="form-control" id="groupselect" name="groupselect" multiple="multiple">
     {% for item in groups %}
         <option value="{{ item }}" selected>{{ item }}</option>
     {% endfor %}
@@ -53,6 +64,8 @@
         <option value="{{ item }}">{{ item }}</option>
     {% endfor %}
     </select></br>
+    </div>
+  </div>
 <!--</form>-->
 {#
 {% else %}
@@ -61,14 +74,15 @@
 #}
 
 <!--<form action="{{url_for('edithostsubmit')}}" method="post">-->
-<input type="submit" value="Edit host" name="edithostBTN" />
+<input class="btn btn-primary" type="submit" value="Edit host" name="edithostBTN" />
 </form>
 
 {% endif %}
 
 <!-- javascript -->
 <script type="text/javascript">
-$('#groupselect').multiSelect();
+//$('#groupselect').multiSelect();
+$('#groupselect').multiSelect({selectableHeader: "<b>Available groups</b>",selectionHeader: "<b>Current groups</b>"});
 </script>
 
 {% endblock %}
