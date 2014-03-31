@@ -45,7 +45,7 @@
     
     <div class="form-group">
     <select id="childrenselect" name="childrenselect" multiple="multiple">
-        {% for item in hosts %}
+        {% for item in childgroups %}
         ¦   <option value="{{ item }}" selected>{{ item }}</option>
         {% endfor %}
         {% for item in available_hosts %}

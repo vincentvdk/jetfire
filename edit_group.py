@@ -36,6 +36,7 @@ class EditGroup(flask.views.MethodView):
 
     def post(self):
         groupname = str(flask.request.form['group_get'])
+        childgroups = self.get_childgroups(groupname)
         if len(groupname) == 0:
             flask.flash('empty groupname given')
             return flask.render_template('editgroup.html')
@@ -46,7 +47,7 @@ class EditGroup(flask.views.MethodView):
             result = self.get_groupinfo(groupname)
             hosts = self.get_grouphosts(groupname)
             available_hosts = self.get_availablehosts()
-            return flask.render_template('editgroup.html', group=groupname, result=result, hosts=hosts, available_hosts=available_hosts)
+            return flask.render_template('editgroup.html', group=groupname, result=result, hosts=hosts, available_hosts=available_hosts, childgroups=childgroups)
 
     def get(self):
         return flask.render_template('editgroup.html')
@@ -64,7 +65,6 @@ class EditGroup(flask.views.MethodView):
         '''retrieve all hosts from the group'''
         result = db.groups.find({"groupname": groupname}, {'hosts': 1, '_id': 0})
         hosts = result[0]["hosts"]
-        #print hosts
         if not hosts:
             return "notfound"
         else:
@@ -79,6 +79,16 @@ class EditGroup(flask.views.MethodView):
         s = set(hosts)
         availablehosts = [ x for x in allhosts if x not in s ]
         return availablehosts
+
+    def get_childgroups(self, groupname):
+        result = db.groups.find({"groupname": groupname}, {'children':1, '_id': 0})
+        for item in result:
+            childgroups = item["children"]
+        return childgroups
+
+    def get_availablechildren():
+        pass
+
 
 class EditGroupSubmit(flask.views.MethodView):
 
