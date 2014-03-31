@@ -47,7 +47,8 @@ class EditGroup(flask.views.MethodView):
             result = self.get_groupinfo(groupname)
             hosts = self.get_grouphosts(groupname)
             available_hosts = self.get_availablehosts()
-            return flask.render_template('editgroup.html', group=groupname, result=result, hosts=hosts, available_hosts=available_hosts, childgroups=childgroups)
+            availablechildgroups = self.get_availablechildren()
+            return flask.render_template('editgroup.html', group=groupname, result=result, hosts=hosts, available_hosts=available_hosts, childgroups=childgroups, availablechildgroups=availablechildgroups)
 
     def get(self):
         return flask.render_template('editgroup.html')
@@ -86,8 +87,15 @@ class EditGroup(flask.views.MethodView):
             childgroups = item["children"]
         return childgroups
 
-    def get_availablechildren():
-        pass
+    def get_availablechildren(self):
+        allgroups = db.groups.find().distinct("groupname")
+        print allgroups
+        # build compared list
+        groupname = str(flask.request.form['group_get'])
+        childgroups = self.get_childgroups(groupname)
+        s = set(childgroups)
+        availablechildgroups = [x for x in allgroups if x not in s]
+        return availablechildgroups
 
 
 class EditGroupSubmit(flask.views.MethodView):
