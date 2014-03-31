@@ -36,7 +36,6 @@ class EditGroup(flask.views.MethodView):
 
     def post(self):
         groupname = str(flask.request.form['group_get'])
-        #result = self.get_groupinfo(groupname)
         if len(groupname) == 0:
             flask.flash('empty groupname given')
             return flask.render_template('editgroup.html')
@@ -98,7 +97,6 @@ class EditGroupSubmit(flask.views.MethodView):
             y = yaml.load(yamlvars)
         except yaml.YAMLError, exc:
             print "Yaml syntax error"
-            #print y
             #post = {"hostname": hostname,
             #        "vars": y
             #}

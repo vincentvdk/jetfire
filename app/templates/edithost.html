@@ -52,11 +52,11 @@
 groups</b><td></tr></table>-->
 {#{% if groups %}#}
 <!--<form>-->
-  <div class="form-group">
-    <div class="col-md-6">
+  {#<div class="form-group">#}
+    {#<div class="col-md-6">#}
     {#<select class="form-control" id="groupselect" name="groupselect"
     multiple="multiple">#}
-    <select class="form-control" id="groupselect" name="groupselect" multiple="multiple">
+    <select  id="groupselect" name="groupselect" multiple="multiple">
     {% for item in groups %}
         <option value="{{ item }}" selected>{{ item }}</option>
     {% endfor %}
@@ -67,11 +67,6 @@ groups</b><td></tr></table>-->
     </div>
   </div>
 <!--</form>-->
-{#
-{% else %}
-    <pre> none </p>
-{% endif %}
-#}
 
 <!--<form action="{{url_for('edithostsubmit')}}" method="post">-->
 <input class="btn btn-primary" type="submit" value="Edit host" name="edithostBTN" />

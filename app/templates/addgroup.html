@@ -48,7 +48,7 @@ return false;
       </div>
     </div>
     
-    <!-- Multi select -->
+    <!-- Multi select hosts -->
     <div class="form-group">
       <div class="col-md-6">
         <label for="hostselect">Select host(s)</label>
@@ -60,7 +60,19 @@ return false;
       </div>
     </div>
 
-    <!-- Multi select -->
+    <!-- Multi select children -->
+    <div class="form-group">
+      <div class="col-md-6">
+        <label for="childselect">Select child group(s)</label>
+          <select id="childselect" class="form-control" name="selectedchildren" multiple="multiple">
+            {% for item in childgroups %}
+              <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+          </select>
+      </div>
+    </div>
+    
+    <!-- Variables text area -->
     <div class="form-group">
       <div class="col-md-6">
         <label for="g_yaml">Variables</label>

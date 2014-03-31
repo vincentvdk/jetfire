@@ -25,8 +25,6 @@ from functools import wraps
 from app import app
 
 # establish connection with mongod
-#conn = pymongo.Connection('192.168.122.240', 27017)
-#db = conn['ansible']
 dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
 database = os.getenv("DATABASE", app.config['DATABASE'])
 dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
@@ -39,19 +37,21 @@ class AddGroup(flask.views.MethodView):
     def get(self):
         '''logic to return a list of all available ansible hosts'''
         hosts = db.hosts.find().distinct("hostname")
-        return flask.render_template('addgroup.html', hosts=hosts)
+        childgroups = db.groups.find().distinct("groupname")
+        return flask.render_template('addgroup.html', hosts=hosts, childgroups=childgroups)
 
     def post(self):
         groupname = str(flask.request.form['add_group'])
         hosts = db.hosts.find().distinct("hostname")
+        childgroups = db.groups.find().distinct("groupname")
         if len(groupname) == 0:
             flask.flash('empty groupname')
-            return flask.render_template('addgroup.html', hosts=hosts)
+            return flask.render_template('addgroup.html', hosts=hosts, childgroups=childgroups)
         else:
             # insert logic to see if group already exists (get_groupname)
             self.add_group(groupname)
             flask.flash('Group added successfully')
-            return flask.render_template('addgroup.html', hosts=hosts)
+            return flask.render_template('addgroup.html', hosts=hosts, childgroups=childgroups)
 
 
     def add_group(self, groupname):
@@ -63,11 +63,16 @@ class AddGroup(flask.views.MethodView):
             y = yaml.load(yamlvars)
             #print y
         selectedhosts = flask.request.form.getlist('selectedhosts')
+        selectedchildren = flask.request.form.getlist('selectedchildren')
+        print "selectedschildren %s" % selectedchildren
         # create a list with the DNs from the selected hostnames
         children = []
         members = []
         for host in selectedhosts:
             members.append(host)
+        for child in selectedchildren:
+            print child
+            children.append(child)
         attrs = {}
         post = {"groupname": groupname,
                 "hosts": members,

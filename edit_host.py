@@ -37,8 +37,6 @@ class EditHost(flask.views.MethodView):
 
     def post(self):
         hostname = str(flask.request.form['p_get'])
-        #res = GetHost()
-        #result = res.get_hostinfo(hostname)
         if len(hostname) == 0:
             flask.flash('empty hostname given')
             return flask.render_template('edithost.html')
@@ -90,7 +88,6 @@ class EditHostSubmit(flask.views.MethodView):
 
     def update_host(self,hostname):
             yamlvars = flask.request.form['ehyaml']
-            #groups = flask.request.form.getlist('groupselect')
             try:
                 y = yaml.load(yamlvars)
             except yaml.YAMLError, exc:
@@ -106,14 +103,11 @@ class EditHostSubmit(flask.views.MethodView):
     def update_groups(self,hostname):
             g = EditHost()
             current_groups = g.get_hostgroups(hostname)
-            #print current_groups
             updated_groups = flask.request.form.getlist('groupselect')
-            #print updated_groups
             addh = set(current_groups)
             remh = set(updated_groups)
             add_hosts_group = [ x for x in updated_groups if x not in addh ]
             remove_hosts_group = [ x for x in current_groups if x not in remh ]
-            #print remove_hosts_group
             for item in add_hosts_group:
                 db.groups.update({"groupname": item}, {"$push": {"hosts": hostname}})
             for item in remove_hosts_group:
