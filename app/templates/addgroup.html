@@ -42,51 +42,43 @@ return false;
     <h3>Add group</h3>
     <!-- Text input -->
     <div class="form-group">
-      <div class="col-md-6">
         <label for="groupname">Group name</label>
         <input id="groupname" type="text" name="add_group" class="form-control"/>
-      </div>
     </div>
     
     <!-- Multi select hosts -->
     <div class="form-group">
-      <div class="col-md-6">
         <label for="hostselect">Select host(s)</label>
-          <select id="hostselect" class="form-control" name="selectedhosts" multiple="multiple">
+          <select id="hostselect" class="form-control" name="selectedhosts"
+          multiple="multiple" style="height: 150px">
             {% for item in hosts %}
               <option value="{{ item }}">{{ item }}</option>
             {% endfor %}
           </select>
-      </div>
     </div>
 
     <!-- Multi select children -->
     <div class="form-group">
-      <div class="col-md-6">
         <label for="childselect">Select child group(s)</label>
-          <select id="childselect" class="form-control" name="selectedchildren" multiple="multiple">
+          <select id="childselect" class="form-control" name="selectedchildren"
+          multiple="multiple" style="height:150px">
             {% for item in childgroups %}
               <option value="{{ item }}">{{ item }}</option>
             {% endfor %}
           </select>
-      </div>
     </div>
     
     <!-- Variables text area -->
     <div class="form-group">
-      <div class="col-md-6">
-        <label for="g_yaml">Variables</label>
+        <label for="g_yaml">Group variables (yaml)</label>
           <textarea class="form-control" id=g_yaml" name="gyaml" value=""
           style="height:200px"></textarea>
-      </div>
     </div>
     
     <!-- Button -->
     <div class="form-group">
-      <div class="col-md-6">
         <label for=""></label>
           <input class="btn btn-primary" type="submit" value="Add Group" name="submitBTN"/>
-      </div>
     </div>
 </form>
 

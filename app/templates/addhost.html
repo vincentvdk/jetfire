@@ -42,18 +42,15 @@ return false;
   <h3>Add host</h3>
   <!-- text input -->
     <div class="form-group">
-      <div class="col-md-6">
-        <label for="hostname">FQDN of the hostname</label>
+        <label for="hostname">Hostname</label>
     {#<form action="{{url_for('addhost')}}" method="post">#}
-        <input id="hostname" class="form-control" type="text" name="add_host" placeholder="Host's FQDN"/>
+        <input id="hostname" class="form-control" type="text" name="add_host">
         {#<div id="addvarinput">
         <!--<input type="text" id="p_new" name="pnew" value=""
         placeholder="Ansible var" /><a href="#" id="addNew">Add</a></p>-->
         </div>#}
-     </div>
     </div>
     <div class="form-group">
-      <div class="col-md-6">
         <label for="groupselect">Select group(s)</label>
         <!-- Multiple group select build from available ansible groups -->
         <select id="groupselect" class="form-control" name="selectedgroups" multiple="multiple">
@@ -61,30 +58,16 @@ return false;
                 <option value="{{ item }}">{{ item }}</option>
             {% endfor %}
         </select>
-      </div>
     </div>
     <div class="form-group">
-      <div class="col-md-6">
-        <label for="hostvars">Host variables</label>
+        <label for="hostvars">Host variables (yaml)</label>
         <textarea class="form-control" id="h_yaml" name="hyaml"
         style="height: 200px"></textarea>
-      </div>
     </div>
         <input class="btn btn-primary" type="submit" value="Add host" />
     </form>
 </div> <!-- end col md-6 -->
 
-<!-- Flash message when host has been added -->
-{#    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-<pre>
-{{ message }}
-</pre>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-#}
 {% endblock %}
 
 
