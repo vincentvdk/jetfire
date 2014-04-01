@@ -2,38 +2,47 @@
 
 {% block body %}
 
-<h2>Remove Items from inventory</h2>
+<!-- Flash message when host has been added -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+<pre>
+{{ message }}
+</pre>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
-<form action="{{url_for('remove')}}" method="post">
-    Select host(s) to remove:</br>
-        <select name="selectedhostsremove" multiple="multiple" style="width:300px;height:300px">
+<h3>Remove Items from inventory</h3>
+
+<div class="col-md-6">
+<form class="form form-horizontal" action="{{ url_for('remove')}}" method="post">
+{#<form action="{{url_for('remove')}}" method="post">#}
+  <div class="form-group">
+    <label for="groupvars">Select host(s) to remove</label>
+    {#Select host(s) to remove:</br>#}
+        <select class="form-control" name="selectedhostsremove" multiple="multiple" style="height:300px">
             {% for item in allhosts %}
                 <option value="{{ item }}">{{ item }}</option>
             {% endfor %}
-        </select></br>
-    
-    Select group(s) to remove</br>
-        <select name="selectedgroupsremove" multiple="multiple" style="width:300px;height:300px">
+        </select>
+  </div>
+  <div class="form-group">
+    <label for="removegroups">Select group(s) to remove<</label>
+    {#Select group(s) to remove</br>#}
+        <select class="form-control" id="removegroups" name="selectedgroupsremove" multiple="multiple" style="height:300px">
             {% for item in allgroups %}
                 <option value="{{ item }}">{{ item }}</option>
             {% endfor %}
-        </select></br>
-
-        <input type="submit" value="Remove" />
+        </select>
+  </div>
+  <div class="form-group">
+    <input class="btn btn-primary" type="submit" value="Remove">
+  </div>
 </form>
+</div><!-- end col-md-6 -->
 
 
-<!-- Flash message when host has been added -->
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            Results:
-            <pre>
-                {% for message in messages %}
-{{ message }}
-                {% endfor %}
-            </pre>
-        {% endif %}
-    {% endwith %}
 {% endblock %}
 
 
