@@ -30,9 +30,6 @@ The +inventory.py+ script is used as inventory script. It must be edited to poin
 
 === TODO
 * list required Python packages
-* add and edit children of a group
 * enable versioning in MongoDB
 * easier search
 * REST API
-* nicer GUI :-)
-
