@@ -45,7 +45,7 @@
     <th></th>
   </tr>
   <tr>
-    <td>{{ hostname }}</td>
+    <td><b>{{ hostname }}</b></td>
     <td>
 {% for item in groupres %}
     {{ item }} 
@@ -57,10 +57,12 @@
       <input type="hidden" name="p_get" value="{{ hostname }}">
       <button class="btn btn-info btn-small" type="submit" name='submitBTN'><i class="glyphicon glyphicon-pencil"></i></button>
       </form>
+      {#
       <form action="{{url_for('remove')}}" method="post">
       <input type="hidden" name="remove" value="{{ hostname }}">
-      <button class="btn btn-danger btn-small" type="submit" name='submitBTN'><i class="glyphicon glyphicon-trash"></i></button>
-      </form>
+      <button class="btn btn-danger btn-small" type="submit" name='submitBTN'>
+      <i class="glyphicon glyphicon-trash"></i></button>
+      </form>#}
       </td>
     </div><!--end button group -->
 {% endif %}
@@ -89,8 +91,8 @@
         <form action="{{url_for('remove')}}" method="post">
         <input type="hidden" name="remove" value="{{ host }}" />
         <button class="btn btn-danger btn-small" type="submit"
-        name='submitBTN'><i class="glyphicon glyphicon-trash"></i></button>#}
-        </form>
+        name='submitBTN'><i class="glyphicon glyphicon-trash"></i></button>
+        </form>#}
       </div><!-- end button group -->
     </td>
 {% endfor %}
