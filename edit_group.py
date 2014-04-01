@@ -89,7 +89,6 @@ class EditGroup(flask.views.MethodView):
 
     def get_availablechildren(self):
         allgroups = db.groups.find().distinct("groupname")
-        print allgroups
         # build compared list
         groupname = str(flask.request.form['group_get'])
         childgroups = self.get_childgroups(groupname)
@@ -104,6 +103,7 @@ class EditGroupSubmit(flask.views.MethodView):
         groupname = str(flask.request.form['group_get2'])
         self.update_group(groupname)
         self.update_hosts(groupname)
+        self.update_childgroups(groupname)
         return flask.render_template('editgroup.html')
 
     def get(self):
@@ -131,11 +131,24 @@ class EditGroupSubmit(flask.views.MethodView):
         remh = set(updated_hosts)
         add_hosts = [x for x in updated_hosts if x not in addh]
         rem_hosts = [x for x in current_hosts if x not in remh]
-        print "hosts to add: %s." % add_hosts
-        print "hosts to remove: %s." % rem_hosts
+        #print "hosts to add: %s." % add_hosts
+        #print "hosts to remove: %s." % rem_hosts
         for item in add_hosts:
             db.groups.update({"groupname": groupname}, {"$push": {"hosts": item}})
         for item in rem_hosts:
             db.groups.update({"groupname": groupname}, {"$pull": {"hosts": item}})
         pass
+
+    def update_childgroups(self, groupname):
+        c= EditGroup()
+        current_children = c.get_childgroups(groupname)
+        updated_children = flask.request.form.getlist('childrenselect')
+        addchld = set(current_children)
+        remchld = set(updated_children)
+        add_chlds = [x for x in updated_children if x not in addchld]
+        rem_chlds = [x for x in current_children if x not in remchld]
+        for item in add_chlds:
+            db.groups.update({"groupname": groupname}, {"$push": {"children": item}})
+        for item in rem_chlds:
+            db.groups.update({"groupname": groupname}, {"$pull": {"children": item}})
 
