@@ -48,8 +48,10 @@ class Remove(flask.views.MethodView):
         gremove = flask.request.form.getlist('selectedgroupsremove')
         if hremove:
             for item in hremove:
-                print item
                 self.host(item)
+        if gremove:
+            for item in gremove:
+                self.group(item)
         return flask.render_template('remove.html')
 
     def host(self, hostname):
@@ -60,5 +62,8 @@ class Remove(flask.views.MethodView):
 
 
     def group(self, groupname):
-        db.hosts.remove({'groupname': groupname})
+        db.groups.remove({'groupname': groupname})
+        parentgroups = db.groups.find({'children': groupname}).distinct('groupname')
+        for item in parentgroups:
+            db.groups.update({"groupname": item}, {"$pull": {"children": groupname}})
 
