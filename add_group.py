@@ -17,86 +17,69 @@
 #
 
 import flask, flask.views
-import ldap
-import ldap.modlist as modlist
 import os
-import re
+import pymongo
+import json
+import yaml
 from functools import wraps
 from app import app
-# establish connection with LDAP server
 
-try:
-    l = ldap.initialize(os.getenv("LDAPHOST", app.config['LDAPHOST']))
-    username = os.getenv("LDAPBINDDN", app.config['LDAPBINDDN'])
-    password = os.getenv("LDAPBINDPW", app.config['LDAPBINDPW'])
-    l.set_option(ldap.OPT_PROTOCOL_VERSION,ldap.VERSION3)
-    l.bind_s(username, password, ldap.AUTH_SIMPLE)
+# establish connection with mongod
+dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
+database = os.getenv("DATABASE", app.config['DATABASE'])
+dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
 
-except ldap.LDAPError, e:
-    print e
-
-baseDN = os.getenv("LDAPBASEDN", app.config['LDAPBASEDN'])
-searchScope = ldap.SCOPE_SUBTREE
-attrs = None
+conn = pymongo.Connection(dbserver, dbserverport)
+db = conn[database]
 
 class AddGroup(flask.views.MethodView):
 
     def get(self):
-        # logic to return a list of all available ansible hosts
-        filter = '(objectClass=ansibleHost)'
-        result = l.search_s(baseDN, searchScope, filter)
-        hosts = []
-        for item in result:
-            host = ''.join(map(str, item[1]['cn']))
-            hosts.append(host)
-        return flask.render_template('addgroup.html', hosts=hosts)
+        '''logic to return a list of all available ansible hosts'''
+        hosts = db.hosts.find().distinct("hostname")
+        childgroups = db.groups.find().distinct("groupname")
+        return flask.render_template('addgroup.html', hosts=hosts, childgroups=childgroups)
 
     def post(self):
         groupname = str(flask.request.form['add_group'])
+        hosts = db.hosts.find().distinct("hostname")
+        childgroups = db.groups.find().distinct("groupname")
         if len(groupname) == 0:
             flask.flash('empty groupname')
-            return flask.render_template('addgroup.html')
+            return flask.render_template('addgroup.html', hosts=hosts, childgroups=childgroups)
         else:
             # insert logic to see if group already exists (get_groupname)
             self.add_group(groupname)
-            return flask.render_template('addgroup.html')
+            flask.flash('Group added successfully')
+            return flask.render_template('addgroup.html', hosts=hosts, childgroups=childgroups)
 
-    def get_hostdn(self, hostname):
-        # get the DN from the hostname selected in the form
-        #members = flask.request.form.getlist('selectedhosts')
-        filter = '(cn=' + hostname +')'
-        result = l.search_s(baseDN, searchScope, filter)
-        hostdn = result[0][0]
-        return hostdn
-
-    def get_groupname(self, groupname):
-        filter = '(cn=' + groupname + ')'
-        result = l.search_s(baseDN, searchScope, filter)
-        if result:
-            grouname = ''.join(map(str, result[0][1]['cn']))
-            return groupname
 
     def add_group(self, groupname):
-        dn = str('cn=' + groupname + ',' + 'ou=ansible,dc=ansible,dc=local')
-        ansivars = flask.request.form.getlist('gnew')
+        yamlvars = flask.request.form['gyaml']
+        # return empty list in inventory output when no vars
+        if not yamlvars:
+            y = {}
+        else:
+            y = yaml.load(yamlvars)
+            #print y
         selectedhosts = flask.request.form.getlist('selectedhosts')
+        selectedchildren = flask.request.form.getlist('selectedchildren')
+        print "selectedschildren %s" % selectedchildren
         # create a list with the DNs from the selected hostnames
+        children = []
         members = []
         for host in selectedhosts:
-            member = self.get_hostdn(host)
-            members.append(member)
+            members.append(host)
+        for child in selectedchildren:
+            print child
+            children.append(child)
         attrs = {}
-        if ansivars == [u'']:
-            attrs['objectclass'] = ['ansibleGroup', 'groupOfNames', 'top']
-            attrs['cn'] = [groupname]
-            attrs['member'] = [str(host) for host in members]
-        else:
-            attrs['ansibleGroupVar'] = [str(var) for var in ansivars]
-            attrs['objectClass'] = ['ansibleGroup', 'groupOfNames', 'top']
-            attrs['cn'] = [groupname]
-            attrs['member'] =  [str(host) for host in members]
-        ldif = modlist.addModlist(attrs)
+        post = {"groupname": groupname,
+                "hosts": members,
+                "vars": y,
+                "children": children
+        }
         try:
-            l.add_s(dn, ldif)
-        except ldap.LDAPError, e:
-            print e
+            db.groups.insert(post)
+        except:
+            pass

@@ -1,26 +1,35 @@
-= jetfire
+== jetfire
 
-An Ansible inventory tool based on LDAP
+An Ansible inventory tool.
 
-== Overview
-Jetfire is a web based Flask application with an LDAP backend to manage an Ansible inventory.
-It works in conjunction with the [ldap inventory script](https://github.com/vincentvdk/ansible_inventory.git)
+=== Overview
+Jetfire is a web based Flask application with a MongoDB backend to manage an Ansible inventory.
 
-It is currently in early stage and lacks fearures and proper documentation. It can currently do the following
+It is currently in early stage and lacks fearures and proper documentation. It currently has the 
+following features:
 
 * add host with vars and add it to available groups
 * add groups with vars and available members
 * get host info (hostvars)
 * get group info (groupvars and members)
+* edit host vars and groups
+* edit groups vars and hosts
+* remove hosts and groups from the inventory
 
-== Usage
+=== Usage
 
-You need a working LDAP server that has the ansible schema loaded. Check the  [ldap inventory script](https://github.com/vincentvdk/ansible_inventory.git) repository for more info on this.
+You'll need a running MongoDB instance that you will use for your inventory. By default an "ansible" db is created (unless you configure a differend name in the config file) with currently following collections
 
-clone the repository and edit the config.cfg file in the app folder. Then run python app.py to launch the application.
+* hosts
+* groups
+
+clone the repository and edit the config.cfg file in the +app+ folder (specify mongodb server, port and database). Then run python app.py to launch the application.
 Open a browser and point to http://<yourhost>:5000
 
+The +inventory.py+ script is used as inventory script. It must be edited to point to the same MongoDB instance and database to function.
 
-
-
-
+=== TODO
+* list required Python packages
+* enable versioning in MongoDB
+* easier search
+* REST API

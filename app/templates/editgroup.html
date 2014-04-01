@@ -1,0 +1,68 @@
+{#{% extends "base.html" %}  #}
+{% extends "getgroup.html" %}
+
+
+{#{% block body %}#}
+{% block action %}
+{#
+<h2> Edit group </h2>
+<form action="{{url_for('editgroup')}}" method="post">
+    <input type="text" name="group_get" />
+    <input type="submit" value="Get group" name='submitBTN'/>
+</form>
+#}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+<pre>
+{{ message }}
+</pre>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+
+
+<form class="form form-horizontal" action="{{ url_for('editgroupsubmit')}}" method="post">
+
+    <h3>Group : {{ group }} </h3>
+    <input type="hidden" name="group_get2" value="{{ group }}"/>
+    <div class="form-group">
+        <label for="groupvars">Variables</label>
+        <textarea class="form-control" type="area" name="egyaml" value="" style="height:200px">{{result}}</textarea>
+    </div>
+    
+    <div class="form-group">
+    <select id="hostselect" name="hostselect" multiple="multiple">
+        {% for item in hosts %}
+        ¦   <option value="{{ item }}" selected>{{ item }}</option>
+        {% endfor %}
+        {% for item in available_hosts %}
+        ¦   <option value="{{ item }}">{{ item }}</option>
+        {% endfor %}
+    </select>
+    </div>
+    
+    <div class="form-group">
+    <select id="childrenselect" name="childrenselect" multiple="multiple">
+        {% for item in childgroups %}
+        ¦   <option value="{{ item }}" selected>{{ item }}</option>
+        {% endfor %}
+        {% for item in availablechildgroups %}
+        ¦   <option value="{{ item }}">{{ item }}</option>
+        {% endfor %}
+    </select>
+    </div>
+    
+    <input class="btn btn-primary" type="submit" value="Edit Group" name="edithostBTN" />
+</form>
+
+
+
+<!-- javascript -->
+<script type="text/javascript">
+$('#hostselect').multiSelect({selectableHeader: "<b>Available hosts</b>",selectionHeader: "<b>Current hosts</b>"});
+$('#childrenselect').multiSelect({selectableHeader: "<b>Available children</b>",selectionHeader: "<b>Current children</b>"});
+</script>
+
+{% endblock %}

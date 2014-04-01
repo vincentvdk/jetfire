@@ -2,52 +2,111 @@
 
 
 {% block body %}
-    <h2> Group Information </h2>
-    <form action="{{url_for('getgroup')}}" method="post">
-    <input type="text" name="get_group" />
-    <input type="submit" value="Get Group" name="submitBTN"/>
-    </form>
 
-
-{# print message when host not found #}
+<div class="row">
+  <div class="col-md-6">
 {% with messages = get_flashed_messages() %}
     {% if messages %}
         {% for message in messages %}
+<pre>
 {{ message }}
+</pre>
         {% endfor %}
     {% endif %}
 {% endwith %}
 
-<h3>Group : {{ groupname }} </h3>
-<p>
-<b>Members :</b>
-{% if members is none %}
-    <pre> none </pre>
-{% else %}
-    {% for item in members %}
-        <ul><li> {{ item }} </li></ul>
-    {% endfor %}
+      <div class="form-inline">
+        <form action="{{url_for('getgroup')}}" method="post">
+        <input type="text" name="get_group" />
+        <button class="btn btn-info btn-small" type="submit" value="Get Group"
+        name="submitBTN"><i class="glyphicon glyphicon-search"></i></button>
+        {#</form>#}
+        {#<form action ="{{url_for('getallgroups')}}" method="post">#}
+        <div class="btn-group pull-right">
+          <a class="btn btn-info btn-small" href="{{url_for('addgroup')}}"><i
+          class="glyphicon glyphicon-plus"></i></a>
+          <a class="btn btn-default btn-small"
+          href="{{url_for('getallgroups')}}"><i class="glyphicon glyphicon-circle-arrow-down"></i></a>
+          {#<input class="btn btn-info btn-small" type="submit" value="All
+          Groups" name="allGROUPS"/>#}
+        </form>
+        </div><!-- end btn group -->
+      </div>
+    
+    
+{% if grouphosts %}
+<table class="table">
+  <tr>
+    <th>Group</th>
+    <th>Hosts</th>
+    <th>Child groups</th>
+    <th></th>
+  </tr>
+  <tr>
+  <td><b> {{ groupname }} </b></td>
+  <td> {% for host in grouphosts %} {{ host }} {%endfor %} </td>
+  <td> {% for member in members %} {{ member }} {% endfor %}</td>
+  <td>
+    <div class="btn-group pull-right">
+      <form action="{{url_for('editgroup')}}" method="post">
+      <input type="hidden" name="group_get" value="{{ groupname }}"/>
+      <button class="btn btn-info btn-small" type="submit"name='submitBTN'><i class="glyphicon glyphicon-pencil"></i></button>
+      </form>
+      {#
+      <form action="{{url_for('remove')}}" method="post">
+      <input type="hidden" name="remove" value="{{ groupname }}">
+      <button class="btn btn-danger btn-small" type="submit" name='submitBTN'>
+      <i class="glyphicon glyphicon-trash"></i></button>
+      </form>#}
+    </div><!-- end button group -->
+  </td>
 {% endif %}
-</p>
+  </tr>
+  </table>
 
-<p>
-<b>Variables :</b>
-{% if groupvars is none %}
-    <pre> none </pre>
-{% else %}
-    {% for item in groupvars %}
-        <ul><li> {{ item }} </li></ul>
+{% if allgroups %}
+    <table class="table">
+      <tr>
+        <th>Group</th>
+        <th>Hosts</th>
+        <th>Child groups</th>
+        <th></th>
+      </tr>
+    {#{% for item in allgroups %}#}
+    {% for item in allgroups %}
+      <tr>
+      <td><b> {{ item.groupname }} </b></td>
+      <td> {% for host in item.hosts %} {{ host }} {% endfor %}</td>
+      <td> {% for child in item.children %} {{ child }} {% endfor %}</td>
+      <td>
+        <div class="btn-group pull-right">
+          <form action="{{url_for('editgroup')}}" method="post">
+          <input type="hidden" name="group_get" value="{{ item.groupname }}">
+          <button class="btn btn-info btn-small" type="submit" name='submitBTN'><i
+          class="glyphicon glyphicon-pencil"></i></button>
+          </form>
+          {#<form action="{{url_for('remove')}}" method="post">#}
+          {#<input type="hidden" name="remove" value="{{ item.groupname }}">#}
+          {#<button class="btn btn-danger btn-small" type="submit"
+          name='submitBTN'><i class="glyphicon glyphicon-trash"></i></button>#}
+          {#</form>#}
+        </div><!-- end button group -->
+      </td>
+      </tr>
     {% endfor %}
+    </table>
 {% endif %}
-</p>
+    </div>
+</div><!-- end row -->
 
-{# all groups button #}
-<form action ="{{url_for('getallgroups')}}" method="post">
-    <input type="submit" value="Get all groups" name="allGROUPS"/>
-</form>
+<div class="row">
+  <div class="col-md-6">
+    {% block action %}
 
-{% for item in allgroups %}
-    <ul><li><font size=2> {{ item }} </font></li></ul>
-{% endfor %}
+    {% endblock %}
+  </div>
+</div><!-- end row-->
+
+
 
 {% endblock %}

@@ -1,65 +1,114 @@
 {% extends "base.html" %}
 
-
 {% block body %}
-    <h2> Host Information </h2>
-    <form action="{{url_for('gethostinfo')}}" method="post">
-    <input type="text" name="p_get" />
-    <input type="submit" value="Get host" name='submitBTN'/>
-    </form>
 
+<div class="row">
+<div class="col-md-6">
 
-
+{# message box #}
     {% with messages = get_flashed_messages() %}
         {% if messages %}
-            Results:
-            <pre>
             {% for message in messages %}
+<pre>
 {{ message }}
+</pre>
             {% endfor %}
-            </pre>
         {% endif %}
     {% endwith %}
 
-<h3>Host : {{ host }}</h3>
+{#<div class="panel panel-default">#}
+{#    <div class="panel-heading">#}
+{# search form #}
+{# class="navbar-form navbar-left" #}
+    {#<div class="row">#}
+        <div class="form-inline">
+          <form action="{{url_for('gethostinfo')}}" method="post">
+          <input type="text" name="p_get">
+          <button class="btn btn-info btn-small" type="submit"
+          name='submitBTN'><i class="glyphicon glyphicon-search"></i></button>
+          <div class="btn-group pull-right">
+            <a class="btn btn-info btn-small" href="{{url_for('addhost')}}"><i class="glyphicon glyphicon-plus"></i></a>
+            <a class="btn btn-default btn-small" href="{{url_for('getallhosts')}}"><i class="glyphicon glyphicon-circle-arrow-down"></i></a>
+          </div>
+          </form>
+        </div>
+      {#</form>#}
+    {#</div>#}
+    {#</div> #}
 
-<p>
-<b>Ansiblevars :</b>
-{# do net iterate if no list with ansible vars is returned #}
-{% if res is none %}
-    <pre>None</pre>
-{% else %}
-{# print all ansible vars #}
-{% for item in res %}
-<ul> 
-<li>{{ item }}</li>
-</ul>
+{# search box result #}
+{% if hostname %}
+<table class="table">
+  <tr>
+    <th>Hostname</th>
+    <th>Groups</th>
+    <th></th>
+  </tr>
+  <tr>
+    <td><b>{{ hostname }}</b></td>
+    <td>
+{% for item in groupres %}
+    {{ item }} 
+{% endfor %}
+    </td>
+    <td>
+    <div class="btn-group pull-right">
+      <form action="{{url_for('edithost')}}" method="post">
+      <input type="hidden" name="p_get" value="{{ hostname }}">
+      <button class="btn btn-info btn-small" type="submit" name='submitBTN'><i class="glyphicon glyphicon-pencil"></i></button>
+      </form>
+      {#
+      <form action="{{url_for('remove')}}" method="post">
+      <input type="hidden" name="remove" value="{{ hostname }}">
+      <button class="btn btn-danger btn-small" type="submit" name='submitBTN'>
+      <i class="glyphicon glyphicon-trash"></i></button>
+      </form>#}
+      </td>
+    </div><!--end button group -->
+{% endif %}
+</tr>
+</table>
+
+{# all hosts button #}
+{% if allhosts %}
+<table class="table">
+  <tr>
+    <th>Hostname</th>
+    <th>Groups</th>
+    <th></th>
+  </tr>
+{% for host, groups in allhosts.iteritems() %}
+  <tr>
+    <td><b> {{ host }} </b></td> 
+    <td> {% for item in groups %} {{ item }} {% endfor %}</td>
+    <td>
+      <div class="btn-group pull-right">
+        <form action="{{url_for('edithost')}}" method="post">
+        <input type="hidden" name="p_get" value="{{ host }}" />
+        <button class="btn btn-info btn-small" type="submit" name='submitBTN'><i class="glyphicon glyphicon-pencil"></i></button>
+        </form>
+        {# 
+        <form action="{{url_for('remove')}}" method="post">
+        <input type="hidden" name="remove" value="{{ host }}" />
+        <button class="btn btn-danger btn-small" type="submit"
+        name='submitBTN'><i class="glyphicon glyphicon-trash"></i></button>
+        </form>#}
+      </div><!-- end button group -->
+    </td>
 {% endfor %}
 {% endif %}
-</p>
+</tr>
+</table>
+{#</div>#}
 
-<p>
-<b>Groups :</b>
-{% for item in groupres %}
-<ul>
-<li>{{ item }}</li>
-</ul>
-{% endfor %}
-</p>
+<div class="row">
+  <div class="col-md-6">
+    {% block action %}
 
+    {% endblock %}
+  </div>
+</div>
 
-{# get all hosts button #}
-<form action="{{url_for('getallhosts')}}" method="post">
-<input type="submit" value="Get all hosts" name="allHOSTS"/>
-</form>
-
-{% for item in allhosts %}
-<ul>
-<li>{{ item }}</li>
-</ul>
-{% endfor %} 
 
 {% endblock %}
 
-{# insert a block to show host results #}
-{# to render a block in the parent template use {{ super() }} #}

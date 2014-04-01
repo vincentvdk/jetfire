@@ -17,50 +17,36 @@
 #
 
 import flask, flask.views
-import ldap
-import ldap.modlist as modlist
 import os
+import pymongo
+import yaml
+import json
 from app import app
-# establish connection with LDAP server
 
-try:
-    l = ldap.initialize(os.getenv("LDAPHOST", app.config['LDAPHOST']))
-    username = os.getenv("LDAPBINDDN", app.config['LDAPBINDDN'])
-    password = os.getenv("LDAPBINDPW", app.config['LDAPBINDPW'])
-    l.set_option(ldap.OPT_PROTOCOL_VERSION,ldap.VERSION3)
-    l.bind_s(username, password, ldap.AUTH_SIMPLE)
 
-except ldap.LDAPError, e:
-    print e
+# establish connection
+dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
+database = os.getenv("DATABASE", app.config['DATABASE'])
+dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
 
-# LDAP variables
-
-#baseDN = os.getenv("LDAPBASEDN", 'ou=ansible-dev, dc=ansible, dc=local')
-baseDN = os.getenv("LDAPBASEDN", app.config['LDAPBASEDN'])
-searchScope = ldap.SCOPE_SUBTREE
-attrs = None
+conn = pymongo.Connection(dbserver, dbserverport)
+db = conn[database]
 
 class AddHost(flask.views.MethodView):
 
     def get(self):
-        # logic to return list with all groups in the form
-        filter = '(objectClass=ansibleGroup)'
-        result = l.search_s(baseDN, searchScope, filter)
-        groups = []
-        for item in result:
-            group = ''.join(map(str, item[1]['cn']))
-            groups.append(group)
+        groups =  db.groups.find().distinct("groupname")
         # return everything to the template
         return flask.render_template('addhost.html', groups=groups)
 
     def post(self):
         hostname = str(flask.request.form['add_host'])
-        #print hostname
         # check if hostname already exists
         if len(hostname) == 0:
             flask.flash('Empty hostname given')
             return flask.redirect(flask.url_for('addhost'))
         elif hostname == self.get_hostname(hostname):
+# add the option to edit the given hostname
             flask.flash('Host already exists')
             return flask.redirect(flask.url_for('addhost'))
         else:
@@ -71,39 +57,30 @@ class AddHost(flask.views.MethodView):
             flask.flash('Host added successfully')
             return flask.redirect(flask.url_for('addhost'))
 
+    def get_hostname(self,hostname):
+        host = [str(item) for item in db.hosts.find({"hostname": hostname}).distinct("hostname")]
+        if not host:
+            host = None
+        else:
+            host = host[0]
+        return host
+
     def add_host(self,hostname):
         # Get the ansible vars from the form
-        ansivars = flask.request.form.getlist('pnew')
-        # build ldif to add host + vars in LDAP
-        dn = str('cn=' + hostname + ',' + app.config['LDAPBASEDN'])
-        attrs = {}
-        if ansivars == [u'']:
-            attrs['objectclass'] = ['ansibleHost', 'top', 'device']
-            attrs['cn'] = [hostname]
-        else:
-            attrs['ansibleVar'] = [str(var) for var in ansivars]
-            attrs['objectclass'] = ['ansibleHost', 'top', 'device']
-            attrs['cn'] = [hostname]
-        ldif = modlist.addModlist(attrs)
+        yamlvars = flask.request.form['hyaml']
+        print yamlvars
         try:
-            l.add_s(dn, ldif)
-        except ldap.LDAPError, e:
-            print e
-
-    def get_hostname(self,hostname):
-        filter = '(cn=' + hostname +')'
-        result = l.search_s(baseDN, searchScope, filter)
-        if result:
-            hostname = ''.join(map(str, result[0][1]['cn']))
-            return hostname
-
-    def get_hostdn(self,hostname):
-        # this will fail if hostname is not created previously
-        filter = '(cn=' + hostname +')'
-        result = l.search_s(baseDN, searchScope, filter)
-        dn = result[0][0]
-        return dn
-
+            y = yaml.load(yamlvars)
+        except yaml.YAMLError, exc:
+            print "Yaml syntax error"
+        print y
+        post = {"hostname": hostname,
+                "vars": y
+        }
+        try:
+            db.hosts.insert(post)
+        except:
+            pass
 
     def add_host_togroups(self, hostname):
         selectgroups = flask.request.form.getlist('selectedgroups')
@@ -111,13 +88,7 @@ class AddHost(flask.views.MethodView):
         selectgroups = [str(group) for group in selectgroups]
         # Add host as member to each selecred group
         for group in selectgroups:
-            filter = '(cn=' + group +')'
-            result = l.search_s(baseDN, searchScope, filter)
-            groupdn = result[0][0]
-            hostdn = self.get_hostdn(hostname)
-            mod_attrs = [( ldap.MOD_ADD, 'member', hostdn )]
-            try:
-                l.modify_s(groupdn,mod_attrs)
-            except ldap.LDAPError, e:
-                print e
+            # get group ObjectId for insert
+            objectid = db.groups.find({"groupname": group}).distinct("_id")
+            db.groups.update({'groupname': group}, {'$push':{'hosts': hostname}},upsert=False,multi=False)
 

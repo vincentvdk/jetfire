@@ -17,29 +17,21 @@
 #
 
 import flask, flask.views
-import ldap
-import ldap.modlist as modlist
 import os
 import re
+import pymongo
 from functools import wraps
 from app import app
+
+# -----------------------------------------------------------------------------------
 # establish connection with LDAP server
+dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
+database = os.getenv("DATABASE", app.config['DATABASE'])
+dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
 
-try:
-    #l = ldap.initialize(os.getenv("LDAPHOST", "ldap://infra-08.prod.btr.local"))
-    l = ldap.initialize(os.getenv("LDAPHOST", app.config['LDAPHOST']))
-    username = os.getenv("LDAPBINDDN", app.config['LDAPBINDDN'])
-    password = os.getenv("LDAPBINDPW", app.config['LDAPBINDPW'])
-    l.set_option(ldap.OPT_PROTOCOL_VERSION,ldap.VERSION3)
-    l.bind_s(username, password, ldap.AUTH_SIMPLE)
-
-except ldap.LDAPError, e:
-    print e
-
-baseDN = os.getenv("LDAPBASEDN", app.config['LDAPBASEDN'])
-searchScope = ldap.SCOPE_SUBTREE
-attrs = None
-
+conn = pymongo.Connection(dbserver, dbserverport)
+db = conn[database]
+# -----------------------------------------------------------------------------------
 class GetGroup(flask.views.MethodView):
 
     def get(self):
@@ -47,57 +39,90 @@ class GetGroup(flask.views.MethodView):
 
     def post(self):
         groupname = str(flask.request.form['get_group'])
-        filter = '(&(objectclass=ansibleGroup)(cn=' + groupname + '))'
-        result = l.search_s(baseDN, searchScope, filter)
-        #self.get_allgroups()
-        if not result:
+        result = db.groups.find({"groupname": groupname}, {'groupname': 1, '_id': 0})
+        group = [ item for item in result]
+        if not group:
             flask.flash('Group ' + groupname + ' not found')
             return flask.redirect(flask.url_for('getgroup'))
         else:
-            groupmembers = self.get_groupmembers(groupname)
+            #groupmembers = self.get_groupmembers(groupname)
+            groupmembers = self.get_groupchildren(groupname)
             groupvars = self.get_groupvars(groupname)
-            return flask.render_template('getgroup.html', groupname=groupname, members=groupmembers, groupvars=groupvars)
+            grouphosts = self.get_grouphosts(groupname)
+            return flask.render_template('getgroup.html', groupname=groupname, members=groupmembers, groupvars=groupvars, grouphosts=grouphosts)
 
-    def get_groupmembers(self,groupname):
-        filter = '(&(objectclass=ansibleGroup)(cn=' + groupname + '))'
-        result = l.search_s(baseDN, searchScope, filter)
-        # return notfound when group does not exists
-        if not result:
-            members = None
+#    def get_groupmembers(self,groupname):
+    def get_groupchildren(self,groupname):
+        result = db.groups.find({"groupname": groupname}, {'children': 1, '_id': 0})
+        for item in result:
+            childs = item
+        children = []
+        # return none if no group is entered in form
+        #if len(groupname) == 0:
+        #    members = None
+        # return none if group has no children
+        if not childs:
+            #children = None
+            children = []
         else:
-            memberlist = result[0][1]['member']
-            members = []
-            for item in memberlist:
-                member = item.split(",")
-                members.append(member[0][3:])
+            for item in childs["children"]:
+                children.append(item)
+        return children
+
+    def get_grouphosts(self,groupname):
+        result = db.groups.find({"groupname": groupname}, {'hosts': 1, '_id': 0})
+        #hosts = [ item for item in result]
+        for item in result:
+            h = item
+        members = []
+        # return none if no group is entered in form
+        #if len(groupname) == 0:
+        #    members = None
+        # return none if group has no children
+        if not h:
+            #members = None
+            member = []
+        else:
+            #for item in hosts:
+            for item in h["hosts"]:
+                #members = item["hosts"]
+                members.append(item)
         return members
 
     def get_groupvars(self,groupname):
-        filter = '(&(objectclass=ansibleGroup)(cn=' + groupname + '))'
-        result = l.search_s(baseDN, searchScope, filter)
+        result = db.groups.find({"groupname": groupname}, {'vars': 1, '_id': 0})
+        vars = [item for item in result]
         # return none when no vars found
-        if not result:
+        if len(groupname) == 0:
             groupvars = None
-        elif 'ansibleGroupVar' in result[0][1]:
-            groupvars = result[0][1]['ansibleGroupVar']
-            #print groupvars
+        elif not vars:
+            groupvars = None
         else:
-            groupvars = None
+            for item in vars:
+                groupvars = item["vars"]
         return groupvars
 
 class GetAllGroups(flask.views.MethodView):
 
-    def post(self):
+    def get(self):
         allgroups = self.get_allgroups()
+        #allgroupmembers = GetGroup.get_groupmembers(group)
         return flask.render_template('getgroup.html', allgroups=allgroups)
 
     def get_allgroups(self):
-        filter = '(objectclass=ansibleGroup)'
-        result = l.search_s(baseDN, searchScope, filter)
+        result = db.groups.find().distinct("groupname")
         allgroups = []
+        #allgroups = {}
+        group = GetGroup()
         for item in result:
-            group = ''.join(map(str, item[1]['cn']))
-            #print group
-            allgroups.append(group)
+            t = {}
+            t["groupname"] = str(item)
+            t["children"] = group.get_groupchildren(item)
+            t["hosts"] = group.get_grouphosts(item)
+            allgroups.append(t)
+            #print type(t["children"])
+            #print allgroups["groupname"]
+            #print allgroups["children"]
+        #print allgroups
         return allgroups
 
