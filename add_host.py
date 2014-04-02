@@ -68,12 +68,12 @@ class AddHost(flask.views.MethodView):
     def add_host(self,hostname):
         # Get the ansible vars from the form
         yamlvars = flask.request.form['hyaml']
-        print yamlvars
+        #print yamlvars
         try:
             y = yaml.load(yamlvars)
         except yaml.YAMLError, exc:
             print "Yaml syntax error"
-        print y
+        #print y
         post = {"hostname": hostname,
                 "vars": y
         }
@@ -81,6 +81,16 @@ class AddHost(flask.views.MethodView):
             db.hosts.insert(post)
         except:
             pass
+        #add host to the default group "all"
+        all = db.groups.find({"groupname": "all"}).distinct("groupname")
+        if not all:
+            post = {"groupname": "all",
+                    "hosts": [],
+                    "vars": {},
+                    "children": []}
+            db.groups.insert(post)
+        db.groups.update({'groupname': 'all'}, {'$push':{'hosts': hostname}},upsert=False,multi=False)
+
 
     def add_host_togroups(self, hostname):
         selectgroups = flask.request.form.getlist('selectedgroups')
