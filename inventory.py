@@ -14,6 +14,9 @@ def getlist():
     inv = {}
     db.groups.ensure_index('groupname')
     grouplist = db.groups.find().distinct("groupname")
+    # populate "all" group
+    allhosts = [host for host in db.hosts.find().distinct("hostname")]
+    inv["all"] = allhosts
     for item in grouplist:
         items = db.groups.find({"groupname": item}, {"_id": 0})
         for item in items:

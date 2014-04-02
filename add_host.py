@@ -82,14 +82,14 @@ class AddHost(flask.views.MethodView):
         except:
             pass
         #add host to the default group "all"
-        all = db.groups.find({"groupname": "all"}).distinct("groupname")
-        if not all:
-            post = {"groupname": "all",
-                    "hosts": [],
-                    "vars": {},
-                    "children": []}
-            db.groups.insert(post)
-        db.groups.update({'groupname': 'all'}, {'$push':{'hosts': hostname}},upsert=False,multi=False)
+        #all = db.groups.find({"groupname": "all"}).distinct("groupname")
+        #if not all:
+        #    post = {"groupname": "all",
+        #            "hosts": [],
+        #            "vars": {},
+        #            "children": []}
+        #    db.groups.insert(post)
+        #db.groups.update({'groupname': 'all'}, {'$push':{'hosts': hostname}},upsert=False,multi=False)
 
 
     def add_host_togroups(self, hostname):
