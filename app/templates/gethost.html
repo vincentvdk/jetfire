@@ -47,9 +47,10 @@
   <tr>
     <td><b>{{ hostname }}</b></td>
     <td>
-{% for item in groupres %}
-    {{ item }} 
+<ul>{% for item in groupres %}
+    <li<{{ item }}</li>
 {% endfor %}
+</ul>
     </td>
     <td>
     <div class="btn-group pull-right">

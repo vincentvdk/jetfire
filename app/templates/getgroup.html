@@ -76,8 +76,9 @@
     {% for item in allgroups %}
       <tr>
       <td><b> {{ item.groupname }} </b></td>
-      <td> {% for host in item.hosts %} {{ host }} {% endfor %}</td>
-      <td> {% for child in item.children %} {{ child }} {% endfor %}</td>
+      <td> <ul>{% for host in item.hosts %} <li>{{ host }}</li> {% endfor
+      %}</ul></td>
+      <td> <ul>{% for child in item.children %} <li>{{ child }}</li>{% endfor %}</td>
       <td>
         <div class="btn-group pull-right">
           <form action="{{url_for('editgroup')}}" method="post">
