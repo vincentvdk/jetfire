@@ -47,12 +47,25 @@ class AddGroup(flask.views.MethodView):
         if len(groupname) == 0:
             flask.flash('empty groupname')
             return flask.render_template('addgroup.html', hosts=hosts, childgroups=childgroups)
+        elif groupname == self.get_groupname(groupname):
+            flask.flash('groupname already exists')
+            return flask.render_template('addgroup.html', hosts=hosts, childgroups=childgroups)
         else:
             # insert logic to see if group already exists (get_groupname)
             self.add_group(groupname)
             flask.flash('Group added successfully')
             return flask.render_template('addgroup.html', hosts=hosts, childgroups=childgroups)
 
+    # this checks if the groupname is already defined.
+    # needt better implementation
+    def get_groupname(self, groupname):
+        group = [str(item) for item in db.groups.find({"groupname": groupname}).distinct("groupname")]
+        print group
+        if not group:
+            group = None
+        else:
+            group = group[0]
+        return group
 
     def add_group(self, groupname):
         yamlvars = flask.request.form['gyaml']
