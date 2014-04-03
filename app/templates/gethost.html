@@ -81,7 +81,7 @@
 {% for host, groups in allhosts.iteritems() %}
   <tr>
     <td><b> {{ host }} </b></td> 
-    <td> {% for item in groups %} {{ item }} {% endfor %}</td>
+    <td> <ul>{% for item in groups %} <li>{{ item }}</li> {% endfor %}</ul></td>
     <td>
       <div class="btn-group pull-right">
         <form action="{{url_for('edithost')}}" method="post">
