@@ -33,7 +33,8 @@ def getdetails(host):
     varlist = {}
     vars = db.hosts.find({"hostname": host}, {"_id": 0, "hostname": 0})
     for item in vars:
-        varlist[host] = item["vars"]
+        #varlist[host] = item["vars"]
+        varlist = item["vars"]
     print json.dumps(varlist, sort_keys=True, indent=2)
 
 # ------------------------------------------------------------------

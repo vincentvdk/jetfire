@@ -68,12 +68,13 @@ class AddHost(flask.views.MethodView):
     def add_host(self,hostname):
         # Get the ansible vars from the form
         yamlvars = flask.request.form['hyaml']
-        #print yamlvars
         try:
-            y = yaml.load(yamlvars)
+            if not yamlvars:
+                y = yaml.load('{}')
+            else:
+                y = yaml.load(yamlvars)
         except yaml.YAMLError, exc:
             print "Yaml syntax error"
-        #print y
         post = {"hostname": hostname,
                 "vars": y
         }
