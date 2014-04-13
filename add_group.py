@@ -60,7 +60,6 @@ class AddGroup(flask.views.MethodView):
     # needt better implementation
     def get_groupname(self, groupname):
         group = [str(item) for item in db.groups.find({"groupname": groupname}).distinct("groupname")]
-        print group
         if not group:
             group = None
         else:
@@ -77,7 +76,6 @@ class AddGroup(flask.views.MethodView):
             #print y
         selectedhosts = flask.request.form.getlist('selectedhosts')
         selectedchildren = flask.request.form.getlist('selectedchildren')
-        print "selectedschildren %s" % selectedchildren
         # create a list with the DNs from the selected hostnames
         children = []
         members = []
