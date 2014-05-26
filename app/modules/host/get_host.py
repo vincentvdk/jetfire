@@ -18,7 +18,7 @@
 
 import flask
 import flask.views
-from app.common import db
+from app import common
 
 
 class GetHost(flask.views.MethodView):
@@ -39,7 +39,7 @@ class GetHost(flask.views.MethodView):
             return flask.redirect(flask.url_for('gethostinfo'))
 
     def get_hostinfo(self, hostname):
-        result = db.hosts.find({"hostname": hostname}, {'hostname': 0, '_id': 0})
+        result = common.getHostnameInfo(hostname)
         host = [item for item in result]
         if len(hostname) == 0:
             return "notfound"
@@ -56,7 +56,7 @@ class GetHost(flask.views.MethodView):
 
 
     def get_hostgroups(self, hostname):
-        result = db.groups.find({"hosts": hostname}, {'groupname': 1, '_id': 0})
+        result = common.getAllGroupsForHost(hostname)
         groups = [ item for item in result]
         grouplist = []
         # return empty list when host is not in a group
@@ -75,7 +75,7 @@ class GetAllHosts(flask.views.MethodView):
         return flask.render_template('gethost.html', allhosts=allhosts)
 
     def get_allhosts(self):
-        result = db.hosts.find().distinct("hostname")
+        result = common.getAllHosts()
         #allhosts = []
         allhosts = {}
         host = GetHost()

@@ -18,7 +18,7 @@
 
 import flask
 import flask.views
-from app.common import db
+from app import common
 
 
 class GetGroup(flask.views.MethodView):
@@ -28,7 +28,7 @@ class GetGroup(flask.views.MethodView):
 
     def post(self):
         groupname = str(flask.request.form['get_group'])
-        result = db.groups.find({"groupname": groupname}, {'groupname': 1, '_id': 0})
+        result = common.getGroup(groupname)
         group = [ item for item in result]
         if not group:
             flask.flash('Group ' + groupname + ' not found')
@@ -42,7 +42,7 @@ class GetGroup(flask.views.MethodView):
 
 #    def get_groupmembers(self,groupname):
     def get_groupchildren(self,groupname):
-        result = db.groups.find({"groupname": groupname}, {'children': 1, '_id': 0})
+        result = common.getAllChilderenForGroup(groupname)
         for item in result:
             childs = item
         children = []
@@ -59,7 +59,7 @@ class GetGroup(flask.views.MethodView):
         return children
 
     def get_grouphosts(self,groupname):
-        result = db.groups.find({"groupname": groupname}, {'hosts': 1, '_id': 0})
+        result = common.getAllHostForGroup(groupname)
         #hosts = [ item for item in result]
         for item in result:
             h = item
@@ -79,7 +79,7 @@ class GetGroup(flask.views.MethodView):
         return members
 
     def get_groupvars(self,groupname):
-        result = db.groups.find({"groupname": groupname}, {'vars': 1, '_id': 0})
+        result = common.getGroupVariables(groupname)
         vars = [item for item in result]
         # return none when no vars found
         if len(groupname) == 0:
@@ -99,7 +99,7 @@ class GetAllGroups(flask.views.MethodView):
         return flask.render_template('getgroup.html', allgroups=allgroups)
 
     def get_allgroups(self):
-        result = db.groups.find().distinct("groupname")
+        result = common.getAllGroups()
         allgroups = []
         #allgroups = {}
         group = GetGroup()

@@ -19,12 +19,13 @@
 import flask
 import flask.views
 import yaml
+from app import common
 from app.common import db
 
 class AddHost(flask.views.MethodView):
 
     def get(self):
-        groups =  db.groups.find().distinct("groupname")
+        groups =  common.getAllGroups()
         # return everything to the template
         return flask.render_template('addhost.html', groups=groups)
 

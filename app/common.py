@@ -19,10 +19,37 @@ import os
 import pymongo
 from app import app
 
-# establish connection with mongod
+# establish connection with mongodb
 dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
 database = os.getenv("DATABASE", app.config['DATABASE'])
 dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
 
 conn = pymongo.Connection(dbserver, dbserverport)
 db = conn[database]
+
+def getAllGroupsForHost(hostname):
+    return db.groups.find({"hosts": hostname}, {'groupname': 1, '_id': 0})
+
+def getHostInfo(hostname):
+    return db.hosts.find({"hostname": hostname}, {'hostname': 0, '_id': 0})
+
+def getAllHosts():
+    return db.hosts.find().distinct("hostname")
+
+def getAllHostForGroup(groupname):
+    return db.groups.find({'groupname': groupname}, {'hosts': 1, '_id': 0})
+
+def getAllChilderenForGroup(groupname):
+    return db.groups.find({"groupname": groupname}, {'children': 1, '_id': 0})
+
+def getGroupVariables(groupname):
+    return db.groups.find({"groupname": groupname}, {'vars': 1, '_id': 0})
+
+def getAllGroups():
+    return db.groups.find().distinct("groupname")
+
+def getGroup(groupname):
+    return db.groups.find({"groupname": groupname}, {'groupname': 1, '_id': 0})
+
+def getGroupInfo(groupname):
+    return db.groups.find({"groupname": groupname}).distinct("vars")
