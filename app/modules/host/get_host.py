@@ -85,12 +85,12 @@ class GetAllHosts(flask.views.MethodView):
             page = 1
 
         skip = NUMBER_OF_ITEMS * (page - 1)
-        allhosts = self.get_allhosts(skip, NUMBER_OF_ITEMS)
+        allhosts = self.get_pagedhosts(skip, NUMBER_OF_ITEMS)
 
         pagination = Pagination(page=page, total=common.countHosts(), search=search, record_name='host')
         return flask.render_template('gethost.html', allhosts=allhosts, pagination=pagination)
 
-    def get_allhosts(self, skip, numberOfItems):
+    def get_pagedhosts(self, skip, numberOfItems):
         result = common.getPagedHosts(skip, numberOfItems)
         #allhosts = []
         allhosts = {}

@@ -36,7 +36,7 @@ def countGroups():
 def getAllGroupsForHost(hostname):
     return db.groups.find({"hosts": hostname}, {'groupname': 1, '_id': 0})
 
-def getHostInfo(hostname):
+def getHostnameInfo(hostname):
     return db.hosts.find({"hostname": hostname}, {'hostname': 0, '_id': 0})
 
 def getPagedHosts(skip, numberOfItems):
