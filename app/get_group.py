@@ -16,12 +16,13 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-import flask, flask.views
+import flask
+import flask.views
 import os
-import re
 import pymongo
-from functools import wraps
+
 from app import app
+
 
 # -----------------------------------------------------------------------------------
 # establish connection with LDAP server

@@ -16,12 +16,13 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-import flask, flask.views
+import flask
+import flask.views
 import os
 import pymongo
-from functools import wraps
+
 from app import app
-import re
+
 
 # establish connection with Mongo server
 dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])

@@ -18,7 +18,6 @@
 import flask
 import flask.views
 
-
 app = flask.Flask('app')
 app.config.from_pyfile('../config.cfg')
 
@@ -85,3 +84,4 @@ app.add_url_rule('/addgroups',
 app.add_url_rule('/remove',
                 view_func=Remove.as_view('remove'),
                 methods=['GET', 'POST'])
+

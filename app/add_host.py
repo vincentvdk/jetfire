@@ -16,12 +16,14 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-import flask, flask.views
+import flask
+import flask.views
 import os
 import pymongo
 import yaml
-import json
+
 from app import app
+
 
 
 # establish connection
