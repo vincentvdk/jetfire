@@ -75,6 +75,7 @@ class EditGroup(flask.views.MethodView):
 
     def get_childgroups(self, groupname):
         result = common.getGroup(groupname)
+        result = db.groups.find({"groupname": groupname}, {'children':1, '_id': 0})
         for item in result:
             childgroups = item["children"]
         return childgroups

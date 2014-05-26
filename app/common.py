@@ -39,8 +39,11 @@ def getAllGroupsForHost(hostname):
 def getHostInfo(hostname):
     return db.hosts.find({"hostname": hostname}, {'hostname': 0, '_id': 0})
 
-def getAllHosts(skip, numberOfItems):
+def getPagedHosts(skip, numberOfItems):
     return db.hosts.find().skip(skip).limit(numberOfItems)
+
+def getAllHosts():
+    return db.hosts.find().distinct("hostname")
 
 def getAllHostForGroup(groupname):
     return db.groups.find({'groupname': groupname}, {'hosts': 1, '_id': 0})
@@ -51,8 +54,11 @@ def getAllChilderenForGroup(groupname):
 def getGroupVariables(groupname):
     return db.groups.find({"groupname": groupname}, {'vars': 1, '_id': 0})
 
-def getAllGroups(skip, numberOfItems):
+def getPagedGroups(skip, numberOfItems):
     return db.groups.find().skip(skip).limit(numberOfItems)
+
+def getAllGroups():
+    return db.groups.find().distinct("groupname")
 
 def getGroup(groupname):
     return db.groups.find({"groupname": groupname}, {'groupname': 1, '_id': 0})

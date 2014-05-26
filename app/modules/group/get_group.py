@@ -108,13 +108,13 @@ class GetAllGroups(flask.views.MethodView):
             page = 1
 
         skip = NUMBER_OF_ITEMS * (page - 1)
-        allgroups = self.get_allgroups(skip, NUMBER_OF_ITEMS)
+        allgroups = self.get_pagedGroups(skip, NUMBER_OF_ITEMS)
 
         pagination = Pagination(page=page, total=common.countGroups(), search=search, record_name='group')
         return flask.render_template('getgroup.html', allgroups=allgroups, pagination=pagination)
 
-    def get_allgroups(self, skip, numberOfTimes):
-        result = common.getAllGroups(skip, numberOfTimes)
+    def get_pagedGroups(self, skip, numberOfTimes):
+        result = common.getPagedGroups(skip, numberOfTimes)
         allgroups = []
         #allgroups = {}
         group = GetGroup()
@@ -127,5 +127,22 @@ class GetAllGroups(flask.views.MethodView):
                 t["hosts"] = group.get_grouphosts(groupname)
                 allgroups.append(t)
 
+        return allgroups
+
+    def get_allgroups(self):
+        result = common.getAllGroups()
+        allgroups = []
+        #allgroups = {}
+        group = GetGroup()
+        for item in result:
+            t = {}
+            t["groupname"] = str(item)
+            t["children"] = group.get_groupchildren(item)
+            t["hosts"] = group.get_grouphosts(item)
+            allgroups.append(t)
+            #print type(t["children"])
+            #print allgroups["groupname"]
+            #print allgroups["children"]
+        #print allgroups
         return allgroups
 

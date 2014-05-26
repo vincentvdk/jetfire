@@ -91,7 +91,7 @@ class GetAllHosts(flask.views.MethodView):
         return flask.render_template('gethost.html', allhosts=allhosts, pagination=pagination)
 
     def get_allhosts(self, skip, numberOfItems):
-        result = common.getAllHosts(skip, numberOfItems)
+        result = common.getPagedHosts(skip, numberOfItems)
         #allhosts = []
         allhosts = {}
         host = GetHost()
@@ -105,4 +105,15 @@ class GetAllHosts(flask.views.MethodView):
             itemgroups = host.get_hostgroups(hostname)
             #allhosts.append(item)
             allhosts[hostname] = [str(x) for x in itemgroups]
+        return allhosts
+
+    def get_allhosts(self):
+        result = common.getAllHosts()
+        #allhosts = []
+        allhosts = {}
+        host = GetHost()
+        for item in result:
+            itemgroups = host.get_hostgroups(item)
+            #allhosts.append(item)
+            allhosts[item] = [str(x) for x in itemgroups]
         return allhosts
