@@ -18,21 +18,8 @@
 
 import flask
 import flask.views
-import os
-import pymongo
 import yaml
-
-from app import app
-
-
-
-# establish connection
-dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
-database = os.getenv("DATABASE", app.config['DATABASE'])
-dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
-
-conn = pymongo.Connection(dbserver, dbserverport)
-db = conn[database]
+from app.common import db
 
 class AddHost(flask.views.MethodView):
 
