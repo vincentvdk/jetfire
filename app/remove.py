@@ -18,8 +18,9 @@
 #
 import flask
 import flask.views
-from get_host import GetAllHosts
-from get_group import GetAllGroups
+
+from app.modules.host.get_host import GetAllHosts
+from app.modules.group.get_group import GetAllGroups
 from app.common import db
 
 

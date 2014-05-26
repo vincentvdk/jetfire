@@ -21,12 +21,12 @@ import flask.views
 app = flask.Flask('app')
 app.config.from_pyfile('../config.cfg')
 
-from add_host import AddHost
-from get_host import GetHost, GetAllHosts
-from get_group import GetGroup, GetAllGroups
-from add_group import AddGroup
-from edit_host import EditHost, EditHostSubmit
-from edit_group import EditGroup, EditGroupSubmit
+from app.modules.host.add_host import AddHost
+from app.modules.host.get_host import GetHost, GetAllHosts
+from app.modules.group.get_group import GetGroup, GetAllGroups
+from app.modules.group.add_group import AddGroup
+from app.modules.host.edit_host import EditHost, EditHostSubmit
+from app.modules.group.edit_group import EditGroup, EditGroupSubmit
 #from remove import RemoveGroup, RemoveHost
 from remove import Remove
 
