@@ -72,8 +72,10 @@
 
 {# all hosts button #}
 {% if allhosts %}
-{{ pagination.info|safe }}
-{{ pagination.links|safe }}
+    {% if pagination %}
+        {{ pagination.info|safe}}
+        {{ pagination.links|safe}}
+    {% endif%}
 <table class="table">
   <tr>
     <th class="tablewidth">Hostname</th>
@@ -101,7 +103,9 @@
 {% endfor %}
 </tr>
 </table>
-{{ pagination.links|safe }}
+    {% if pagination %}
+        {{ pagination.links|safe }}
+    {% endif%}
 {% endif %}
 {#</div>#}
 

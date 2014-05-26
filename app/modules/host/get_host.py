@@ -18,7 +18,7 @@
 
 import flask
 import flask.views
-from app import common
+from app import common, app
 from flask.ext.paginate import Pagination
 from flask import request
 
@@ -73,8 +73,6 @@ class GetHost(flask.views.MethodView):
 class GetAllHosts(flask.views.MethodView):
 
     def get(self):
-        NUMBER_OF_ITEMS = 10
-
         search = False
         q = request.args.get('q')
         if q:
@@ -84,10 +82,10 @@ class GetAllHosts(flask.views.MethodView):
         except ValueError:
             page = 1
 
-        skip = NUMBER_OF_ITEMS * (page - 1)
-        allhosts = self.get_pagedhosts(skip, NUMBER_OF_ITEMS)
+        skip = app.config['NUMBER_OF_ITEMS_PER_PAGE'] * (page - 1)
+        allhosts = self.get_pagedhosts(skip, app.config['NUMBER_OF_ITEMS_PER_PAGE'])
 
-        pagination = Pagination(page=page, total=common.countHosts(), search=search, record_name='host')
+        pagination = Pagination(page=page, total=common.countHosts(), search=search, record_name='host', per_page= app.config['NUMBER_OF_ITEMS_PER_PAGE'])
         return flask.render_template('gethost.html', allhosts=allhosts, pagination=pagination)
 
     def get_pagedhosts(self, skip, numberOfItems):

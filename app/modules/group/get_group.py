@@ -18,7 +18,7 @@
 
 import flask
 import flask.views
-from app import common
+from app import common, app
 from flask.ext.paginate import Pagination
 from flask import request
 
@@ -96,8 +96,6 @@ class GetGroup(flask.views.MethodView):
 class GetAllGroups(flask.views.MethodView):
 
     def get(self):
-        NUMBER_OF_ITEMS = 10
-
         search = False
         q = request.args.get('q')
         if q:
@@ -107,10 +105,10 @@ class GetAllGroups(flask.views.MethodView):
         except ValueError:
             page = 1
 
-        skip = NUMBER_OF_ITEMS * (page - 1)
-        allgroups = self.get_pagedGroups(skip, NUMBER_OF_ITEMS)
+        skip = app.config['NUMBER_OF_ITEMS_PER_PAGE'] * (page - 1)
+        allgroups = self.get_pagedGroups(skip, app.config['NUMBER_OF_ITEMS_PER_PAGE'])
 
-        pagination = Pagination(page=page, total=common.countGroups(), search=search, record_name='group')
+        pagination = Pagination(page=page, total=common.countGroups(), search=search, record_name='group', per_page= app.config['NUMBER_OF_ITEMS_PER_PAGE'])
         return flask.render_template('getgroup.html', allgroups=allgroups, pagination=pagination)
 
     def get_pagedGroups(self, skip, numberOfTimes):
