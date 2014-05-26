@@ -27,14 +27,17 @@ dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
 conn = pymongo.Connection(dbserver, dbserverport)
 db = conn[database]
 
+def countHosts():
+    return db.hosts.find().count()
+
 def getAllGroupsForHost(hostname):
     return db.groups.find({"hosts": hostname}, {'groupname': 1, '_id': 0})
 
 def getHostInfo(hostname):
     return db.hosts.find({"hostname": hostname}, {'hostname': 0, '_id': 0})
 
-def getAllHosts():
-    return db.hosts.find().distinct("hostname")
+def getAllHosts(skip, numberOfItems):
+    return db.hosts.find().skip(skip).limit(numberOfItems)
 
 def getAllHostForGroup(groupname):
     return db.groups.find({'groupname': groupname}, {'hosts': 1, '_id': 0})

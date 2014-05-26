@@ -72,6 +72,8 @@
 
 {# all hosts button #}
 {% if allhosts %}
+{{ pagination.info|safe }}
+{{ pagination.links|safe }}
 <table class="table">
   <tr>
     <th class="tablewidth">Hostname</th>
@@ -80,7 +82,7 @@
   </tr>
 {% for host, groups in allhosts.iteritems() %}
   <tr>
-    <td><b> {{ host }} </b></td> 
+    <td><b> {{ host }} </b></td>
     <td> <ul>{% for item in groups %} <li>{{ item }}</li> {% endfor %}</ul></td>
     <td>
       <div class="btn-group pull-right">
@@ -88,7 +90,7 @@
         <input type="hidden" name="p_get" value="{{ host }}" />
         <button class="btn btn-info btn-small" type="submit" name='submitBTN'><i class="glyphicon glyphicon-pencil"></i></button>
         </form>
-        {# 
+        {#
         <form action="{{url_for('remove')}}" method="post">
         <input type="hidden" name="remove" value="{{ host }}" />
         <button class="btn btn-danger btn-small" type="submit"
@@ -97,9 +99,10 @@
       </div><!-- end button group -->
     </td>
 {% endfor %}
-{% endif %}
 </tr>
 </table>
+{{ pagination.links|safe }}
+{% endif %}
 {#</div>#}
 
 <div class="row">

@@ -19,6 +19,8 @@
 import flask
 import flask.views
 from app import common
+from flask.ext.paginate import Pagination
+from flask import request
 
 
 class GetHost(flask.views.MethodView):
@@ -71,16 +73,36 @@ class GetHost(flask.views.MethodView):
 class GetAllHosts(flask.views.MethodView):
 
     def get(self):
-        allhosts = self.get_allhosts()
-        return flask.render_template('gethost.html', allhosts=allhosts)
+        NUMBER_OF_ITEMS = 10
 
-    def get_allhosts(self):
-        result = common.getAllHosts()
+        search = False
+        q = request.args.get('q')
+        if q:
+            search = True
+        try:
+            page = int(request.args.get('page', 1))
+        except ValueError:
+            page = 1
+
+        skip = NUMBER_OF_ITEMS * (page - 1)
+        allhosts = self.get_allhosts(skip, NUMBER_OF_ITEMS)
+
+        pagination = Pagination(page=page, total=common.countHosts(), search=search, record_name='host')
+        return flask.render_template('gethost.html', allhosts=allhosts, pagination=pagination)
+
+    def get_allhosts(self, skip, numberOfItems):
+        result = common.getAllHosts(skip, numberOfItems)
         #allhosts = []
         allhosts = {}
         host = GetHost()
         for item in result:
-            itemgroups = host.get_hostgroups(item)
+            hostname = ""
+            if (type(item) is dict):
+                hostname = item["hostname"]
+            else:
+                hostname = item
+
+            itemgroups = host.get_hostgroups(hostname)
             #allhosts.append(item)
-            allhosts[item] = [str(x) for x in itemgroups]
+            allhosts[hostname] = [str(x) for x in itemgroups]
         return allhosts
