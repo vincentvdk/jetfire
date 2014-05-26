@@ -30,6 +30,9 @@ db = conn[database]
 def countHosts():
     return db.hosts.find().count()
 
+def countGroups():
+    return db.groups.find().count()
+
 def getAllGroupsForHost(hostname):
     return db.groups.find({"hosts": hostname}, {'groupname': 1, '_id': 0})
 
@@ -48,8 +51,8 @@ def getAllChilderenForGroup(groupname):
 def getGroupVariables(groupname):
     return db.groups.find({"groupname": groupname}, {'vars': 1, '_id': 0})
 
-def getAllGroups():
-    return db.groups.find().distinct("groupname")
+def getAllGroups(skip, numberOfItems):
+    return db.groups.find().skip(skip).limit(numberOfItems)
 
 def getGroup(groupname):
     return db.groups.find({"groupname": groupname}, {'groupname': 1, '_id': 0})

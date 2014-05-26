@@ -19,6 +19,8 @@
 import flask
 import flask.views
 from app import common
+from flask.ext.paginate import Pagination
+from flask import request
 
 
 class GetGroup(flask.views.MethodView):
@@ -94,24 +96,36 @@ class GetGroup(flask.views.MethodView):
 class GetAllGroups(flask.views.MethodView):
 
     def get(self):
-        allgroups = self.get_allgroups()
-        #allgroupmembers = GetGroup.get_groupmembers(group)
-        return flask.render_template('getgroup.html', allgroups=allgroups)
+        NUMBER_OF_ITEMS = 10
 
-    def get_allgroups(self):
-        result = common.getAllGroups()
+        search = False
+        q = request.args.get('q')
+        if q:
+            search = True
+        try:
+            page = int(request.args.get('page', 1))
+        except ValueError:
+            page = 1
+
+        skip = NUMBER_OF_ITEMS * (page - 1)
+        allgroups = self.get_allgroups(skip, NUMBER_OF_ITEMS)
+
+        pagination = Pagination(page=page, total=common.countGroups(), search=search, record_name='group')
+        return flask.render_template('getgroup.html', allgroups=allgroups, pagination=pagination)
+
+    def get_allgroups(self, skip, numberOfTimes):
+        result = common.getAllGroups(skip, numberOfTimes)
         allgroups = []
         #allgroups = {}
         group = GetGroup()
         for item in result:
-            t = {}
-            t["groupname"] = str(item)
-            t["children"] = group.get_groupchildren(item)
-            t["hosts"] = group.get_grouphosts(item)
-            allgroups.append(t)
-            #print type(t["children"])
-            #print allgroups["groupname"]
-            #print allgroups["children"]
-        #print allgroups
+            if (type(item) is dict):
+                groupname = item["groupname"]
+                t = {}
+                t["groupname"] = str(groupname)
+                t["children"] = group.get_groupchildren(groupname)
+                t["hosts"] = group.get_grouphosts(groupname)
+                allgroups.append(t)
+
         return allgroups
 

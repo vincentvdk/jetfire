@@ -65,6 +65,8 @@
   </table>
 
 {% if allgroups %}
+{{ pagination.info|safe }}
+{{ pagination.links|safe }}
     <table class="table">
       <tr>
         <th class="tablewidth">Group</th>
@@ -96,6 +98,7 @@
       </tr>
     {% endfor %}
     </table>
+{{ pagination.links|safe }}
 {% endif %}
     </div>
 </div><!-- end row -->
