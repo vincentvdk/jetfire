@@ -29,8 +29,11 @@ dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
 conn = pymongo.Connection(dbserver, dbserverport)
 db = conn[database]
 
-def countHosts():
-    return db.hosts.find().count()
+def countHosts(filterHostname = None):
+    if filterHostname:
+        return db.hosts.find({'hostname' : {'$regex' : filterHostname}}).count()
+    else:
+        return db.hosts.find().count()
 
 def countGroups():
     return db.groups.find().count()
@@ -41,8 +44,11 @@ def getAllGroupsForHost(hostname):
 def getHostnameInfo(hostname):
     return db.hosts.find({"hostname": hostname}, {'hostname': 0, '_id': 0})
 
-def getPagedHosts(skip, numberOfItems):
-    return db.hosts.find().skip(skip).limit(numberOfItems)
+def getPagedHosts(skip, numberOfItems, filterHostname = None):
+    if filterHostname:
+        return db.hosts.find({'hostname' : {'$regex' : filterHostname}}).skip(skip).limit(numberOfItems)
+    else:
+        return db.hosts.find().skip(skip).limit(numberOfItems)
 
 def getAllHosts():
     return db.hosts.find().distinct("hostname")

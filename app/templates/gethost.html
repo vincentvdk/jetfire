@@ -22,10 +22,9 @@
 {# class="navbar-form navbar-left" #}
     {#<div class="row">#}
         <div class="form-inline">
-          <form action="{{url_for('gethostinfo')}}" method="post">
-          <input type="text" name="p_get">
-          <button class="btn btn-info btn-small" type="submit"
-          name='submitBTN'><i class="glyphicon glyphicon-search"></i></button>
+          <form action="{{url_for('gethostinfo')}}" method="get">
+          <input type="text" name="q">
+          <button class="btn btn-info btn-small" type="submit"><i class="glyphicon glyphicon-search"></i></button>
           <div class="btn-group pull-right">
             <a class="btn btn-info btn-small" href="{{url_for('addhost')}}"><i class="glyphicon glyphicon-plus"></i></a>
             <a class="btn btn-default btn-small" href="{{url_for('getallhosts')}}"><i class="glyphicon glyphicon-circle-arrow-down"></i></a>
