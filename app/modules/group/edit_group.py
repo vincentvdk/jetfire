@@ -16,21 +16,13 @@
 # # along with this program. If not, see <http://www.gnu.org/licenses/>.
 # #
 
-import flask, flask.views
-import os
+import flask
+import flask.views
 import yaml
 import json
-import pymongo
-from functools import wraps
-from app import app
-from get_host import GetHost
+from app import common
+from app.common import db
 
-dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
-database = os.getenv("DATABASE", app.config['DATABASE'])
-dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
-
-conn = pymongo.Connection(dbserver, dbserverport)
-db = conn[database]
 
 class EditGroup(flask.views.MethodView):
 
@@ -54,7 +46,7 @@ class EditGroup(flask.views.MethodView):
         return flask.render_template('editgroup.html')
 
     def get_groupinfo(self, groupname):
-        result = db.groups.find({"groupname": groupname}).distinct("vars")
+        result = common.getGroupInfo(groupname)
         if not result:
             ansiblevar = "notfound"
         else:
@@ -64,7 +56,7 @@ class EditGroup(flask.views.MethodView):
 
     def get_grouphosts(self, groupname):
         '''retrieve all hosts from the group'''
-        result = db.groups.find({"groupname": groupname}, {'hosts': 1, '_id': 0})
+        result = common.getAllHostForGroup(groupname)
         hosts = result[0]["hosts"]
         if not hosts:
             return "notfound"
@@ -73,7 +65,7 @@ class EditGroup(flask.views.MethodView):
 
     def get_availablehosts(self):
         ''' return all hosts not a member of this group'''
-        allhosts = db.hosts.find().distinct("hostname")
+        allhosts = common.getAllHosts()
         # build compared list
         groupname = str(flask.request.form['group_get'])
         hosts = self.get_grouphosts(groupname)
@@ -82,13 +74,14 @@ class EditGroup(flask.views.MethodView):
         return availablehosts
 
     def get_childgroups(self, groupname):
+        result = common.getGroup(groupname)
         result = db.groups.find({"groupname": groupname}, {'children':1, '_id': 0})
         for item in result:
             childgroups = item["children"]
         return childgroups
 
     def get_availablechildren(self):
-        allgroups = db.groups.find().distinct("groupname")
+        allgroups = common.getAllGroups()
         # build compared list
         groupname = str(flask.request.form['group_get'])
         childgroups = self.get_childgroups(groupname)

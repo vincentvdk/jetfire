@@ -16,22 +16,12 @@
 # # along with this program. If not, see <http://www.gnu.org/licenses/>.
 # #
 #
-import flask, flask.views
-import os
-import yaml
-import json
-import pymongo
-from functools import wraps
-from app import app
-from get_host import GetAllHosts
-from get_group import GetAllGroups
-# establish connection with mongodb server
-dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
-database = os.getenv("DATABASE", app.config['DATABASE'])
-dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
+import flask
+import flask.views
 
-conn = pymongo.Connection(dbserver, dbserverport)
-db = conn[database]
+from app.modules.host.get_host import GetAllHosts
+from app.modules.group.get_group import GetAllGroups
+from app.common import db
 
 
 class Remove(flask.views.MethodView):
@@ -44,14 +34,25 @@ class Remove(flask.views.MethodView):
         return flask.render_template('remove.html', allgroups=allgroups, allhosts=allhosts)
 
     def post(self):
+        #grpdelbtnvalue = flask.request.form['removegroup']
+        #print "group to remove 1 %s" % grpdelbtnvalue
         hremove = flask.request.form.getlist('selectedhostsremove')
         gremove = flask.request.form.getlist('selectedgroupsremove')
+        #if grpdelbtnvalue:
+        #    self.group(grpdelbtnvalue)
         if hremove:
             for item in hremove:
+                print item
                 self.host(item)
-        if gremove:
+        elif gremove:
             for item in gremove:
+                print item
                 self.group(item)
+        else:
+            grpdelbtnvalue = flask.request.form['removegroup']
+            print "group to remove %s" % grpdelbtnvalue
+            if grpdelbtnvalue:
+              self.group(grpdelbtnvalue)
         return flask.render_template('remove.html')
 
     def host(self, hostname):

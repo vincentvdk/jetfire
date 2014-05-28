@@ -16,26 +16,16 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-import flask, flask.views
-import os
-import pymongo
+import flask
+import flask.views
 import yaml
-import json
-from app import app
-
-
-# establish connection
-dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
-database = os.getenv("DATABASE", app.config['DATABASE'])
-dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
-
-conn = pymongo.Connection(dbserver, dbserverport)
-db = conn[database]
+from app import common
+from app.common import db
 
 class AddHost(flask.views.MethodView):
 
     def get(self):
-        groups =  db.groups.find().distinct("groupname")
+        groups =  common.getAllGroups()
         # return everything to the template
         return flask.render_template('addhost.html', groups=groups)
 

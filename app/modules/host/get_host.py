@@ -16,20 +16,11 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-import flask, flask.views
-import os
-import pymongo
-from functools import wraps
-from app import app
-import re
-
-# establish connection with Mongo server
-dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
-database = os.getenv("DATABASE", app.config['DATABASE'])
-dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
-
-conn = pymongo.Connection(dbserver, dbserverport)
-db = conn[database]
+import flask
+import flask.views
+from app import common, app
+from flask.ext.paginate import Pagination
+from flask import request
 
 
 class GetHost(flask.views.MethodView):
@@ -50,7 +41,7 @@ class GetHost(flask.views.MethodView):
             return flask.redirect(flask.url_for('gethostinfo'))
 
     def get_hostinfo(self, hostname):
-        result = db.hosts.find({"hostname": hostname}, {'hostname': 0, '_id': 0})
+        result = common.getHostnameInfo(hostname)
         host = [item for item in result]
         if len(hostname) == 0:
             return "notfound"
@@ -67,7 +58,7 @@ class GetHost(flask.views.MethodView):
 
 
     def get_hostgroups(self, hostname):
-        result = db.groups.find({"hosts": hostname}, {'groupname': 1, '_id': 0})
+        result = common.getAllGroupsForHost(hostname)
         groups = [ item for item in result]
         grouplist = []
         # return empty list when host is not in a group
@@ -82,11 +73,40 @@ class GetHost(flask.views.MethodView):
 class GetAllHosts(flask.views.MethodView):
 
     def get(self):
-        allhosts = self.get_allhosts()
-        return flask.render_template('gethost.html', allhosts=allhosts)
+        search = False
+        q = request.args.get('q')
+        if q:
+            search = True
+        try:
+            page = int(request.args.get('page', 1))
+        except ValueError:
+            page = 1
+
+        skip = app.config['NUMBER_OF_ITEMS_PER_PAGE'] * (page - 1)
+        allhosts = self.get_pagedhosts(skip, app.config['NUMBER_OF_ITEMS_PER_PAGE'])
+
+        pagination = Pagination(css_framework='bootstrap3', page=page, total=common.countHosts(), search=search, record_name='host', per_page= app.config['NUMBER_OF_ITEMS_PER_PAGE'])
+        return flask.render_template('gethost.html', allhosts=allhosts, pagination=pagination)
+
+    def get_pagedhosts(self, skip, numberOfItems):
+        result = common.getPagedHosts(skip, numberOfItems)
+        #allhosts = []
+        allhosts = {}
+        host = GetHost()
+        for item in result:
+            hostname = ""
+            if (type(item) is dict):
+                hostname = item["hostname"]
+            else:
+                hostname = item
+
+            itemgroups = host.get_hostgroups(hostname)
+            #allhosts.append(item)
+            allhosts[hostname] = [str(x) for x in itemgroups]
+        return allhosts
 
     def get_allhosts(self):
-        result = db.hosts.find().distinct("hostname")
+        result = common.getAllHosts()
         #allhosts = []
         allhosts = {}
         host = GetHost()

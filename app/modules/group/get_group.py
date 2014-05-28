@@ -16,22 +16,13 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-import flask, flask.views
-import os
-import re
-import pymongo
-from functools import wraps
-from app import app
+import flask
+import flask.views
+from app import common, app
+from flask.ext.paginate import Pagination
+from flask import request
 
-# -----------------------------------------------------------------------------------
-# establish connection with LDAP server
-dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
-database = os.getenv("DATABASE", app.config['DATABASE'])
-dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
 
-conn = pymongo.Connection(dbserver, dbserverport)
-db = conn[database]
-# -----------------------------------------------------------------------------------
 class GetGroup(flask.views.MethodView):
 
     def get(self):
@@ -39,7 +30,7 @@ class GetGroup(flask.views.MethodView):
 
     def post(self):
         groupname = str(flask.request.form['get_group'])
-        result = db.groups.find({"groupname": groupname}, {'groupname': 1, '_id': 0})
+        result = common.getGroup(groupname)
         group = [ item for item in result]
         if not group:
             flask.flash('Group ' + groupname + ' not found')
@@ -53,7 +44,7 @@ class GetGroup(flask.views.MethodView):
 
 #    def get_groupmembers(self,groupname):
     def get_groupchildren(self,groupname):
-        result = db.groups.find({"groupname": groupname}, {'children': 1, '_id': 0})
+        result = common.getAllChilderenForGroup(groupname)
         for item in result:
             childs = item
         children = []
@@ -70,7 +61,7 @@ class GetGroup(flask.views.MethodView):
         return children
 
     def get_grouphosts(self,groupname):
-        result = db.groups.find({"groupname": groupname}, {'hosts': 1, '_id': 0})
+        result = common.getAllHostForGroup(groupname)
         #hosts = [ item for item in result]
         for item in result:
             h = item
@@ -90,7 +81,7 @@ class GetGroup(flask.views.MethodView):
         return members
 
     def get_groupvars(self,groupname):
-        result = db.groups.find({"groupname": groupname}, {'vars': 1, '_id': 0})
+        result = common.getGroupVariables(groupname)
         vars = [item for item in result]
         # return none when no vars found
         if len(groupname) == 0:
@@ -105,12 +96,39 @@ class GetGroup(flask.views.MethodView):
 class GetAllGroups(flask.views.MethodView):
 
     def get(self):
-        allgroups = self.get_allgroups()
-        #allgroupmembers = GetGroup.get_groupmembers(group)
-        return flask.render_template('getgroup.html', allgroups=allgroups)
+        search = False
+        q = request.args.get('q')
+        if q:
+            search = True
+        try:
+            page = int(request.args.get('page', 1))
+        except ValueError:
+            page = 1
+
+        skip = app.config['NUMBER_OF_ITEMS_PER_PAGE'] * (page - 1)
+        allgroups = self.get_pagedGroups(skip, app.config['NUMBER_OF_ITEMS_PER_PAGE'])
+
+        pagination = Pagination(css_framework='bootstrap3', page=page, total=common.countGroups(), search=search, record_name='group', per_page= app.config['NUMBER_OF_ITEMS_PER_PAGE'])
+        return flask.render_template('getgroup.html', allgroups=allgroups, pagination=pagination)
+
+    def get_pagedGroups(self, skip, numberOfTimes):
+        result = common.getPagedGroups(skip, numberOfTimes)
+        allgroups = []
+        #allgroups = {}
+        group = GetGroup()
+        for item in result:
+            if (type(item) is dict):
+                groupname = item["groupname"]
+                t = {}
+                t["groupname"] = str(groupname)
+                t["children"] = group.get_groupchildren(groupname)
+                t["hosts"] = group.get_grouphosts(groupname)
+                allgroups.append(t)
+
+        return allgroups
 
     def get_allgroups(self):
-        result = db.groups.find().distinct("groupname")
+        result = common.getAllGroups()
         allgroups = []
         #allgroups = {}
         group = GetGroup()

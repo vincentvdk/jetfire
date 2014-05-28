@@ -16,21 +16,13 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-import flask, flask.views
-import os
+import flask
+import flask.views
 import yaml
 import json
-import pymongo
-from functools import wraps
-from app import app
-from get_host import GetHost
-# establish connection with mongodb server
-dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
-database = os.getenv("DATABASE", app.config['DATABASE'])
-dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
+from app import common
 
-conn = pymongo.Connection(dbserver, dbserverport)
-db = conn[database]
+from app.common import db
 
 
 class EditHost(flask.views.MethodView):
@@ -63,13 +55,13 @@ class EditHost(flask.views.MethodView):
 
     def get_hostgroups(self, hostname):
         '''retrieve all groups the host is a member of'''
-        result = db.groups.find({"hosts": hostname}, {'groupname': 1, '_id': 0})
+        result = common.getAllGroupsForHost(hostname)
         groups = [ item["groupname"] for item in result]
         return groups
 
     def get_availablegroups(self):
         ''' return all groups this host is not a member of'''
-        allgroups = db.groups.find().distinct("groupname")
+        allgroups = common.getAllGroups()
         # build compared list
         hostname = str(flask.request.form['p_get'])
         groups = self.get_hostgroups(hostname)

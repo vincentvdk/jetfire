@@ -16,34 +16,25 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-import flask, flask.views
-import os
-import pymongo
-import json
+import flask
+import flask.views
 import yaml
-from functools import wraps
-from app import app
+from app import common
+from app.common import db
 
-# establish connection with mongod
-dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
-database = os.getenv("DATABASE", app.config['DATABASE'])
-dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
-
-conn = pymongo.Connection(dbserver, dbserverport)
-db = conn[database]
 
 class AddGroup(flask.views.MethodView):
 
     def get(self):
         '''logic to return a list of all available ansible hosts'''
-        hosts = db.hosts.find().distinct("hostname")
-        childgroups = db.groups.find().distinct("groupname")
+        hosts = common.getAllHosts()
+        childgroups = common.getAllGroups()
         return flask.render_template('addgroup.html', hosts=hosts, childgroups=childgroups)
 
     def post(self):
         groupname = str(flask.request.form['add_group'])
-        hosts = db.hosts.find().distinct("hostname")
-        childgroups = db.groups.find().distinct("groupname")
+        hosts = common.getAllHosts()
+        childgroups = common.getAllGroups()
         if len(groupname) == 0:
             flask.flash('empty groupname')
             return flask.render_template('addgroup.html', hosts=hosts, childgroups=childgroups)

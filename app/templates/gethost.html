@@ -48,7 +48,7 @@
     <td><b>{{ hostname }}</b></td>
     <td>
 <ul>{% for item in groupres %}
-    <li<{{ item }}</li>
+    <li>{{ item }}</li>
 {% endfor %}
 </ul>
     </td>
@@ -58,20 +58,24 @@
       <input type="hidden" name="p_get" value="{{ hostname }}">
       <button class="btn btn-info btn-small" type="submit" name='submitBTN'><i class="glyphicon glyphicon-pencil"></i></button>
       </form>
-      {#
       <form action="{{url_for('remove')}}" method="post">
       <input type="hidden" name="remove" value="{{ hostname }}">
       <button class="btn btn-danger btn-small" type="submit" name='submitBTN'>
       <i class="glyphicon glyphicon-trash"></i></button>
-      </form>#}
-      </td>
+      </form>
+
     </div><!--end button group -->
-{% endif %}
-</tr>
+      </td>
+    </tr>
 </table>
+{% endif %}
+
 
 {# all hosts button #}
 {% if allhosts %}
+    {% if pagination %}
+        {{ pagination.links|safe}}
+    {% endif%}
 <table class="table">
   <tr>
     <th class="tablewidth">Hostname</th>
@@ -80,7 +84,7 @@
   </tr>
 {% for host, groups in allhosts.iteritems() %}
   <tr>
-    <td><b> {{ host }} </b></td> 
+    <td><b> {{ host }} </b></td>
     <td> <ul>{% for item in groups %} <li>{{ item }}</li> {% endfor %}</ul></td>
     <td>
       <div class="btn-group pull-right">
@@ -88,18 +92,19 @@
         <input type="hidden" name="p_get" value="{{ host }}" />
         <button class="btn btn-info btn-small" type="submit" name='submitBTN'><i class="glyphicon glyphicon-pencil"></i></button>
         </form>
-        {# 
         <form action="{{url_for('remove')}}" method="post">
         <input type="hidden" name="remove" value="{{ host }}" />
-        <button class="btn btn-danger btn-small" type="submit"
-        name='submitBTN'><i class="glyphicon glyphicon-trash"></i></button>
-        </form>#}
+        <button id="btnConfirmDelete" class="btn btn-danger btn-small"  type="button" data-toggle="modal" data-target="#confirmDelete" data-modal-title="Delete Host"  data-modal-text="Are you sure you want to delete {{ host }}?"><i class="glyphicon glyphicon-trash"></i></button>
+        </form>
       </div><!-- end button group -->
     </td>
 {% endfor %}
-{% endif %}
 </tr>
 </table>
+    {% if pagination %}
+        {{ pagination.links|safe }}
+    {% endif%}
+{% endif %}
 {#</div>#}
 
 <div class="row">
@@ -113,3 +118,12 @@
 
 {% endblock %}
 
+
+<script>
+        $(document).on("click", ".confirm", function(e) {
+        bootbox.confirm("Are you sure?", function(result) {
+              if (result == "true"){
+
+              }
+        });
+</script>
