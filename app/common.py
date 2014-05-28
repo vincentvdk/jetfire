@@ -19,6 +19,8 @@ import os
 import pymongo
 from app import app
 
+SECRET_KEY = os.getenv("SECRET_KEY", app.config['SECRET_KEY'])
+
 # establish connection with mongodb
 dbserver = os.getenv("MONGOSRV", app.config['MONGOSRV'])
 database = os.getenv("DATABASE", app.config['DATABASE'])

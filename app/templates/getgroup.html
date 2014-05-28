@@ -33,8 +33,10 @@
         </div><!-- end btn group -->
       </div>
     
-    
-{% if grouphosts %}
+
+{# search result #} 
+{#{% if grouphosts %}#}
+{% if groupname %}
 <table class="table">
   <tr>
     <th class="tablewidth">Group</th>
@@ -65,7 +67,6 @@
   </table>
 
 {% if allgroups %}
-{{ pagination.info|safe }}
 {{ pagination.links|safe }}
     <table class="table">
       <tr>
@@ -89,7 +90,7 @@
           class="glyphicon glyphicon-pencil"></i></button>
           </form>
           <form action="{{url_for('remove')}}" method="post">
-          <input type="hidden" name="remove" value="{{ item.groupname }}">
+          <input type="hidden" name="removegroup" value="{{ item.groupname }}">
           <button id="btnConfirmDelete" class="btn btn-danger btn-small"  type="button" data-toggle="modal" data-target="#confirmDelete" data-modal-title="Delete Group"  data-modal-text="Are you sure you want to delete {{ item.groupname }}?"><i class="glyphicon glyphicon-trash"></i></button>
           </form>
         </div><!-- end button group -->

@@ -34,14 +34,25 @@ class Remove(flask.views.MethodView):
         return flask.render_template('remove.html', allgroups=allgroups, allhosts=allhosts)
 
     def post(self):
+        #grpdelbtnvalue = flask.request.form['removegroup']
+        #print "group to remove 1 %s" % grpdelbtnvalue
         hremove = flask.request.form.getlist('selectedhostsremove')
         gremove = flask.request.form.getlist('selectedgroupsremove')
+        #if grpdelbtnvalue:
+        #    self.group(grpdelbtnvalue)
         if hremove:
             for item in hremove:
+                print item
                 self.host(item)
-        if gremove:
+        elif gremove:
             for item in gremove:
+                print item
                 self.group(item)
+        else:
+            grpdelbtnvalue = flask.request.form['removegroup']
+            print "group to remove %s" % grpdelbtnvalue
+            if grpdelbtnvalue:
+              self.group(grpdelbtnvalue)
         return flask.render_template('remove.html')
 
     def host(self, hostname):

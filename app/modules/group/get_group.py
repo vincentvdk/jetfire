@@ -108,7 +108,7 @@ class GetAllGroups(flask.views.MethodView):
         skip = app.config['NUMBER_OF_ITEMS_PER_PAGE'] * (page - 1)
         allgroups = self.get_pagedGroups(skip, app.config['NUMBER_OF_ITEMS_PER_PAGE'])
 
-        pagination = Pagination(page=page, total=common.countGroups(), search=search, record_name='group', per_page= app.config['NUMBER_OF_ITEMS_PER_PAGE'])
+        pagination = Pagination(css_framework='bootstrap3', page=page, total=common.countGroups(), search=search, record_name='group', per_page= app.config['NUMBER_OF_ITEMS_PER_PAGE'])
         return flask.render_template('getgroup.html', allgroups=allgroups, pagination=pagination)
 
     def get_pagedGroups(self, skip, numberOfTimes):
