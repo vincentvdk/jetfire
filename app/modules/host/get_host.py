@@ -26,6 +26,16 @@ from flask import request
 class GetHost(flask.views.MethodView):
 
     def get(self):
+        query = request.args.get('q')
+        if query:
+            result = self.get_hostinfo(query)
+            groups = self.get_hostgroups(query)
+            if result == 'notfound':
+                return self.get_searchHosts(query)
+            else:
+                hostinfo = result
+                return flask.render_template('gethost.html', res=result, groupres=groups, hostname=query)
+
         return flask.render_template('gethost.html')
 
     def post(self):
@@ -33,12 +43,26 @@ class GetHost(flask.views.MethodView):
         result = self.get_hostinfo(hostname)
         groups = self.get_hostgroups(hostname)
         #print groups
-        if result != 'notfound':
+        if result == 'notfound':
+            return self.get_searchHosts(hostname)
+        else:
             hostinfo = result
             return flask.render_template('gethost.html', res=result, groupres=groups, hostname=hostname)
-        else:
-            flask.flash('Host ' + hostname + ' not found')
-            return flask.redirect(flask.url_for('gethostinfo'))
+
+    def get_searchHosts(self, hostname):
+        try:
+            page = int(request.args.get('page', 1))
+        except ValueError:
+            page = 1
+
+        skip = app.config['NUMBER_OF_ITEMS_PER_PAGE'] * (page - 1)
+
+        getallhosts = GetAllHosts()
+        searchHosts = getallhosts.get_pagedhosts(skip, app.config['NUMBER_OF_ITEMS_PER_PAGE'], hostname)
+
+        pagination = Pagination(page=page, total=common.countHosts(hostname), found=hostname, record_name='host', per_page= app.config['NUMBER_OF_ITEMS_PER_PAGE'])
+        return flask.render_template('gethost.html', allhosts=searchHosts, pagination=pagination)
+
 
     def get_hostinfo(self, hostname):
         result = common.getHostnameInfo(hostname)
@@ -73,10 +97,6 @@ class GetHost(flask.views.MethodView):
 class GetAllHosts(flask.views.MethodView):
 
     def get(self):
-        search = False
-        q = request.args.get('q')
-        if q:
-            search = True
         try:
             page = int(request.args.get('page', 1))
         except ValueError:
@@ -88,8 +108,8 @@ class GetAllHosts(flask.views.MethodView):
         pagination = Pagination(css_framework='bootstrap3', page=page, total=common.countHosts(), search=search, record_name='host', per_page= app.config['NUMBER_OF_ITEMS_PER_PAGE'])
         return flask.render_template('gethost.html', allhosts=allhosts, pagination=pagination)
 
-    def get_pagedhosts(self, skip, numberOfItems):
-        result = common.getPagedHosts(skip, numberOfItems)
+    def get_pagedhosts(self, skip, numberOfItems, filterHostname = None):
+        result = common.getPagedHosts(skip, numberOfItems, filterHostname)
         #allhosts = []
         allhosts = {}
         host = GetHost()

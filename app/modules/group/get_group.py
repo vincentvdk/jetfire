@@ -26,6 +26,18 @@ from flask import request
 class GetGroup(flask.views.MethodView):
 
     def get(self):
+        query = request.args.get('q')
+        if query:
+            result = common.getGroup(query)
+            group = [item for item in result]
+            if group:
+                groupmembers = self.get_groupchildren(query)
+                groupvars = self.get_groupvars(query)
+                grouphosts = self.get_grouphosts(query)
+                return flask.render_template('getgroup.html', groupname=query, members=groupmembers, groupvars=groupvars, grouphosts=grouphosts)
+            else:
+                return self.get_searchGroups(query)
+
         return flask.render_template('getgroup.html')
 
     def post(self):
@@ -41,6 +53,20 @@ class GetGroup(flask.views.MethodView):
             groupvars = self.get_groupvars(groupname)
             grouphosts = self.get_grouphosts(groupname)
             return flask.render_template('getgroup.html', groupname=groupname, members=groupmembers, groupvars=groupvars, grouphosts=grouphosts)
+
+    def get_searchGroups(self, groupname):
+        try:
+            page = int(request.args.get('page', 1))
+        except ValueError:
+            page = 1
+
+        skip = app.config['NUMBER_OF_ITEMS_PER_PAGE'] * (page - 1)
+
+        getallgroups = GetAllGroups()
+        searchgroups = getallgroups.get_pagedGroups(skip, app.config['NUMBER_OF_ITEMS_PER_PAGE'], groupname)
+
+        pagination = Pagination(page=page, total=common.countGroups(groupname), found=groupname, record_name='group', per_page= app.config['NUMBER_OF_ITEMS_PER_PAGE'])
+        return flask.render_template('getgroup.html', allgroups=searchgroups, pagination=pagination)
 
 #    def get_groupmembers(self,groupname):
     def get_groupchildren(self,groupname):
@@ -96,10 +122,6 @@ class GetGroup(flask.views.MethodView):
 class GetAllGroups(flask.views.MethodView):
 
     def get(self):
-        search = False
-        q = request.args.get('q')
-        if q:
-            search = True
         try:
             page = int(request.args.get('page', 1))
         except ValueError:
@@ -111,8 +133,8 @@ class GetAllGroups(flask.views.MethodView):
         pagination = Pagination(css_framework='bootstrap3', page=page, total=common.countGroups(), search=search, record_name='group', per_page= app.config['NUMBER_OF_ITEMS_PER_PAGE'])
         return flask.render_template('getgroup.html', allgroups=allgroups, pagination=pagination)
 
-    def get_pagedGroups(self, skip, numberOfTimes):
-        result = common.getPagedGroups(skip, numberOfTimes)
+    def get_pagedGroups(self, skip, numberOfTimes, filterGroup = None):
+        result = common.getPagedGroups(skip, numberOfTimes, filterGroup)
         allgroups = []
         #allgroups = {}
         group = GetGroup()

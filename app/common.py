@@ -29,11 +29,17 @@ dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
 conn = pymongo.Connection(dbserver, dbserverport)
 db = conn[database]
 
-def countHosts():
-    return db.hosts.find().count()
+def countHosts(filterHostname = None):
+    if filterHostname:
+        return db.hosts.find({'hostname' : {'$regex' : filterHostname}}).count()
+    else:
+        return db.hosts.find().count()
 
-def countGroups():
-    return db.groups.find().count()
+def countGroups(filterGroupname = None):
+    if filterGroupname:
+        return db.groups.find({'groupname' : {'$regex' : filterGroupname}}).count()
+    else:
+        return db.groups.find().count()
 
 def getAllGroupsForHost(hostname):
     return db.groups.find({"hosts": hostname}, {'groupname': 1, '_id': 0})
@@ -41,8 +47,11 @@ def getAllGroupsForHost(hostname):
 def getHostnameInfo(hostname):
     return db.hosts.find({"hostname": hostname}, {'hostname': 0, '_id': 0})
 
-def getPagedHosts(skip, numberOfItems):
-    return db.hosts.find().skip(skip).limit(numberOfItems)
+def getPagedHosts(skip, numberOfItems, filterHostname = None):
+    if filterHostname:
+        return db.hosts.find({'hostname' : {'$regex' : filterHostname}}).skip(skip).limit(numberOfItems)
+    else:
+        return db.hosts.find().skip(skip).limit(numberOfItems)
 
 def getAllHosts():
     return db.hosts.find().distinct("hostname")
@@ -56,8 +65,11 @@ def getAllChilderenForGroup(groupname):
 def getGroupVariables(groupname):
     return db.groups.find({"groupname": groupname}, {'vars': 1, '_id': 0})
 
-def getPagedGroups(skip, numberOfItems):
-    return db.groups.find().skip(skip).limit(numberOfItems)
+def getPagedGroups(skip, numberOfItems, filterGroupname = None):
+    if filterGroupname:
+        return db.groups.find({'groupname' : {'$regex' : filterGroupname}}).skip(skip).limit(numberOfItems)
+    else:
+        return db.groups.find().skip(skip).limit(numberOfItems)
 
 def getAllGroups():
     return db.groups.find().distinct("groupname")
