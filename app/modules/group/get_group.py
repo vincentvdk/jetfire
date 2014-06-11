@@ -48,7 +48,6 @@ class GetGroup(flask.views.MethodView):
             flask.flash('Group ' + groupname + ' not found')
             return flask.redirect(flask.url_for('getgroup'))
         else:
-            #groupmembers = self.get_groupmembers(groupname)
             groupmembers = self.get_groupchildren(groupname)
             groupvars = self.get_groupvars(groupname)
             grouphosts = self.get_grouphosts(groupname)
@@ -73,12 +72,7 @@ class GetGroup(flask.views.MethodView):
         for item in result:
             childs = item
         children = []
-        # return none if no group is entered in form
-        #if len(groupname) == 0:
-        #    members = None
-        # return none if group has no children
         if not childs:
-            #children = None
             children = []
         else:
             for item in childs["children"]:
@@ -87,7 +81,6 @@ class GetGroup(flask.views.MethodView):
 
     def get_grouphosts(self,groupname):
         result = common.getAllHostForGroup(groupname)
-        #hosts = [ item for item in result]
         for item in result:
             h = item
         members = []
@@ -102,7 +95,6 @@ class GetGroup(flask.views.MethodView):
     def get_groupvars(self,groupname):
         result = common.getGroupVariables(groupname)
         vars = [item for item in result]
-        # return none when no vars found
         if len(groupname) == 0:
             groupvars = None
         elif not vars:
@@ -131,7 +123,7 @@ class GetAllGroups(flask.views.MethodView):
         allgroups = []
         group = GetGroup()
         for item in result:
-            if (type(item) is dict):
+            if type(item) is dict:
                 groupname = item["groupname"]
                 t = {}
                 t["groupname"] = str(groupname)

@@ -141,7 +141,7 @@ class EditGroupSubmit(flask.views.MethodView):
         pass
 
     def update_childgroups(self, groupname):
-        c= EditGroup()
+        c = EditGroup()
         current_children = c.get_childgroups(groupname)
         updated_children = flask.request.form.getlist('childrenselect')
         addchld = set(current_children)
