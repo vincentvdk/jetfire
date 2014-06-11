@@ -49,11 +49,9 @@
       <button class="btn btn-info btn-small" type="submit" name='submitBTN'><i class="glyphicon glyphicon-pencil"></i></button>
       </form>
       <form action="{{url_for('remove')}}" method="post">
-      <input type="hidden" name="remove" value="{{ hostname }}">
-      <button class="btn btn-danger btn-small" type="submit" name='submitBTN'>
-      <i class="glyphicon glyphicon-trash"></i></button>
+      <input type="hidden" name="removehost" value="{{ hostname }}" />
+      <button id="btnConfirmDelete" class="btn btn-danger btn-small"  type="button" data-toggle="modal" data-target="#confirmDelete" data-modal-title="Delete Host"  data-modal-text="Are you sure you want to delete {{ hostname }}?"><i class="glyphicon glyphicon-trash"></i></button>
       </form>
-
     </div><!--end button group -->
       </td>
     </tr>
@@ -82,7 +80,7 @@
         <button class="btn btn-info btn-small" type="submit" name='submitBTN'><i class="glyphicon glyphicon-pencil"></i></button>
         </form>
         <form action="{{url_for('remove')}}" method="post">
-        <input type="hidden" name="remove" value="{{ host }}" />
+        <input type="hidden" name="removehost" value="{{ host }}" />
         <button id="btnConfirmDelete" class="btn btn-danger btn-small"  type="button" data-toggle="modal" data-target="#confirmDelete" data-modal-title="Delete Host"  data-modal-text="Are you sure you want to delete {{ host }}?"><i class="glyphicon glyphicon-trash"></i></button>
         </form>
       </div><!-- end button group -->

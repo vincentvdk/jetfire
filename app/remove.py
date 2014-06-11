@@ -35,24 +35,27 @@ class Remove(flask.views.MethodView):
     def post(self):
         hremove = flask.request.form.getlist('selectedhostsremove')
         gremove = flask.request.form.getlist('selectedgroupsremove')
+        grpdelbtnvalue = flask.request.form.get('removegroup', None)
+        hostdelbtnvalue = flask.request.form.get('removehost', None)
+
         if hremove:
             for item in hremove:
-                print item
                 self.host(item)
         elif gremove:
             for item in gremove:
-                print item
                 self.group(item)
-        else:
-            grpdelbtnvalue = flask.request.form['removegroup']
-            print "group to remove %s" % grpdelbtnvalue
-            if grpdelbtnvalue:
-              self.group(grpdelbtnvalue)
-        return flask.render_template('remove.html')
+        elif grpdelbtnvalue:
+            self.group(grpdelbtnvalue)
+            return flask.redirect('getgroup')
+        elif hostdelbtnvalue:
+            self.host(hostdelbtnvalue)
+            return flask.redirect('gethostinfo')
+
+        return flask.redirect('remove')
 
     def host(self, hostname):
         db.hosts.remove({'hostname': hostname})
-        groups =  db.groups.find({'hosts': hostname}).distinct('groupname')
+        groups = db.groups.find({'hosts': hostname}).distinct('groupname')
         for item in groups:
              db.groups.update({"groupname": item}, {"$pull": {"hosts": hostname}})
 
