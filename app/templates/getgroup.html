@@ -45,7 +45,7 @@
       <input type="hidden" name="group_get" value="{{ groupname }}"/>
       <button class="btn btn-info btn-small" type="submit"name='submitBTN'><i class="glyphicon glyphicon-pencil"></i></button>
       </form>
-      <form id="delete_form_{{ loop.index }}" action="{{url_for('remove')}}" method="post">
+      <form id="delete_form_1" action="{{url_for('remove')}}" method="post">
       <input type="hidden" name="removegroup" value="{{ groupname }}">
       <button id="btnConfirmDelete" class="btn btn-danger btn-small"  type="button" data-toggle="modal" data-target="#confirmDelete" data-modal-title="Delete Group"  data-modal-text="Are you sure you want to delete {{ groupname }}?"><i class="glyphicon glyphicon-trash"></i></button>
       </form>
