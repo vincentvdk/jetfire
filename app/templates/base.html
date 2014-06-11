@@ -18,12 +18,15 @@
                     $(this).find('.modal-title').text(title);
                     var text = $(e.relatedTarget).attr('data-modal-text');
                     $(this).find('.modal-body p').text(text);
-                    confirmBtn = $(this).find('.confirm');
+                    // confirmBtn = $(this).find('.confirm');
+                    var selectedForm = $(e.relatedTarget).closest("form").attr("id");
+                    $('#btnYes').attr("data-form", selectedForm);
                 });
 
-                $('#btnYes').click(function() {
+                $('#btnYes').click(function(e) {
                     // handle form processing here
-                    $('form').submit();
+                    var form = "#" + $(e.currentTarget).attr('data-form');
+                    $(form).submit();
                 });
             });
         </script>
@@ -42,7 +45,7 @@
              <p>Do you want to submit the form?</p>
         </div>
         <div class="modal-footer">
-          <a href="#" id="btnYes" class="btn confirm">Yes</a>
+          <a href="#" id="btnYes" class="btn confirm" data-form="">Yes</a>
           <a href="#" data-dismiss="modal" aria-hidden="true" class="btn secondary">No</a>
         </div>
       </div>
