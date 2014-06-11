@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 
-
 {% block body %}
 
 <div class="row">
@@ -19,22 +18,15 @@
         <form action="{{url_for('getgroup')}}" method="get">
         <input type="text" name="q" />
         <button class="btn btn-info btn-small" type="submit" value="Get Group"><i class="glyphicon glyphicon-search"></i></button>
-        {#</form>#}
-        {#<form action ="{{url_for('getallgroups')}}" method="post">#}
         <div class="btn-group pull-right">
           <a class="btn btn-info btn-small" href="{{url_for('addgroup')}}"><i
           class="glyphicon glyphicon-plus"></i></a>
           <a class="btn btn-default btn-small"
           href="{{url_for('getallgroups')}}"><i class="glyphicon glyphicon-circle-arrow-down"></i></a>
-          {#<input class="btn btn-info btn-small" type="submit" value="All
-          Groups" name="allGROUPS"/>#}
         </div><!-- end btn group -->
-          </form>
+        </form>
       </div>
-    
 
-{# search result #} 
-{#{% if grouphosts %}#}
 {% if groupname %}
 <table class="table">
   <tr>
@@ -72,7 +64,6 @@
         <th>Child groups</th>
         <th></th>
       </tr>
-    {#{% for item in allgroups %}#}
     {% for item in allgroups %}
       <tr>
       <td><b> {{ item.groupname }} </b></td>
@@ -107,7 +98,5 @@
     {% endblock %}
   </div>
 </div><!-- end row-->
-
-
 
 {% endblock %}
