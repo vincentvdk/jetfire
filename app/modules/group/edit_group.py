@@ -74,7 +74,6 @@ class EditGroup(flask.views.MethodView):
         return availablehosts
 
     def get_childgroups(self, groupname):
-        result = common.getGroup(groupname)
         result = db.groups.find({"groupname": groupname}, {'children':1, '_id': 0})
         for item in result:
             childgroups = item["children"]
@@ -108,9 +107,7 @@ class EditGroupSubmit(flask.views.MethodView):
             y = yaml.load(yamlvars)
         except yaml.YAMLError, exc:
             print "Yaml syntax error"
-            #post = {"hostname": hostname,
-            #        "vars": y
-            #}
+
         try:
             db.groups.update({"groupname": groupname}, {"$set": {'vars': y}}, upsert=False,multi=False)
         except:

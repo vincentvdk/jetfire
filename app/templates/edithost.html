@@ -1,17 +1,6 @@
-{#{% extends "base.html" %}#}
 {% extends "gethost.html" %}
 
-
-{#{% block body %}#}
 {% block action %}
-{#
-    <h2> Edit Host Settings </h2>
-    <form action="{{url_for('edithost')}}" method="post">
-    <input type="text" name="p_get" />
-    <input type="submit" value="Get host" name='submitBTN'/>
-    </form>
-
-#}
 
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -26,36 +15,20 @@
 
 
 <p>
-{# do net iterate if no list with ansible vars is returned #}
 {% if res is none %}
     <pre>None</pre>
 {% else %}
 
 <form class="form form-horizontal" action="{{url_for('edithostsubmit')}}" method="post">
-{#<form action="{{ url_for('edithostsubmit')}}" method="post">#}
   <h3>Host : {{ host }} </h3>
-  {#<div class="form-group">
-    <div class="col-md-6">
-      <label for="hostvars">Variables</label>#}
       <input type="hidden" name="p_get2" value="{{ host }}"/>
   <div class="form-group">
     <div class="col-md-6">
       <label for="hostvars">Variables</label>
-{#<b>Ansiblevars :</b><br>#}
-{# get the ansible vars #}
       <textarea class="form-control" type="area" name="ehyaml" value="" style="height:200px">{{result}}</textarea>
     </div>
   </div>
 
-{# get the groups #}
-<!--<table><tr><td><b>Available groups</b></td><td><b>Current
-groups</b><td></tr></table>-->
-{#{% if groups %}#}
-<!--<form>-->
-  {#<div class="form-group">#}
-    {#<div class="col-md-6">#}
-    {#<select class="form-control" id="groupselect" name="groupselect"
-    multiple="multiple">#}
     <select  id="groupselect" name="groupselect" multiple="multiple">
     {% for item in groups %}
         <option value="{{ item }}" selected>{{ item }}</option>
@@ -66,17 +39,13 @@ groups</b><td></tr></table>-->
     </select></br>
     </div>
   </div>
-<!--</form>-->
 
-<!--<form action="{{url_for('edithostsubmit')}}" method="post">-->
 <input class="btn btn-primary" type="submit" value="Edit host" name="edithostBTN" />
 </form>
 
 {% endif %}
 
-<!-- javascript -->
 <script type="text/javascript">
-//$('#groupselect').multiSelect();
 $('#groupselect').multiSelect({selectableHeader: "<b>Available groups</b>",selectionHeader: "<b>Current groups</b>"});
 </script>
 

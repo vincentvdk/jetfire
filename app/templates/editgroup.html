@@ -1,16 +1,6 @@
-{#{% extends "base.html" %}  #}
 {% extends "getgroup.html" %}
 
-
-{#{% block body %}#}
 {% block action %}
-{#
-<h2> Edit group </h2>
-<form action="{{url_for('editgroup')}}" method="post">
-    <input type="text" name="group_get" />
-    <input type="submit" value="Get group" name='submitBTN'/>
-</form>
-#}
 {% with messages = get_flashed_messages() %}
     {% if messages %}
         {% for message in messages %}

@@ -73,7 +73,6 @@ class EditHostSubmit(flask.views.MethodView):
 
     def post(self):
         hostname = str(flask.request.form['p_get2'])
-        #vars = yaml.load(flask.request.form['ehyaml'])
         self.update_host(hostname)
         self.update_groups(hostname)
         return flask.render_template('edithost.html')
@@ -84,10 +83,6 @@ class EditHostSubmit(flask.views.MethodView):
                 y = yaml.load(yamlvars)
             except yaml.YAMLError, exc:
                 print "Yaml syntax error"
-            #print y
-            #post = {"hostname": hostname,
-            #        "vars": y
-            #}
             try:
                 db.hosts.update({"hostname": hostname}, {"$set": {'vars': y}}, upsert=False,multi=False)
             except:

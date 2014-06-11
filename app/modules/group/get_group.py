@@ -68,7 +68,6 @@ class GetGroup(flask.views.MethodView):
         pagination = Pagination(page=page, total=common.countGroups(groupname), found=groupname, record_name='group', per_page= app.config['NUMBER_OF_ITEMS_PER_PAGE'])
         return flask.render_template('getgroup.html', allgroups=searchgroups, pagination=pagination)
 
-#    def get_groupmembers(self,groupname):
     def get_groupchildren(self,groupname):
         result = common.getAllChilderenForGroup(groupname)
         for item in result:
@@ -92,17 +91,11 @@ class GetGroup(flask.views.MethodView):
         for item in result:
             h = item
         members = []
-        # return none if no group is entered in form
-        #if len(groupname) == 0:
-        #    members = None
-        # return none if group has no children
+
         if not h:
-            #members = None
             member = []
         else:
-            #for item in hosts:
             for item in h["hosts"]:
-                #members = item["hosts"]
                 members.append(item)
         return members
 
@@ -136,7 +129,6 @@ class GetAllGroups(flask.views.MethodView):
     def get_pagedGroups(self, skip, numberOfTimes, filterGroup = None):
         result = common.getPagedGroups(skip, numberOfTimes, filterGroup)
         allgroups = []
-        #allgroups = {}
         group = GetGroup()
         for item in result:
             if (type(item) is dict):
@@ -152,7 +144,7 @@ class GetAllGroups(flask.views.MethodView):
     def get_allgroups(self):
         result = common.getAllGroups()
         allgroups = []
-        #allgroups = {}
+
         group = GetGroup()
         for item in result:
             t = {}
@@ -160,9 +152,6 @@ class GetAllGroups(flask.views.MethodView):
             t["children"] = group.get_groupchildren(item)
             t["hosts"] = group.get_grouphosts(item)
             allgroups.append(t)
-            #print type(t["children"])
-            #print allgroups["groupname"]
-            #print allgroups["children"]
-        #print allgroups
+
         return allgroups
 
