@@ -62,7 +62,7 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     {%- for endpoint, caption in
-                    [('gethostinfo','Hosts'),('getgroup','Groups'),('remove','remove')] %}
+                    [('gethostinfo','Hosts'),('getgroup','Groups'),('remove','Remove')] %}
                       <li {% if endpoint == request.endpoint %} class="active" {% endif %}><a href="{{url_for(endpoint)}}">{{ caption }}</a></li>
                     {%- endfor %}
                 </ul>
