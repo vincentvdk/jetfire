@@ -16,11 +16,6 @@
         {% endif %}
     {% endwith %}
 
-{#<div class="panel panel-default">#}
-{#    <div class="panel-heading">#}
-{# search form #}
-{# class="navbar-form navbar-left" #}
-    {#<div class="row">#}
         <div class="form-inline">
           <form action="{{url_for('gethostinfo')}}" method="get">
           <input type="text" name="q">
@@ -31,11 +26,7 @@
           </div>
           </form>
         </div>
-      {#</form>#}
-    {#</div>#}
-    {#</div> #}
 
-{# search box result #}
 {% if hostname %}
 <table class="table">
   <tr>
@@ -57,12 +48,10 @@
       <input type="hidden" name="p_get" value="{{ hostname }}">
       <button class="btn btn-info btn-small" type="submit" name='submitBTN'><i class="glyphicon glyphicon-pencil"></i></button>
       </form>
-      <form action="{{url_for('remove')}}" method="post">
-      <input type="hidden" name="remove" value="{{ hostname }}">
-      <button class="btn btn-danger btn-small" type="submit" name='submitBTN'>
-      <i class="glyphicon glyphicon-trash"></i></button>
+      <form id="delete_form_{{ loop.index }}" action="{{url_for('remove')}}" method="post">
+      <input type="hidden" name="removehost" value="{{ hostname }}" />
+      <button id="btnConfirmDelete" class="btn btn-danger btn-small"  type="button" data-toggle="modal" data-target="#confirmDelete" data-modal-title="Delete Host"  data-modal-text="Are you sure you want to delete {{ hostname }}?"><i class="glyphicon glyphicon-trash"></i></button>
       </form>
-
     </div><!--end button group -->
       </td>
     </tr>
@@ -70,7 +59,6 @@
 {% endif %}
 
 
-{# all hosts button #}
 {% if allhosts %}
     {% if pagination %}
         {{ pagination.links|safe}}
@@ -91,8 +79,8 @@
         <input type="hidden" name="p_get" value="{{ host }}" />
         <button class="btn btn-info btn-small" type="submit" name='submitBTN'><i class="glyphicon glyphicon-pencil"></i></button>
         </form>
-        <form action="{{url_for('remove')}}" method="post">
-        <input type="hidden" name="remove" value="{{ host }}" />
+        <form id="delete_form_{{ loop.index }}" action="{{url_for('remove')}}" method="post">
+        <input type="hidden" name="removehost" value="{{ host }}" />
         <button id="btnConfirmDelete" class="btn btn-danger btn-small"  type="button" data-toggle="modal" data-target="#confirmDelete" data-modal-title="Delete Host"  data-modal-text="Are you sure you want to delete {{ host }}?"><i class="glyphicon glyphicon-trash"></i></button>
         </form>
       </div><!-- end button group -->
@@ -104,7 +92,6 @@
         {{ pagination.links|safe }}
     {% endif%}
 {% endif %}
-{#</div>#}
 
 <div class="row">
   <div class="col-md-6">
@@ -116,13 +103,3 @@
 
 
 {% endblock %}
-
-
-<script>
-        $(document).on("click", ".confirm", function(e) {
-        bootbox.confirm("Are you sure?", function(result) {
-              if (result == "true"){
-
-              }
-        });
-</script>

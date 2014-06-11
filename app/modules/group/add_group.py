@@ -64,7 +64,6 @@ class AddGroup(flask.views.MethodView):
             y = {}
         else:
             y = yaml.load(yamlvars)
-            #print y
         selectedhosts = flask.request.form.getlist('selectedhosts')
         selectedchildren = flask.request.form.getlist('selectedchildren')
         # create a list with the DNs from the selected hostnames
@@ -75,7 +74,6 @@ class AddGroup(flask.views.MethodView):
         for child in selectedchildren:
             print child
             children.append(child)
-        attrs = {}
         post = {"groupname": groupname,
                 "hosts": members,
                 "vars": y,

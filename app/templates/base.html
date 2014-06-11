@@ -18,12 +18,15 @@
                     $(this).find('.modal-title').text(title);
                     var text = $(e.relatedTarget).attr('data-modal-text');
                     $(this).find('.modal-body p').text(text);
-                    confirmBtn = $(this).find('.confirm');
+                    // confirmBtn = $(this).find('.confirm');
+                    var selectedForm = $(e.relatedTarget).closest("form").attr("id");
+                    $('#btnYes').attr("data-form", selectedForm);
                 });
 
-                $('#btnYes').click(function() {
+                $('#btnYes').click(function(e) {
                     // handle form processing here
-                    $('form').submit();
+                    var form = "#" + $(e.currentTarget).attr('data-form');
+                    $(form).submit();
                 });
             });
         </script>
@@ -42,7 +45,7 @@
              <p>Do you want to submit the form?</p>
         </div>
         <div class="modal-footer">
-          <a href="#" id="btnYes" class="btn confirm">Yes</a>
+          <a href="#" id="btnYes" class="btn confirm" data-form="">Yes</a>
           <a href="#" data-dismiss="modal" aria-hidden="true" class="btn secondary">No</a>
         </div>
       </div>
@@ -59,7 +62,7 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     {%- for endpoint, caption in
-                    [('gethostinfo','Hosts'),('getgroup','Groups'),('remove','remove')] %}
+                    [('gethostinfo','Hosts'),('getgroup','Groups'),('remove','Remove')] %}
                       <li {% if endpoint == request.endpoint %} class="active" {% endif %}><a href="{{url_for(endpoint)}}">{{ caption }}</a></li>
                     {%- endfor %}
                 </ul>
@@ -72,21 +75,7 @@
         <div class="container">
             {% block body %} {% endblock %}
         </div>
-
           <!--<img src="/static/img/jetfire.png" height="160" width="120">-->
-{#
-            <h3>Navigation</h3>
-            <ul>
-                <li><a href="{{url_for('index')}}"> Home </a></li>
-                <li><a href="{{url_for('gethostinfo')}}"> Get host </a></li>
-                <li><a href="{{url_for('getgroup')}}"> Get group </a></li>
-                <li><a href="{{url_for('addhost')}}"> Add host </a></li>
-                <li><a href="{{url_for('addgroup')}}"> Add group </a></li>
-                <li><a href="{{url_for('edithost')}}"> Edit Host </a></li>
-                <li><a href="{{url_for('editgroup')}}"> Edit Group </a></li>
-                <li><a href="{{url_for('remove')}}"> Remove Group/Host </a></li>
-#}
-        </div>
     </body>
 
 </html>
