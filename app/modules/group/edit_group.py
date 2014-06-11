@@ -98,7 +98,7 @@ class EditGroupSubmit(flask.views.MethodView):
         self.update_group(groupname)
         self.update_hosts(groupname)
         self.update_childgroups(groupname)
-        return flask.render_template('editgroup.html')
+        return flask.redirect('getgroup')
 
     def get(self):
         return flask.render_template('editgroup.html')
@@ -116,19 +116,28 @@ class EditGroupSubmit(flask.views.MethodView):
             pass
 
     def update_hosts(self,groupname):
+        global add_hosts, rem_hosts
         h = EditGroup()
         current_hosts = h.get_grouphosts(groupname)
         updated_hosts = flask.request.form.getlist('hostselect')
-        addh = set(current_hosts)
-        remh = set(updated_hosts)
-        add_hosts = [x for x in updated_hosts if x not in addh]
-        rem_hosts = [x for x in current_hosts if x not in remh]
-        #print "hosts to add: %s." % add_hosts
-        #print "hosts to remove: %s." % rem_hosts
-        for item in add_hosts:
-            db.groups.update({"groupname": groupname}, {"$push": {"hosts": item}})
-        for item in rem_hosts:
-            db.groups.update({"groupname": groupname}, {"$pull": {"hosts": item}})
+        if current_hosts != None and len(updated_hosts) > 0:
+            addh = set(current_hosts)
+            remh = set(updated_hosts)
+            add_hosts = [x for x in updated_hosts if x not in addh]
+            rem_hosts = [x for x in current_hosts if x not in remh]
+        else:
+            if len(updated_hosts) > 0:
+                add_hosts = [x for x in updated_hosts]
+
+            if current_hosts:
+                rem_hosts = [x for x in current_hosts]
+
+        if add_hosts:
+            for item in add_hosts:
+                db.groups.update({"groupname": groupname}, {"$push": {"hosts": item}})
+        if rem_hosts:
+            for item in rem_hosts:
+                db.groups.update({"groupname": groupname}, {"$pull": {"hosts": item}})
         pass
 
     def update_childgroups(self, groupname):
