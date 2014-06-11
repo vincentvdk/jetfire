@@ -29,6 +29,11 @@ dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
 conn = pymongo.Connection(dbserver, dbserverport)
 db = conn[database]
 
+def hostExists(hostname):
+    if db.hosts.find({"hostname": hostname}).count() > 0:
+        return True
+    return False
+
 def countHosts(filterHostname = None):
     if filterHostname:
         return db.hosts.find({'hostname' : {'$regex' : filterHostname}}).count()

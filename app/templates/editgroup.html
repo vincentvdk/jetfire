@@ -24,23 +24,31 @@
     
     <div class="form-group">
     <select id="hostselect" name="hostselect" multiple="multiple">
+        {% if hosts %}
         {% for item in hosts %}
         ¦   <option value="{{ item }}" selected>{{ item }}</option>
         {% endfor %}
+        {% endif %}
+        {% if available_hosts %}
         {% for item in available_hosts %}
         ¦   <option value="{{ item }}">{{ item }}</option>
         {% endfor %}
+        {% endif %}
     </select>
     </div>
     
     <div class="form-group">
     <select id="childrenselect" name="childrenselect" multiple="multiple">
+        {% if childgroups %}
         {% for item in childgroups %}
         ¦   <option value="{{ item }}" selected>{{ item }}</option>
         {% endfor %}
+        {% endif %}
+        {% if availablechildgroups %}
         {% for item in availablechildgroups %}
         ¦   <option value="{{ item }}">{{ item }}</option>
         {% endfor %}
+        {% endif %}
     </select>
     </div>
     

@@ -25,17 +25,21 @@
   <div class="form-group">
     <div class="col-md-6">
       <label for="hostvars">Variables</label>
-      <textarea class="form-control" type="area" name="ehyaml" value="" style="height:200px">{{result}}</textarea>
+      <textarea class="form-control" type="area" name="ehyaml" value="" style="height:200px">{% if result %} {{result}} {% endif %}</textarea>
     </div>
   </div>
 
     <select  id="groupselect" name="groupselect" multiple="multiple">
+    {% if groups %}
     {% for item in groups %}
         <option value="{{ item }}" selected>{{ item }}</option>
     {% endfor %}
+    {% endif %}
+    {% if available_groups %}
     {% for item in available_groups %}
         <option value="{{ item }}">{{ item }}</option>
     {% endfor %}
+    {% endif %}
     </select></br>
     </div>
   </div>

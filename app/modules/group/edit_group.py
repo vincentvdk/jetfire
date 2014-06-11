@@ -32,7 +32,7 @@ class EditGroup(flask.views.MethodView):
         if len(groupname) == 0:
             flask.flash('empty groupname given')
             return flask.render_template('editgroup.html')
-        elif self.get_groupinfo(groupname) == "notfound":
+        elif self.get_groupinfo(groupname) == None:
             flask.flash('Group does not exist')
             return flask.redirect(flask.url_for('editgroup'))
         else:
@@ -48,7 +48,7 @@ class EditGroup(flask.views.MethodView):
     def get_groupinfo(self, groupname):
         result = common.getGroupInfo(groupname)
         if not result:
-            ansiblevar = "notfound"
+            ansiblevar = None
         else:
             j = json.dumps(result[0], sort_keys=True, indent=2)
             ansiblevar = yaml.dump(yaml.load(j), default_flow_style=False)
@@ -59,7 +59,7 @@ class EditGroup(flask.views.MethodView):
         result = common.getAllHostForGroup(groupname)
         hosts = result[0]["hosts"]
         if not hosts:
-            return "notfound"
+            return None
         else:
             return hosts
 
@@ -69,9 +69,11 @@ class EditGroup(flask.views.MethodView):
         # build compared list
         groupname = str(flask.request.form['group_get'])
         hosts = self.get_grouphosts(groupname)
-        s = set(hosts)
-        availablehosts = [ x for x in allhosts if x not in s ]
-        return availablehosts
+        if hosts:
+            s = set(hosts)
+            avaiblable = [x for x in allhosts if x not in s]
+            return avaiblable
+        return allhosts
 
     def get_childgroups(self, groupname):
         result = db.groups.find({"groupname": groupname}, {'children':1, '_id': 0})

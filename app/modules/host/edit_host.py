@@ -32,7 +32,7 @@ class EditHost(flask.views.MethodView):
         if len(hostname) == 0:
             flask.flash('empty hostname given')
             return flask.render_template('edithost.html')
-        elif self.get_hostinfo(hostname) == "notfound":
+        elif not common.hostExists(hostname):
             flask.flash('hostname not found')
             return flask.render_template('edithost.html')
         else:
@@ -46,8 +46,8 @@ class EditHost(flask.views.MethodView):
 
     def get_hostinfo(self, hostname):
         result = db.hosts.find({"hostname": hostname}).distinct("vars")
-        if not result:
-            return "notfound"
+        if result:
+            return None
         else:
             j = json.dumps(result[0], sort_keys=True, indent=2)
             ansiblevar = yaml.dump(yaml.load(j), default_flow_style=False)

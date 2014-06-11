@@ -30,7 +30,7 @@ class GetHost(flask.views.MethodView):
         if query:
             result = self.get_hostinfo(query)
             groups = self.get_hostgroups(query)
-            if result == 'notfound':
+            if result == None:
                 return self.get_searchHosts(query)
             else:
                 hostinfo = result
@@ -43,7 +43,7 @@ class GetHost(flask.views.MethodView):
         result = self.get_hostinfo(hostname)
         groups = self.get_hostgroups(hostname)
         #print groups
-        if result == 'notfound':
+        if result == None:
             return self.get_searchHosts(hostname)
         else:
             hostinfo = result
@@ -68,12 +68,11 @@ class GetHost(flask.views.MethodView):
         result = common.getHostnameInfo(hostname)
         host = [item for item in result]
         if len(hostname) == 0:
-            return "notfound"
+            return None
         elif not host:
-            return "notfound"
+            return None
         elif host[0]["vars"] == None:
-            ansiblevars = None
-            return ansiblevars
+            return None
         else:
             for item in host:
                 print item
