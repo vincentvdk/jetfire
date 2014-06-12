@@ -5,8 +5,8 @@ from app import common
 
 parser = reqparse.RequestParser()
 parser.add_argument('hostname', type=str, location='json')
-parser.add_argument('vars', type=str, location='json')
-parser.add_argument('groups', type=str, location='json')
+parser.add_argument('vars', type=dict, location='json')
+parser.add_argument('groups', type=list, location='json')
 
 
 class HostsAPI(Resource):
@@ -21,23 +21,46 @@ class HostsAPI(Resource):
     def post(self):
         args = parser.parse_args()
         hostname = args['hostname']
-        vars = args['vars']
+        ansiblevars = args['vars']
         groups = args['groups']
         exists = [str(item) for item in common.getSearchHosts(hostname)]
         if exists:
             return 'Host already exists', 201
 
-        self.add_host(hostname, vars)
-        #self.add_host_togroups(hostname, groups)
+        self.add_host(hostname, ansiblevars)
+        self.add_host_togroups(hostname, groups)
 
         return '', 200
 
-    def add_host(self, hostname, vars):
+    def put(self):
+        args = parser.parse_args()
+        hostname = args['hostname']
+        ansiblevars = args['vars']
+        groups = args['groups']
+        self.delete_host(hostname)
+        self.add_host(hostname, ansiblevars)
+        self.add_host_togroups(hostname, groups)
+        return '', 200
+
+    def delete(self):
+        args = parser.parse_args()
+        hostname = args['hostname']
+        self.delete_host(hostname)
+        return '', 200
+
+    def delete_host(self, hostname):
+        common.db.hosts.remove({'hostname': hostname})
+        groups = common.db.groups.find({'hosts': hostname}).distinct('groupname')
+        for item in groups:
+             common.db.groups.update({"groupname": item}, {"$pull": {"hosts": hostname}})
+
+    def add_host(self, hostname, ansiblevars):
         try:
-            if not vars:
+            if not ansiblevars:
                 y = yaml.load('{}')
             else:
-                y = yaml.load(vars)
+                j = json.dumps(ansiblevars, sort_keys=True, indent=2)
+                y = yaml.load(j)
         except yaml.YAMLError, exc:
             print "Yaml syntax error"
         post = {"hostname": hostname,
@@ -46,8 +69,8 @@ class HostsAPI(Resource):
         try:
             common.db.hosts.insert(post)
         except:
+            print "insert error"
             pass
-
 
     def add_host_togroups(self, hostname, groups):
         selectgroups = [str(group) for group in groups]
@@ -59,7 +82,8 @@ class GetHostVarsAPI(Resource):
     def get(self, hostname):
         result = common.getHostnameInfo(hostname)
         if result:
-            data = {"vars": [host["vars"] for host in result]}
+            ansiblevars = [host["vars"] for host in result]
+            data = {"vars": ansiblevars}
         else:
             data = {"vars": ""}
         return data

@@ -1,0 +1,15 @@
+{
+      "hostname":"test.philippe",
+      "vars":
+         {
+            "ansible_ssh_port":223,
+            "users":[
+               "vincent",
+               "chris"
+            ]
+         },
+	"groups":[
+		"sate-dco-proxy",
+		"sate-gh13-proxy"
+	]
+}
