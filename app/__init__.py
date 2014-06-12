@@ -24,7 +24,7 @@ app.config.from_pyfile('../config.cfg')
 from flask.ext.restful import Resource, Api
 api = Api(app)
 
-from app.modules.host.api import GetHostVarsAPI, GetHostsAPI, GetHostsSearchAPI, GetHostGroupsAPI
+from app.modules.host.api import GetHostVarsAPI, HostsAPI, GetHostsSearchAPI, GetHostGroupsAPI
 from app.modules.group.api import GetGroupsAPI, GetGroupsSearchAPI, GetGroupVarsAPI, GetGroupChildrenAPI, GetGroupHostsAPI
 from app.modules.host.add_host import AddHost
 from app.modules.host.get_host import GetHost, GetAllHosts
@@ -45,7 +45,7 @@ class Main(flask.views.MethodView):
 api.add_resource(GetHostVarsAPI, '/api/v1.0/hosts/<string:hostname>/vars')
 api.add_resource(GetHostGroupsAPI, '/api/v1.0/hosts/<string:hostname>/groups')
 api.add_resource(GetHostsSearchAPI, '/api/v1.0/hosts/search/<string:search_term>')
-api.add_resource(GetHostsAPI, '/api/v1.0/hosts/')
+api.add_resource(HostsAPI, '/api/v1.0/hosts/')
 
 api.add_resource(GetGroupChildrenAPI, '/api/v1.0/groups/<string:groupname>/children')
 api.add_resource(GetGroupVarsAPI, '/api/v1.0/groups/<string:groupname>/vars')
