@@ -25,7 +25,7 @@ from flask.ext.restful import Resource, Api
 api = Api(app)
 
 from app.modules.host.api import GetHostVarsAPI, HostsAPI, GetHostsSearchAPI, GetHostGroupsAPI
-from app.modules.group.api import GetGroupsAPI, GetGroupsSearchAPI, GetGroupVarsAPI, GetGroupChildrenAPI, GetGroupHostsAPI
+from app.modules.group.api import GroupsAPI, GetGroupsSearchAPI, GetGroupVarsAPI, GetGroupChildrenAPI, GetGroupHostsAPI
 from app.modules.host.add_host import AddHost
 from app.modules.host.get_host import GetHost, GetAllHosts
 from app.modules.group.get_group import GetGroup, GetAllGroups
@@ -51,7 +51,7 @@ api.add_resource(GetGroupChildrenAPI, '/api/v1.0/groups/<string:groupname>/child
 api.add_resource(GetGroupVarsAPI, '/api/v1.0/groups/<string:groupname>/vars')
 api.add_resource(GetGroupHostsAPI, '/api/v1.0/groups/<string:groupname>/hosts')
 api.add_resource(GetGroupsSearchAPI, '/api/v1.0/groups/search/<string:search_term>')
-api.add_resource(GetGroupsAPI, '/api/v1.0/groups/')
+api.add_resource(GroupsAPI, '/api/v1.0/groups/')
 
 app.add_url_rule('/',
                 view_func=Main.as_view('index'),

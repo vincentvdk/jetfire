@@ -1,0 +1,19 @@
+{
+      "groupname":"group-philippe",
+      "vars":
+         {
+            "ansible_ssh_port":222,
+            "users":[
+               "vincent",
+               "chris"
+            ]
+         },
+      "hosts":[
+         "hhg-01.test.btr.local",
+         "hhg-02.test.btr.local"
+      ],
+      "children":[
+         "sapr-dco",
+         "sapr-dco-ftp"
+      ]
+}
