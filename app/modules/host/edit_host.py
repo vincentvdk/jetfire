@@ -47,11 +47,11 @@ class EditHost(flask.views.MethodView):
     def get_hostinfo(self, hostname):
         result = db.hosts.find({"hostname": hostname}).distinct("vars")
         if result:
-            return None
-        else:
             j = json.dumps(result[0], sort_keys=True, indent=2)
             ansiblevar = yaml.dump(yaml.load(j), default_flow_style=False)
             return ansiblevar
+        else:
+            return None
 
     def get_hostgroups(self, hostname):
         '''retrieve all groups the host is a member of'''

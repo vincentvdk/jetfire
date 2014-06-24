@@ -28,6 +28,7 @@ dbserverport = os.getenv("MONGOPORT", app.config['MONGOPORT'])
 
 conn = pymongo.Connection(dbserver, dbserverport)
 db = conn[database]
+db.groups.ensure_index('groupname')
 
 def hostExists(hostname):
     if db.hosts.find({"hostname": hostname}).count() > 0:
@@ -51,6 +52,9 @@ def getAllGroupsForHost(hostname):
 
 def getHostnameInfo(hostname):
     return db.hosts.find({"hostname": hostname}, {'hostname': 0, '_id': 0})
+
+def getSearchHosts(search_term):
+    return db.hosts.find({'hostname' : {'$regex' : search_term}})
 
 def getPagedHosts(skip, numberOfItems, filterHostname = None):
     if filterHostname:
@@ -84,3 +88,7 @@ def getGroup(groupname):
 
 def getGroupInfo(groupname):
     return db.groups.find({"groupname": groupname}).distinct("vars")
+
+def getSearchGroups(search_term):
+    return db.groups.find({'groupname' : {'$regex' : search_term}})
+
