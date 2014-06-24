@@ -48,7 +48,7 @@ class HostsAPI(Resource):
             data = {"hosts": [host for host in result]}
         else:
             data = {"hosts": ""}
-        return data
+        return json.dumps(data)
 
     def post(self):
         args = parser.parse_args()
