@@ -1,5 +1,6 @@
 from flask.ext.restful import reqparse, abort, Resource, Api
 from flask import json
+from flask import jsonify
 import yaml
 from app import common
 
@@ -48,7 +49,9 @@ class HostsAPI(Resource):
             data = {"hosts": [host for host in result]}
         else:
             data = {"hosts": ""}
-        return json.dumps(data)
+        resp = jsonify(data)
+        resp.status_code = 200
+        return data
 
     def post(self):
         args = parser.parse_args()
