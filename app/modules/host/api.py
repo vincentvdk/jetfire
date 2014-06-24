@@ -51,7 +51,7 @@ class HostsAPI(Resource):
             data = {"hosts": ""}
         resp = jsonify(data)
         resp.status_code = 200
-        return data
+        return resp
 
     def post(self):
         args = parser.parse_args()
