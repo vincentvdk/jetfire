@@ -33,10 +33,5 @@ The +inventory.py+ script is used as inventory script. It must be edited to poin
 
 === API testing
 
-curl http://localhost:5000/api/v1.0/hosts/ -H "Content-Type: application/json" -d @host.json -X POST -v
+curl http://<host>:<port>/api/v1.0/hosts -H "Content-Type: application/json" -d @host.json -X POST -v
 
-=== TODO
-* list required Python packages
-* enable versioning in MongoDB
-* easier search
-* REST API
