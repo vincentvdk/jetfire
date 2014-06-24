@@ -45,13 +45,13 @@ class Main(flask.views.MethodView):
 api.add_resource(GetHostVarsAPI, '/api/v1.0/hosts/<string:hostname>/vars')
 api.add_resource(GetHostGroupsAPI, '/api/v1.0/hosts/<string:hostname>/groups')
 api.add_resource(GetHostsSearchAPI, '/api/v1.0/hosts/search/<string:search_term>')
-api.add_resource(HostsAPI, '/api/v1.0/hosts/')
+api.add_resource(HostsAPI, '/api/v1.0/hosts')
 
 api.add_resource(GetGroupChildrenAPI, '/api/v1.0/groups/<string:groupname>/children')
 api.add_resource(GetGroupVarsAPI, '/api/v1.0/groups/<string:groupname>/vars')
 api.add_resource(GetGroupHostsAPI, '/api/v1.0/groups/<string:groupname>/hosts')
 api.add_resource(GetGroupsSearchAPI, '/api/v1.0/groups/search/<string:search_term>')
-api.add_resource(GroupsAPI, '/api/v1.0/groups/')
+api.add_resource(GroupsAPI, '/api/v1.0/groups')
 
 app.add_url_rule('/',
                 view_func=Main.as_view('index'),
