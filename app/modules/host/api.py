@@ -1,13 +1,9 @@
 from flask.ext.restful import reqparse, abort, Resource, Api
 from flask import json
 from flask import jsonify
+from flask import request
 import yaml
 from app import common
-
-parser = reqparse.RequestParser()
-parser.add_argument('hostname', type=str, location='json')
-parser.add_argument('vars', type=dict, location='json')
-parser.add_argument('groups', type=list, location='json')
 
 
 def delete_host(hostname):
@@ -38,6 +34,7 @@ def add_host(hostname, ansiblevars):
 
 def add_host_togroups(hostname, groups):
     selectgroups = [str(group) for group in groups]
+    print selectgroups
     for group in selectgroups:
         common.db.groups.update({'groupname': group}, {'$push': {'hosts': hostname}}, upsert=False, multi=False)
 
@@ -54,18 +51,20 @@ class HostsAPI(Resource):
         return resp
 
     def post(self):
-        args = parser.parse_args()
-        hostname = args['hostname']
-        ansiblevars = args['vars']
-        groups = args['groups']
+        data = request.json
+        hostname = data['hostname']
+        ansiblevars = data['vars']
+        groups = data['groups']
         exists = [str(item) for item in common.getSearchHosts(hostname)]
         if exists:
             return 'Host already exists', 201
+        if type(groups).__name__!='list':
+            return 'hosts is not of type list', 201
+        else:
+            add_host(hostname, ansiblevars)
+            add_host_togroups(hostname, groups)
 
-        add_host(hostname, ansiblevars)
-        add_host_togroups(hostname, groups)
-
-        return '', 200
+        return 'host added', 200
 
     def put(self):
         args = parser.parse_args()
@@ -77,12 +76,14 @@ class HostsAPI(Resource):
         add_host_togroups(hostname, groups)
         return '', 200
 
-    def delete(self):
-        args = parser.parse_args()
-        hostname = args['hostname']
-        delete_host(hostname)
-        return '', 200
-
+class DeleteHostAPI(Resource):
+    def delete(self, hostname):
+        exists = [str(item) for item in common.getSearchHosts(hostname)]
+        if exists:
+            delete_host(hostname)
+            return 'host deleted', 200
+        else:
+            return 'host does not exist', 201
 
 class GetHostVarsAPI(Resource):
     def get(self, hostname):
@@ -112,5 +113,4 @@ class GetHostsSearchAPI(Resource):
             data = {"hosts": [host["hostname"] for host in result]}
         else:
             data = {"hosts": ""}
-
         return data
