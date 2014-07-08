@@ -76,6 +76,7 @@ class HostsAPI(Resource):
         add_host_togroups(hostname, groups)
         return '', 200
 
+
 class DeleteHostAPI(Resource):
     def delete(self, hostname):
         exists = [str(item) for item in common.getSearchHosts(hostname)]
@@ -85,6 +86,7 @@ class DeleteHostAPI(Resource):
         else:
             return 'host does not exist', 201
 
+
 class GetHostVarsAPI(Resource):
     def get(self, hostname):
         result = common.getHostnameInfo(hostname)
@@ -93,7 +95,9 @@ class GetHostVarsAPI(Resource):
             data = {"vars": ansiblevars}
         else:
             data = {"vars": ""}
-        return data
+        resp = jsonify(data)
+        resp.status_code = 200
+        return resp
 
 
 class GetHostGroupsAPI(Resource):
@@ -103,7 +107,9 @@ class GetHostGroupsAPI(Resource):
             data = {"groups": [host["groupname"] for host in result]}
         else:
             data = {"groups": ""}
-        return data
+        resp = jsonify(data)
+        resp.status_code = 200
+        return resp
 
 
 class GetHostsSearchAPI(Resource):
@@ -113,4 +119,6 @@ class GetHostsSearchAPI(Resource):
             data = {"hosts": [host["hostname"] for host in result]}
         else:
             data = {"hosts": ""}
-        return data
+        resp = jsonify(data)
+        resp.status_code = 200
+        return resp

@@ -1,5 +1,7 @@
 from flask.ext.restful import reqparse, abort, Resource, Api
 from flask import json
+from flask import jsonify
+from flask import request
 import yaml
 from app import common
 
@@ -35,7 +37,9 @@ class GroupsAPI(Resource):
             data = {"groups": [group for group in result]}
         else:
             data = {"groups": ""}
-        return data
+        resp = jsonify(data)
+        resp.status_code = 200
+        return resp
 
     def post(self):
         data = request.json
@@ -60,6 +64,7 @@ class GroupsAPI(Resource):
         add_group(groupname, ansiblevars, children, hosts)
         return '', 200
 
+
 class DeleteGroupAPI(Resource):
     def delete(self, group):
         exists = [str(item) for item in common.getSearchGroups(group)]
@@ -69,6 +74,7 @@ class DeleteGroupAPI(Resource):
         else:
             return 'group does not exist', 201
 
+
 class GetGroupVarsAPI(Resource):
     def get(self, groupname):
         result = common.getGroupVariables(groupname)
@@ -76,7 +82,9 @@ class GetGroupVarsAPI(Resource):
             data = {"vars": [group["vars"] for group in result]}
         else:
             data = {"vars": ""}
-        return data
+        resp = jsonify(data)
+        resp.status_code = 200
+        return resp
 
 
 class GetGroupChildrenAPI(Resource):
@@ -86,7 +94,9 @@ class GetGroupChildrenAPI(Resource):
             data = {"children": [group["children"] for group in result]}
         else:
             data = {"children": ""}
-        return data
+        resp = jsonify(data)
+        resp.status_code = 200
+        return resp
 
 
 class GetGroupHostsAPI(Resource):
@@ -96,7 +106,9 @@ class GetGroupHostsAPI(Resource):
             data = {"hosts": [group["hosts"] for group in result]}
         else:
             data = {"hosts": ""}
-        return data
+        resp = jsonify(data)
+        resp.status_code = 200
+        return resp
 
 
 class GetGroupsSearchAPI(Resource):
@@ -106,4 +118,6 @@ class GetGroupsSearchAPI(Resource):
             data = {"groups": [group["groupname"] for group in result]}
         else:
             data = {"groups": ""}
-        return data
+        resp = jsonify(data)
+        resp.status_code = 200
+        return resp
