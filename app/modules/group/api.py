@@ -3,11 +3,11 @@ from flask import json
 import yaml
 from app import common
 
-parser = reqparse.RequestParser()
-parser.add_argument('groupname', type=str, location='json')
-parser.add_argument('vars', type=dict, location='json')
-parser.add_argument('children', type=list, location='json')
-parser.add_argument('hosts', type=list, location='json')
+#parser = reqparse.RequestParser()
+#parser.add_argument('groupname', type=str, location='json')
+#parser.add_argument('vars', type=dict, location='json')
+#parser.add_argument('children', type=list, location='json')
+#parser.add_argument('hosts', type=list, location='json')
 
 
 def add_group(groupname, ansiblevars, children, hosts):
@@ -44,11 +44,16 @@ class GroupsAPI(Resource):
         return data
 
     def post(self):
-        args = parser.parse_args()
-        groupname = args['groupname']
-        ansiblevars = args['vars']
-        children = args['children']
-        hosts = args['hosts']
+        #args = parser.parse_args()
+        data = request.json
+        #groupname = args['groupname']
+        #ansiblevars = args['vars']
+        #children = args['children']
+        #hosts = args['hosts']
+        groupname = data['groupname']
+        ansiblevars = data['vars']
+        children = data['children']
+        hosts = data['hosts']
         exists = [str(item) for item in common.getSearchGroups(groupname)]
         if exists:
             return 'Group already exists', 201
