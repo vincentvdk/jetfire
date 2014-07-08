@@ -23,8 +23,8 @@ from app.modules.host.get_host import GetAllHosts
 from app.modules.group.get_group import GetAllGroups
 from app.common import db
 
-class Remove(flask.views.MethodView):
 
+class Remove(flask.views.MethodView):
     def get(self):
         g = GetAllGroups()
         h = GetAllHosts()
@@ -57,12 +57,10 @@ class Remove(flask.views.MethodView):
         db.hosts.remove({'hostname': hostname})
         groups = db.groups.find({'hosts': hostname}).distinct('groupname')
         for item in groups:
-             db.groups.update({"groupname": item}, {"$pull": {"hosts": hostname}})
-
+            db.groups.update({"groupname": item}, {"$pull": {"hosts": hostname}})
 
     def group(self, groupname):
         db.groups.remove({'groupname': groupname})
         parentgroups = db.groups.find({'children': groupname}).distinct('groupname')
         for item in parentgroups:
             db.groups.update({"groupname": item}, {"$pull": {"children": groupname}})
-

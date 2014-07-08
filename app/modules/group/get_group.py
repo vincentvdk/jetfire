@@ -24,7 +24,6 @@ from flask import request
 
 
 class GetGroup(flask.views.MethodView):
-
     def get(self):
         query = request.args.get('q')
         if query:
@@ -34,7 +33,8 @@ class GetGroup(flask.views.MethodView):
                 groupmembers = self.get_groupchildren(query)
                 groupvars = self.get_groupvars(query)
                 grouphosts = self.get_grouphosts(query)
-                return flask.render_template('getgroup.html', groupname=query, members=groupmembers, groupvars=groupvars, grouphosts=grouphosts)
+                return flask.render_template('getgroup.html', groupname=query, members=groupmembers,
+                                             groupvars=groupvars, grouphosts=grouphosts)
             else:
                 return self.get_searchGroups(query)
 
@@ -43,7 +43,7 @@ class GetGroup(flask.views.MethodView):
     def post(self):
         groupname = str(flask.request.form['get_group'])
         result = common.getGroup(groupname)
-        group = [ item for item in result]
+        group = [item for item in result]
         if not group:
             flask.flash('Group ' + groupname + ' not found')
             return flask.redirect(flask.url_for('getgroup'))
@@ -51,7 +51,8 @@ class GetGroup(flask.views.MethodView):
             groupmembers = self.get_groupchildren(groupname)
             groupvars = self.get_groupvars(groupname)
             grouphosts = self.get_grouphosts(groupname)
-            return flask.render_template('getgroup.html', groupname=groupname, members=groupmembers, groupvars=groupvars, grouphosts=grouphosts)
+            return flask.render_template('getgroup.html', groupname=groupname, members=groupmembers,
+                                         groupvars=groupvars, grouphosts=grouphosts)
 
     def get_searchGroups(self, groupname):
         try:
@@ -64,10 +65,11 @@ class GetGroup(flask.views.MethodView):
         getallgroups = GetAllGroups()
         searchgroups = getallgroups.get_pagedGroups(skip, app.config['NUMBER_OF_ITEMS_PER_PAGE'], groupname)
 
-        pagination = Pagination(page=page, total=common.countGroups(groupname), found=groupname, record_name='group', per_page= app.config['NUMBER_OF_ITEMS_PER_PAGE'])
+        pagination = Pagination(page=page, total=common.countGroups(groupname), found=groupname, record_name='group',
+                                per_page=app.config['NUMBER_OF_ITEMS_PER_PAGE'])
         return flask.render_template('getgroup.html', allgroups=searchgroups, pagination=pagination)
 
-    def get_groupchildren(self,groupname):
+    def get_groupchildren(self, groupname):
         result = common.getAllChilderenForGroup(groupname)
         for item in result:
             childs = item
@@ -79,7 +81,7 @@ class GetGroup(flask.views.MethodView):
                 children.append(item)
         return children
 
-    def get_grouphosts(self,groupname):
+    def get_grouphosts(self, groupname):
         result = common.getAllHostForGroup(groupname)
         for item in result:
             h = item
@@ -92,7 +94,7 @@ class GetGroup(flask.views.MethodView):
                 members.append(item)
         return members
 
-    def get_groupvars(self,groupname):
+    def get_groupvars(self, groupname):
         result = common.getGroupVariables(groupname)
         vars = [item for item in result]
         if len(groupname) == 0:
@@ -104,8 +106,8 @@ class GetGroup(flask.views.MethodView):
                 groupvars = item["vars"]
         return groupvars
 
-class GetAllGroups(flask.views.MethodView):
 
+class GetAllGroups(flask.views.MethodView):
     def get(self):
         try:
             page = int(request.args.get('page', 1))
@@ -115,10 +117,11 @@ class GetAllGroups(flask.views.MethodView):
         skip = app.config['NUMBER_OF_ITEMS_PER_PAGE'] * (page - 1)
         allgroups = self.get_pagedGroups(skip, app.config['NUMBER_OF_ITEMS_PER_PAGE'])
 
-        pagination = Pagination(css_framework='bootstrap3', page=page, total=common.countGroups(), record_name='group', per_page= app.config['NUMBER_OF_ITEMS_PER_PAGE'])
+        pagination = Pagination(css_framework='bootstrap3', page=page, total=common.countGroups(), record_name='group',
+                                per_page=app.config['NUMBER_OF_ITEMS_PER_PAGE'])
         return flask.render_template('getgroup.html', allgroups=allgroups, pagination=pagination)
 
-    def get_pagedGroups(self, skip, numberOfTimes, filterGroup = None):
+    def get_pagedGroups(self, skip, numberOfTimes, filterGroup=None):
         result = common.getPagedGroups(skip, numberOfTimes, filterGroup)
         allgroups = []
         group = GetGroup()

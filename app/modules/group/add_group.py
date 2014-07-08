@@ -78,7 +78,7 @@ class AddGroup(flask.views.MethodView):
                 "hosts": members,
                 "vars": y,
                 "children": children
-        }
+                }
         try:
             db.groups.insert(post)
         except:

@@ -22,10 +22,10 @@ import yaml
 from app import common
 from app.common import db
 
-class AddHost(flask.views.MethodView):
 
+class AddHost(flask.views.MethodView):
     def get(self):
-        groups =  common.getAllGroups()
+        groups = common.getAllGroups()
         # return everything to the template
         return flask.render_template('addhost.html', groups=groups)
 
@@ -36,7 +36,7 @@ class AddHost(flask.views.MethodView):
             flask.flash('Empty hostname given')
             return flask.redirect(flask.url_for('addhost'))
         elif hostname == self.get_hostname(hostname):
-# add the option to edit the given hostname
+            # add the option to edit the given hostname
             flask.flash('Host already exists')
             return flask.redirect(flask.url_for('addhost'))
         else:
@@ -47,7 +47,7 @@ class AddHost(flask.views.MethodView):
             flask.flash('Host added successfully')
             return flask.redirect(flask.url_for('addhost'))
 
-    def get_hostname(self,hostname):
+    def get_hostname(self, hostname):
         host = [str(item) for item in db.hosts.find({"hostname": hostname}).distinct("hostname")]
         if not host:
             host = None
@@ -55,7 +55,7 @@ class AddHost(flask.views.MethodView):
             host = host[0]
         return host
 
-    def add_host(self,hostname):
+    def add_host(self, hostname):
         # Get the ansible vars from the form
         yamlvars = flask.request.form['hyaml']
         try:
@@ -67,18 +67,16 @@ class AddHost(flask.views.MethodView):
             print "Yaml syntax error"
         post = {"hostname": hostname,
                 "vars": y
-        }
+                }
         try:
             db.hosts.insert(post)
         except:
             pass
 
-
     def add_host_togroups(self, hostname):
         selectgroups = flask.request.form.getlist('selectedgroups')
-        #remove unicode tags
+        # remove unicode tags
         selectgroups = [str(group) for group in selectgroups]
         # Add host as member to each selecred group
         for group in selectgroups:
-            db.groups.update({'groupname': group}, {'$push':{'hosts': hostname}},upsert=False,multi=False)
-
+            db.groups.update({'groupname': group}, {'$push': {'hosts': hostname}}, upsert=False, multi=False)

@@ -25,14 +25,13 @@ from app.common import db
 
 
 class EditGroup(flask.views.MethodView):
-
     def post(self):
         groupname = str(flask.request.form['group_get'])
         childgroups = self.get_childgroups(groupname)
         if len(groupname) == 0:
             flask.flash('empty groupname given')
             return flask.render_template('editgroup.html')
-        elif self.get_groupinfo(groupname) == None:
+        elif self.get_groupinfo(groupname) is None:
             flask.flash('Group does not exist')
             return flask.redirect(flask.url_for('editgroup'))
         else:
@@ -40,7 +39,9 @@ class EditGroup(flask.views.MethodView):
             hosts = self.get_grouphosts(groupname)
             available_hosts = self.get_availablehosts()
             availablechildgroups = self.get_availablechildren()
-            return flask.render_template('editgroup.html', group=groupname, result=result, hosts=hosts, available_hosts=available_hosts, childgroups=childgroups, availablechildgroups=availablechildgroups)
+            return flask.render_template('editgroup.html', group=groupname, result=result, hosts=hosts,
+                                         available_hosts=available_hosts, childgroups=childgroups,
+                                         availablechildgroups=availablechildgroups)
 
     def get(self):
         return flask.render_template('editgroup.html')
@@ -76,7 +77,7 @@ class EditGroup(flask.views.MethodView):
         return allhosts
 
     def get_childgroups(self, groupname):
-        result = db.groups.find({"groupname": groupname}, {'children':1, '_id': 0})
+        result = db.groups.find({"groupname": groupname}, {'children': 1, '_id': 0})
         for item in result:
             childgroups = item["children"]
         return childgroups
@@ -92,7 +93,6 @@ class EditGroup(flask.views.MethodView):
 
 
 class EditGroupSubmit(flask.views.MethodView):
-
     def post(self):
         groupname = str(flask.request.form['group_get2'])
         self.update_group(groupname)
@@ -103,7 +103,7 @@ class EditGroupSubmit(flask.views.MethodView):
     def get(self):
         return flask.render_template('editgroup.html')
 
-    def update_group(self,groupname):
+    def update_group(self, groupname):
         yamlvars = flask.request.form['egyaml']
         try:
             y = yaml.load(yamlvars)
@@ -111,16 +111,16 @@ class EditGroupSubmit(flask.views.MethodView):
             print "Yaml syntax error"
 
         try:
-            db.groups.update({"groupname": groupname}, {"$set": {'vars': y}}, upsert=False,multi=False)
+            db.groups.update({"groupname": groupname}, {"$set": {'vars': y}}, upsert=False, multi=False)
         except:
             pass
 
-    def update_hosts(self,groupname):
+    def update_hosts(self, groupname):
         global add_hosts, rem_hosts
         h = EditGroup()
         current_hosts = h.get_grouphosts(groupname)
         updated_hosts = flask.request.form.getlist('hostselect')
-        if current_hosts != None and len(updated_hosts) > 0:
+        if current_hosts is not None and len(updated_hosts) > 0:
             addh = set(current_hosts)
             remh = set(updated_hosts)
             add_hosts = [x for x in updated_hosts if x not in addh]
