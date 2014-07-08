@@ -47,9 +47,17 @@ class GroupsAPI(Resource):
         ansiblevars = data['vars']
         children = data['children']
         hosts = data['hosts']
+
         exists = [str(item) for item in common.getSearchGroups(groupname)]
         if exists:
             return 'Group already exists', 201
+
+        if type(children) != list:
+            return 'Children is not of type list', 201
+        if type(hosts) != list:
+            return 'Hosts is not of type list', 201
+        if type(ansiblevars) != dict:
+            return 'AnsibleVars is not of type dict', 201
 
         add_group(groupname, ansiblevars, children, hosts)
         return 'group added', 200
@@ -60,9 +68,17 @@ class GroupsAPI(Resource):
         ansiblevars = data['vars']
         children = data['children']
         hosts = data['hosts']
+
+        if type(children) != list:
+            return 'Children is not of type list', 201
+        if type(hosts) != list:
+            return 'Hosts is not of type list', 201
+        if type(ansiblevars) != dict:
+            return 'AnsibleVars is not of type dict', 201
+
         delete_group(groupname)
         add_group(groupname, ansiblevars, children, hosts)
-        return '', 200
+        return 'group updated', 200
 
 
 class DeleteGroupAPI(Resource):

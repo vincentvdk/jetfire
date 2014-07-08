@@ -55,14 +55,18 @@ class HostsAPI(Resource):
         hostname = data['hostname']
         ansiblevars = data['vars']
         groups = data['groups']
+
         exists = [str(item) for item in common.getSearchHosts(hostname)]
         if exists:
             return 'Host already exists', 201
-        if type(groups).__name__!='list':
+
+        if type(groups) != list:
             return 'hosts is not of type list', 201
-        else:
-            add_host(hostname, ansiblevars)
-            add_host_togroups(hostname, groups)
+        if type(ansiblevars) != dict:
+            return 'AnsibleVars is not of type dict', 201
+
+        add_host(hostname, ansiblevars)
+        add_host_togroups(hostname, groups)
 
         return 'host added', 200
 
@@ -71,10 +75,16 @@ class HostsAPI(Resource):
         hostname = data['hostname']
         ansiblevars = data['vars']
         groups = data['groups']
+
+        if type(groups) != list:
+            return 'hosts is not of type list', 201
+        if type(ansiblevars) != dict:
+            return 'AnsibleVars is not of type dict', 201
+
         delete_host(hostname)
         add_host(hostname, ansiblevars)
         add_host_togroups(hostname, groups)
-        return '', 200
+        return 'host updated', 200
 
 
 class DeleteHostAPI(Resource):
