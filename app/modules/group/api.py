@@ -71,12 +71,14 @@ class GroupsAPI(Resource):
         add_group(groupname, ansiblevars, children, hosts)
         return '', 200
 
-    def delete(self):
-        args = parser.parse_args()
-        groupname = args['groupname']
-        delete_group(groupname)
-        return '', 200
-
+class DeleteGroupAPI(Resource):
+    def delete(self, group):
+        exists = [str(item) for item in common.getSearchGroups(group)]
+        if exists:
+            delete_group(group)
+            return 'group deleted', 200
+        else:
+            return 'group does not exist', 201
 
 class GetGroupVarsAPI(Resource):
     def get(self, groupname):
