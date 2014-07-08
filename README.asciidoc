@@ -29,7 +29,13 @@ Open a browser and point to http://<yourhost>:5000
 The +inventory.py+ script is used as inventory script. It must be edited to point to the same MongoDB instance and database to function.
 
 === Required Python packages
+
+* python-yaml
+* python-flask
+* python-pymongo
+
 * pip install flask-paginate
+* pip install Flask-RESTful
 
 === API testing
 
