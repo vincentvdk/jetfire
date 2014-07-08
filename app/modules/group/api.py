@@ -3,12 +3,6 @@ from flask import json
 import yaml
 from app import common
 
-#parser = reqparse.RequestParser()
-#parser.add_argument('groupname', type=str, location='json')
-#parser.add_argument('vars', type=dict, location='json')
-#parser.add_argument('children', type=list, location='json')
-#parser.add_argument('hosts', type=list, location='json')
-
 
 def add_group(groupname, ansiblevars, children, hosts):
     if ansiblevars:
@@ -44,12 +38,7 @@ class GroupsAPI(Resource):
         return data
 
     def post(self):
-        #args = parser.parse_args()
         data = request.json
-        #groupname = args['groupname']
-        #ansiblevars = args['vars']
-        #children = args['children']
-        #hosts = args['hosts']
         groupname = data['groupname']
         ansiblevars = data['vars']
         children = data['children']
@@ -59,14 +48,14 @@ class GroupsAPI(Resource):
             return 'Group already exists', 201
 
         add_group(groupname, ansiblevars, children, hosts)
-        return '', 200
+        return 'group added', 200
 
     def put(self):
-        args = parser.parse_args()
-        groupname = args['groupname']
-        ansiblevars = args['vars']
-        children = args['children']
-        hosts = args['hosts']
+        data = request.json
+        groupname = data['groupname']
+        ansiblevars = data['vars']
+        children = data['children']
+        hosts = data['hosts']
         delete_group(groupname)
         add_group(groupname, ansiblevars, children, hosts)
         return '', 200

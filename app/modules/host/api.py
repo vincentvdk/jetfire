@@ -67,10 +67,10 @@ class HostsAPI(Resource):
         return 'host added', 200
 
     def put(self):
-        args = parser.parse_args()
-        hostname = args['hostname']
-        ansiblevars = args['vars']
-        groups = args['groups']
+        data = request.json
+        hostname = data['hostname']
+        ansiblevars = data['vars']
+        groups = data['groups']
         delete_host(hostname)
         add_host(hostname, ansiblevars)
         add_host_togroups(hostname, groups)
