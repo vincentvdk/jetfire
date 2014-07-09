@@ -25,7 +25,7 @@ from app.common import db
 
 class AddHost(flask.views.MethodView):
     def get(self):
-        groups = common.getAllGroups()
+        groups = common.get_all_groups()
         # return everything to the template
         return flask.render_template('addhost.html', groups=groups)
 

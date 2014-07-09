@@ -27,14 +27,14 @@ class AddGroup(flask.views.MethodView):
 
     def get(self):
         '''logic to return a list of all available ansible hosts'''
-        hosts = common.getAllHosts()
-        childgroups = common.getAllGroups()
+        hosts = common.get_all_hosts()
+        childgroups = common.get_all_groups()
         return flask.render_template('addgroup.html', hosts=hosts, childgroups=childgroups)
 
     def post(self):
         groupname = str(flask.request.form['add_group'])
-        hosts = common.getAllHosts()
-        childgroups = common.getAllGroups()
+        hosts = common.get_all_hosts()
+        childgroups = common.get_all_groups()
         if len(groupname) == 0:
             flask.flash('empty groupname')
             return flask.render_template('addgroup.html', hosts=hosts, childgroups=childgroups)

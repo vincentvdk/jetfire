@@ -32,7 +32,7 @@ def delete_group(groupname):
 
 class GroupsAPI(Resource):
     def get(self):
-        result = common.getAllGroups()
+        result = common.get_all_groups()
         if result:
             data = {"groups": [group for group in result]}
         else:
@@ -48,7 +48,7 @@ class GroupsAPI(Resource):
         children = data['children']
         hosts = data['hosts']
 
-        exists = [str(item) for item in common.getSearchGroups(groupname)]
+        exists = [str(item) for item in common.get_search_groups(groupname)]
         if exists:
             return 'Group already exists', 201
 
@@ -83,7 +83,7 @@ class GroupsAPI(Resource):
 
 class DeleteGroupAPI(Resource):
     def delete(self, group):
-        exists = [str(item) for item in common.getSearchGroups(group)]
+        exists = [str(item) for item in common.get_search_groups(group)]
         if exists:
             delete_group(group)
             return 'group deleted', 200
@@ -93,7 +93,7 @@ class DeleteGroupAPI(Resource):
 
 class GetGroupVarsAPI(Resource):
     def get(self, groupname):
-        result = common.getGroupVariables(groupname)
+        result = common.get_group_variables(groupname)
         if result:
             data = {"vars": [group["vars"] for group in result]}
         else:
@@ -105,7 +105,7 @@ class GetGroupVarsAPI(Resource):
 
 class GetGroupChildrenAPI(Resource):
     def get(self, groupname):
-        result = common.getAllChilderenForGroup(groupname)
+        result = common.get_all_children_for_group(groupname)
         if result:
             data = {"children": [group["children"] for group in result]}
         else:
@@ -117,7 +117,7 @@ class GetGroupChildrenAPI(Resource):
 
 class GetGroupHostsAPI(Resource):
     def get(self, groupname):
-        result = common.getAllHostForGroup(groupname)
+        result = common.get_all_host_for_group(groupname)
         if result:
             data = {"hosts": [group["hosts"] for group in result]}
         else:
@@ -129,7 +129,7 @@ class GetGroupHostsAPI(Resource):
 
 class GetGroupsSearchAPI(Resource):
     def get(self, search_term):
-        result = common.getSearchGroups(search_term)
+        result = common.get_search_groups(search_term)
         if result:
             data = {"groups": [group["groupname"] for group in result]}
         else:

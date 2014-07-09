@@ -47,7 +47,7 @@ class EditGroup(flask.views.MethodView):
         return flask.render_template('editgroup.html')
 
     def get_groupinfo(self, groupname):
-        result = common.getGroupInfo(groupname)
+        result = common.get_group_info(groupname)
         if not result:
             ansiblevar = None
         else:
@@ -57,7 +57,7 @@ class EditGroup(flask.views.MethodView):
 
     def get_grouphosts(self, groupname):
         '''retrieve all hosts from the group'''
-        result = common.getAllHostForGroup(groupname)
+        result = common.get_all_host_for_group(groupname)
         hosts = result[0]["hosts"]
         if not hosts:
             return None
@@ -66,7 +66,7 @@ class EditGroup(flask.views.MethodView):
 
     def get_availablehosts(self):
         ''' return all hosts not a member of this group'''
-        allhosts = common.getAllHosts()
+        allhosts = common.get_all_hosts()
         # build compared list
         groupname = str(flask.request.form['group_get'])
         hosts = self.get_grouphosts(groupname)
@@ -83,7 +83,7 @@ class EditGroup(flask.views.MethodView):
         return childgroups
 
     def get_availablechildren(self):
-        allgroups = common.getAllGroups()
+        allgroups = common.get_all_groups()
         # build compared list
         groupname = str(flask.request.form['group_get'])
         childgroups = self.get_childgroups(groupname)

@@ -30,7 +30,7 @@ class GetHost(flask.views.MethodView):
             result = self.get_hostinfo(query)
             groups = self.get_hostgroups(query)
             if result is None:
-                return self.get_searchHosts(query)
+                return self.get_search_hosts(query)
             else:
                 hostinfo = result
                 return flask.render_template('gethost.html', res=result, groupres=groups, hostname=query)
@@ -43,12 +43,12 @@ class GetHost(flask.views.MethodView):
         groups = self.get_hostgroups(hostname)
         # print groups
         if result is None:
-            return self.get_searchHosts(hostname)
+            return self.get_search_hosts(hostname)
         else:
             hostinfo = result
             return flask.render_template('gethost.html', res=result, groupres=groups, hostname=hostname)
 
-    def get_searchHosts(self, hostname):
+    def get_search_hosts(self, hostname):
         try:
             page = int(request.args.get('page', 1))
         except ValueError:
@@ -56,15 +56,15 @@ class GetHost(flask.views.MethodView):
 
         skip = app.config['NUMBER_OF_ITEMS_PER_PAGE'] * (page - 1)
 
-        getallhosts = GetAllHosts()
-        searchHosts = getallhosts.get_pagedhosts(skip, app.config['NUMBER_OF_ITEMS_PER_PAGE'], hostname)
+        all_hosts = GetAllHosts()
+        search_hosts = all_hosts.get_pagedhosts(skip, app.config['NUMBER_OF_ITEMS_PER_PAGE'], hostname)
 
-        pagination = Pagination(page=page, total=common.countHosts(hostname), found=hostname, record_name='host',
+        pagination = Pagination(page=page, total=common.count_hosts(hostname), found=hostname, record_name='host',
                                 per_page=app.config['NUMBER_OF_ITEMS_PER_PAGE'])
-        return flask.render_template('gethost.html', allhosts=searchHosts, pagination=pagination)
+        return flask.render_template('gethost.html', allhosts=search_hosts, pagination=pagination)
 
     def get_hostinfo(self, hostname):
-        result = common.getHostnameInfo(hostname)
+        result = common.get_hostname_info(hostname)
         host = [item for item in result]
         if len(hostname) == 0:
             return None
@@ -79,7 +79,7 @@ class GetHost(flask.views.MethodView):
             return ansiblevars
 
     def get_hostgroups(self, hostname):
-        result = common.getAllGroupsForHost(hostname)
+        result = common.get_all_groups_for_host(hostname)
         groups = [item for item in result]
         grouplist = []
         # return empty list when host is not in a group
@@ -101,12 +101,12 @@ class GetAllHosts(flask.views.MethodView):
         skip = app.config['NUMBER_OF_ITEMS_PER_PAGE'] * (page - 1)
         allhosts = self.get_pagedhosts(skip, app.config['NUMBER_OF_ITEMS_PER_PAGE'])
 
-        pagination = Pagination(css_framework='bootstrap3', page=page, total=common.countHosts(), record_name='host',
+        pagination = Pagination(css_framework='bootstrap3', page=page, total=common.count_hosts(), record_name='host',
                                 per_page=app.config['NUMBER_OF_ITEMS_PER_PAGE'])
         return flask.render_template('gethost.html', allhosts=allhosts, pagination=pagination)
 
-    def get_pagedhosts(self, skip, numberOfItems, filterHostname=None):
-        result = common.getPagedHosts(skip, numberOfItems, filterHostname)
+    def get_pagedhosts(self, skip, number_of_items, filter_hostname=None):
+        result = common.get_paged_hosts(skip, number_of_items, filter_hostname)
         allhosts = {}
         host = GetHost()
         for item in result:
@@ -120,7 +120,7 @@ class GetAllHosts(flask.views.MethodView):
         return allhosts
 
     def get_allhosts(self):
-        result = common.getAllHosts()
+        result = common.get_all_hosts()
         allhosts = {}
         host = GetHost()
         for item in result:

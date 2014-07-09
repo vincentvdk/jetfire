@@ -37,74 +37,74 @@ def host_exists(hostname):
     return False
 
 
-def countHosts(filterHostname=None):
-    if filterHostname:
-        return db.hosts.find({'hostname': {'$regex': filterHostname}}).count()
+def count_hosts(filter_hostname=None):
+    if filter_hostname:
+        return db.hosts.find({'hostname': {'$regex': filter_hostname}}).count()
     else:
         return db.hosts.find().count()
 
 
-def countGroups(filterGroupname=None):
-    if filterGroupname:
-        return db.groups.find({'groupname': {'$regex': filterGroupname}}).count()
+def count_groups(filter_groupname=None):
+    if filter_groupname:
+        return db.groups.find({'groupname': {'$regex': filter_groupname}}).count()
     else:
         return db.groups.find().count()
 
 
-def getAllGroupsForHost(hostname):
+def get_all_groups_for_host(hostname):
     return db.groups.find({"hosts": hostname}, {'groupname': 1, '_id': 0})
 
 
-def getHostnameInfo(hostname):
+def get_hostname_info(hostname):
     return db.hosts.find({"hostname": hostname}, {'hostname': 0, '_id': 0})
 
 
-def getSearchHosts(search_term):
+def get_search_hosts(search_term):
     return db.hosts.find({'hostname': {'$regex': search_term}})
 
 
-def getPagedHosts(skip, numberOfItems, filterHostname=None):
-    if filterHostname:
-        return db.hosts.find({'hostname': {'$regex': filterHostname}}).skip(skip).limit(numberOfItems)
+def get_paged_hosts(skip, number_of_items, filter_hostname=None):
+    if filter_hostname:
+        return db.hosts.find({'hostname': {'$regex': filter_hostname}}).skip(skip).limit(number_of_items)
     else:
-        return db.hosts.find().skip(skip).limit(numberOfItems)
+        return db.hosts.find().skip(skip).limit(number_of_items)
 
 
-def getAllHosts():
+def get_all_hosts():
     return db.hosts.find().distinct("hostname")
 
 
-def getAllHostForGroup(groupname):
+def get_all_host_for_group(groupname):
     return db.groups.find({'groupname': groupname}, {'hosts': 1, '_id': 0})
 
 
-def getAllChilderenForGroup(groupname):
+def get_all_children_for_group(groupname):
     return db.groups.find({"groupname": groupname}, {'children': 1, '_id': 0})
 
 
-def getGroupVariables(groupname):
+def get_group_variables(groupname):
     return db.groups.find({"groupname": groupname}, {'vars': 1, '_id': 0})
 
 
-def getPagedGroups(skip, numberOfItems, filterGroupname=None):
-    if filterGroupname:
-        return db.groups.find({'groupname': {'$regex': filterGroupname}}).skip(skip).limit(numberOfItems)
+def get_paged_groups(skip, number_of_items, filter_groupname=None):
+    if filter_groupname:
+        return db.groups.find({'groupname': {'$regex': filter_groupname}}).skip(skip).limit(number_of_items)
     else:
-        return db.groups.find().skip(skip).limit(numberOfItems)
+        return db.groups.find().skip(skip).limit(number_of_items)
 
 
-def getAllGroups():
+def get_all_groups():
     return db.groups.find().distinct("groupname")
 
 
-def getGroup(groupname):
+def get_group(groupname):
     return db.groups.find({"groupname": groupname}, {'groupname': 1, '_id': 0})
 
 
-def getGroupInfo(groupname):
+def get_group_info(groupname):
     return db.groups.find({"groupname": groupname}).distinct("vars")
 
 
-def getSearchGroups(search_term):
+def get_search_groups(search_term):
     return db.groups.find({'groupname': {'$regex': search_term}})
 
