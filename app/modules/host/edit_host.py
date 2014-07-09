@@ -54,13 +54,13 @@ class EditHost(flask.views.MethodView):
             return None
 
     def get_hostgroups(self, hostname):
-        '''retrieve all groups the host is a member of'''
+        """retrieve all groups the host is a member of"""
         result = common.get_all_groups_for_host(hostname)
         groups = [item["groupname"] for item in result]
         return groups
 
     def get_availablegroups(self):
-        ''' return all groups this host is not a member of'''
+        """ return all groups this host is not a member of"""
         allgroups = common.get_all_groups()
         # build compared list
         hostname = str(flask.request.form['p_get'])

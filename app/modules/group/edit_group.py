@@ -56,7 +56,7 @@ class EditGroup(flask.views.MethodView):
         return ansiblevar
 
     def get_grouphosts(self, groupname):
-        '''retrieve all hosts from the group'''
+        """retrieve all hosts from the group"""
         result = common.get_all_host_for_group(groupname)
         hosts = result[0]["hosts"]
         if not hosts:
@@ -65,7 +65,7 @@ class EditGroup(flask.views.MethodView):
             return hosts
 
     def get_availablehosts(self):
-        ''' return all hosts not a member of this group'''
+        """ return all hosts not a member of this group"""
         allhosts = common.get_all_hosts()
         # build compared list
         groupname = str(flask.request.form['group_get'])

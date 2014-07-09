@@ -26,7 +26,7 @@ from app.common import db
 class AddGroup(flask.views.MethodView):
 
     def get(self):
-        '''logic to return a list of all available ansible hosts'''
+        """logic to return a list of all available ansible hosts"""
         hosts = common.get_all_hosts()
         childgroups = common.get_all_groups()
         return flask.render_template('addgroup.html', hosts=hosts, childgroups=childgroups)

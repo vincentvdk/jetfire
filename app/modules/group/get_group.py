@@ -87,22 +87,20 @@ class GetGroup(flask.views.MethodView):
             h = item
         members = []
 
-        if not h:
-            member = []
-        else:
+        if h:
             for item in h["hosts"]:
                 members.append(item)
         return members
 
     def get_groupvars(self, groupname):
         result = common.get_group_variables(groupname)
-        vars = [item for item in result]
+        ansible_vars = [item for item in result]
         if len(groupname) == 0:
             groupvars = None
-        elif not vars:
+        elif not ansible_vars:
             groupvars = None
         else:
-            for item in vars:
+            for item in ansible_vars:
                 groupvars = item["vars"]
         return groupvars
 
@@ -128,10 +126,8 @@ class GetAllGroups(flask.views.MethodView):
         for item in result:
             if type(item) is dict:
                 groupname = item["groupname"]
-                t = {}
-                t["groupname"] = str(groupname)
-                t["children"] = group.get_groupchildren(groupname)
-                t["hosts"] = group.get_grouphosts(groupname)
+                t = {"groupname": str(groupname), "children": group.get_groupchildren(groupname),
+                     "hosts": group.get_grouphosts(groupname)}
                 allgroups.append(t)
 
         return allgroups
@@ -142,10 +138,7 @@ class GetAllGroups(flask.views.MethodView):
 
         group = GetGroup()
         for item in result:
-            t = {}
-            t["groupname"] = str(item)
-            t["children"] = group.get_groupchildren(item)
-            t["hosts"] = group.get_grouphosts(item)
+            t = {"groupname": str(item), "children": group.get_groupchildren(item), "hosts": group.get_grouphosts(item)}
             allgroups.append(t)
 
         return allgroups

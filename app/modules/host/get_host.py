@@ -32,7 +32,6 @@ class GetHost(flask.views.MethodView):
             if result is None:
                 return self.get_search_hosts(query)
             else:
-                hostinfo = result
                 return flask.render_template('gethost.html', res=result, groupres=groups, hostname=query)
 
         return flask.render_template('gethost.html')
@@ -45,7 +44,6 @@ class GetHost(flask.views.MethodView):
         if result is None:
             return self.get_search_hosts(hostname)
         else:
-            hostinfo = result
             return flask.render_template('gethost.html', res=result, groupres=groups, hostname=hostname)
 
     def get_search_hosts(self, hostname):
