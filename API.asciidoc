@@ -1,19 +1,36 @@
 == JetFire API
 
-
 == Host
 
 === Get List
 
 +/api/v1.0/hosts+
 
-=== Get
+=== Get Vars
 
-+/api/v1.0/hostsi/{hostname}+
++/api/v1.0/hosts/{hostname}/vars+
 
 |===
-|Parameters|DataType
+|Parameters|DataType|
 hostname,string
+|===
+
+=== Get Groups
+
++/api/v1.0/hosts/{hostname}/groups+
+
+|===
+|Parameters|DataType|
+hostname,string
+|===
+
+=== Get Search
+
++/api/v1.0/search/{search_term}+
+
+|===
+|Parameters|DataType|
+search_term,string
 |===
 
 === Delete
@@ -21,13 +38,20 @@ hostname,string
 +/api/v1.0/hosts/{hostname}+
 
 |===
-|Parameters|DataType
+|Parameters|DataType|
 hostname,string
 |===
 
 === Post
 
 +/api/v1.0/hosts+
+
+|===
+|Parameters|DataType|
+hostname,string
+vars,dict
+groups,list
+|===
 
 === Put
 
