@@ -1,0 +1,34 @@
+== JetFire API
+
+
+== Host
+
+=== Get List
+
++/api/v1.0/hosts+
+
+=== Get
+
++/api/v1.0/hostsi/{hostname}+
+
+|===
+|Parameters|DataType
+hostname,string
+|===
+
+=== Delete
+
++/api/v1.0/hosts/{hostname}+
+
+|===
+|Parameters|DataType
+hostname,string
+|===
+
+=== Post
+
++/api/v1.0/hosts+
+
+=== Put
+
++/api/v1.0/hosts+
