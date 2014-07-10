@@ -1,4 +1,5 @@
-== JetFire API
+= JetFire API
+Philippe Delodder <lodder@delodder.be>
 
 == Host
 
@@ -87,5 +88,47 @@
 
 |groups
 |list
+
+|===
+
+== Group
+
+=== Get List
+
++/api/v1.0/groups+
+
+=== Get Children
+
++/api/v1.0/groups/{groupname/children+
+
+|===
+|Parameters|DataType
+
+|groupname
+|string
+
+|===
+
+=== Get Vars
+
++/api/v1.0/groups/{groupname/vars+
+
+|===
+|Parameters|DataType
+
+|groupname
+|string
+
+|===
+
+=== Get Hosts
+
++/api/v1.0/groups/{groupname/hosts+
+
+|===
+|Parameters|DataType
+
+|groupname
+|string
 
 |===
