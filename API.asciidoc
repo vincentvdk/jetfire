@@ -11,8 +11,11 @@
 +/api/v1.0/hosts/{hostname}/vars+
 
 |===
-|Parameters|DataType|
-hostname,string
+|Parameters|DataType
+
+|hostname
+|string
+
 |===
 
 === Get Groups
@@ -20,8 +23,11 @@ hostname,string
 +/api/v1.0/hosts/{hostname}/groups+
 
 |===
-|Parameters|DataType|
-hostname,string
+|Parameters|DataType
+
+|hostname
+|string
+
 |===
 
 === Get Search
@@ -29,8 +35,11 @@ hostname,string
 +/api/v1.0/search/{search_term}+
 
 |===
-|Parameters|DataType|
-search_term,string
+|Parameters|DataType
+
+|search_term
+|string
+
 |===
 
 === Delete
@@ -38,8 +47,11 @@ search_term,string
 +/api/v1.0/hosts/{hostname}+
 
 |===
-|Parameters|DataType|
-hostname,string
+|Parameters|DataType
+
+|hostname
+|string
+
 |===
 
 === Post
@@ -47,12 +59,33 @@ hostname,string
 +/api/v1.0/hosts+
 
 |===
-|Parameters|DataType|
-hostname,string
-vars,dict
-groups,list
+|Parameters|DataType
+
+|hostname
+|string
+
+|vars
+|dict
+
+|groups
+|list
+
 |===
 
 === Put
 
 +/api/v1.0/hosts+
+
+|===
+|Parameters|DataType
+
+|hostname
+|string
+
+|vars
+|dict
+
+|groups
+|list
+
+|===
