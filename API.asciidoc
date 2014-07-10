@@ -2,7 +2,7 @@
 Philippe Delodder <lodder@delodder.be>
 
 == Description
-The API use JSON pass the data.
+The API use JSON to pass the data.
 
 == Host
 
