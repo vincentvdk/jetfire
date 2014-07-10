@@ -1,6 +1,9 @@
 = JetFire API
 Philippe Delodder <lodder@delodder.be>
 
+== Description
+The API use JSON pass the data.
+
 == Host
 
 === Get List
@@ -12,7 +15,7 @@ Philippe Delodder <lodder@delodder.be>
 +/api/v1.0/hosts/{hostname}/vars+
 
 |===
-|Parameters|DataType
+|Parameters|Data Type
 
 |hostname
 |string
@@ -24,7 +27,7 @@ Philippe Delodder <lodder@delodder.be>
 +/api/v1.0/hosts/{hostname}/groups+
 
 |===
-|Parameters|DataType
+|Parameters|Data Type
 
 |hostname
 |string
@@ -36,7 +39,7 @@ Philippe Delodder <lodder@delodder.be>
 +/api/v1.0/search/{search_term}+
 
 |===
-|Parameters|DataType
+|Parameters|Data Type
 
 |search_term
 |string
@@ -48,7 +51,7 @@ Philippe Delodder <lodder@delodder.be>
 +/api/v1.0/hosts/{hostname}+
 
 |===
-|Parameters|DataType
+|Parameters|Data Type
 
 |hostname
 |string
@@ -60,7 +63,7 @@ Philippe Delodder <lodder@delodder.be>
 +/api/v1.0/hosts+
 
 |===
-|Parameters|DataType
+|Parameters|Data Type
 
 |hostname
 |string
@@ -78,7 +81,7 @@ Philippe Delodder <lodder@delodder.be>
 +/api/v1.0/hosts+
 
 |===
-|Parameters|DataType
+|Parameters|Data Type
 
 |hostname
 |string
@@ -102,7 +105,7 @@ Philippe Delodder <lodder@delodder.be>
 +/api/v1.0/groups/{groupname/children+
 
 |===
-|Parameters|DataType
+|Parameters|Data Type
 
 |groupname
 |string
@@ -114,7 +117,7 @@ Philippe Delodder <lodder@delodder.be>
 +/api/v1.0/groups/{groupname/vars+
 
 |===
-|Parameters|DataType
+Parameters|Data Type
 
 |groupname
 |string
@@ -126,9 +129,82 @@ Philippe Delodder <lodder@delodder.be>
 +/api/v1.0/groups/{groupname/hosts+
 
 |===
-|Parameters|DataType
+|Parameters|Data Type
 
 |groupname
 |string
+
+|===
+
+=== Delete
+
++/api/v1.0/groups/{groupname}+
+
+|===
+|Parameters|Data Type
+
+|groupname
+|string
+
+|===
+
+=== Post
+
++/api/v1.0/groups
+
+|===
+|Parameters|Data Type
+
+|groupname
+|string
+
+|vars
+|dict
+
+|children
+|list
+
+|hosts
+|list
+
+|===
+
+=== Put
+
++/api/v1.0/groups
+
+|===
+|Parameters|Data Type
+
+|groupname
+|string
+
+|vars
+|dict
+
+|children
+|list
+
+|hosts
+|list
+
+|===
+
+== Data Type Examples
+
+|===
+|Data Type|Description|Example
+
+|string
+|define a string to a parameter
+|"groupname" : "group-x"
+
+|dict
+|define a dict to a parameter
+|"vars" : { "ansible_ssh_port" : 222, "users" : [ "vincent", "chris" ] }
+
+|list
+|define a list to a parameter
+|"children" : [ "sapr-dco", "sapr-dco-ftp" ]
 
 |===
