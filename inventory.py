@@ -4,7 +4,7 @@ import json
 import sys
 
 # mongod connection
-conn = pymongo.Connection('192.168.122.240', 27017)
+conn = pymongo.Connection('ansible06.demo.local', 27017, replicaSet='rS0')
 db = conn['ansible']
 
 

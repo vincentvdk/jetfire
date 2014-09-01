@@ -48,7 +48,7 @@ class AddGroup(flask.views.MethodView):
             return flask.render_template('addgroup.html', hosts=hosts, childgroups=childgroups)
 
     # this checks if the groupname is already defined.
-    # needt better implementation
+    # need better implementation
     def get_groupname(self, groupname):
         group = [str(item) for item in db.groups.find({"groupname": groupname}).distinct("groupname")]
         if not group:
