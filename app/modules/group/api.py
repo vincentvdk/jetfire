@@ -3,35 +3,29 @@ from flask import json
 import yaml
 from app import common
 
-#parser = reqparse.RequestParser()
-#parser.add_argument('groupname', type=str, location='json')
-#parser.add_argument('vars', type=dict, location='json')
-#parser.add_argument('children', type=list, location='json')
-#parser.add_argument('hosts', type=list, location='json')
+# commented until API stable
+#def add_group(groupname, ansiblevars, children, hosts):
+#    if ansiblevars:
+#        j = json.dumps(ansiblevars, sort_keys=True, indent=2)
+#        y = yaml.load(j)
+#    else:
+#        y = {}
+#
+#    c = [str(child) for child in children]
+#    h = [str(host) for host in hosts]
+#    post = dict(groupname=groupname, hosts=h, vars=y, children=c)
+#
+#    try:
+#        common.db.groups.insert(post)
+#    except:
+#        pass
 
 
-def add_group(groupname, ansiblevars, children, hosts):
-    if ansiblevars:
-        j = json.dumps(ansiblevars, sort_keys=True, indent=2)
-        y = yaml.load(j)
-    else:
-        y = {}
-
-    c = [str(child) for child in children]
-    h = [str(host) for host in hosts]
-    post = dict(groupname=groupname, hosts=h, vars=y, children=c)
-
-    try:
-        common.db.groups.insert(post)
-    except:
-        pass
-
-
-def delete_group(groupname):
-    common.db.groups.remove({'groupname': groupname})
-    parentgroups = common.db.groups.find({'children': groupname}).distinct('groupname')
-    for item in parentgroups:
-        common.db.groups.update({"groupname": item}, {"$pull": {"children": groupname}})
+#def delete_group(groupname):
+#    common.db.groups.remove({'groupname': groupname})
+#    parentgroups = common.db.groups.find({'children': groupname}).distinct('groupname')
+#    for item in parentgroups:
+#        common.db.groups.update({"groupname": item}, {"$pull": {"children": groupname}})
 
 
 class GroupsAPI(Resource):
@@ -44,12 +38,7 @@ class GroupsAPI(Resource):
         return data
 
     def post(self):
-        #args = parser.parse_args()
         data = request.json
-        #groupname = args['groupname']
-        #ansiblevars = args['vars']
-        #children = args['children']
-        #hosts = args['hosts']
         groupname = data['groupname']
         ansiblevars = data['vars']
         children = data['children']

@@ -1,0 +1,13 @@
+{
+      "hostname":"test.philippe",
+      "vars":
+         {
+            "ansible_ssh_port":22003,
+            "users":[
+               "vincent",
+               "chris"
+            ]
+         },
+      "groups":[
+          "testgroup01", "testgroup02" ]
+}

@@ -1,45 +1,20 @@
 from flask.ext.restful import reqparse, abort, Resource, Api
-from flask import json
 from flask import jsonify
 from flask import request
-import yaml
 from app import common
 
-
-def delete_host(hostname):
-    common.db.hosts.remove({'hostname': hostname})
-    groups = common.db.groups.find({'hosts': hostname}).distinct('groupname')
-    for item in groups:
-        common.db.groups.update({"groupname": item}, {"$pull": {"hosts": hostname}})
-
-
-def add_host(hostname, ansiblevars):
-    try:
-        if ansiblevars:
-            j = json.dumps(ansiblevars, sort_keys=True, indent=2)
-            y = yaml.load(j)
-        else:
-            y = yaml.load('{}')
-    except yaml.YAMLError, exc:
-        print "Yaml syntax error"
-
-    post = dict(hostname=hostname, vars=y)
-
-    try:
-        common.db.hosts.insert(post)
-    except:
-        print "insert error"
-        pass
-
-
-def add_host_togroups(hostname, groups):
-    selectgroups = [str(group) for group in groups]
-    print selectgroups
-    for group in selectgroups:
-        common.db.groups.update({'groupname': group}, {'$push': {'hosts': hostname}}, upsert=False, multi=False)
+# commented until API is stable. then we'll use API for webinterface
+#
+#
+#def add_host_togroups(hostname, groups):
+#    selectgroups = [str(group) for group in groups]
+#    print selectgroups
+#    for group in selectgroups:
+#        common.db.groups.update({'groupname': group}, {'$push': {'hosts': hostname}}, upsert=False, multi=False)
 
 
 class HostsAPI(Resource):
+
     def get(self):
         result = common.getAllHosts()
         if result:
@@ -61,29 +36,30 @@ class HostsAPI(Resource):
         if type(groups).__name__!='list':
             return 'hosts is not of type list', 201
         else:
-            add_host(hostname, ansiblevars)
-            add_host_togroups(hostname, groups)
-
+            common.add_host(hostname, ansiblevars)
+            common.add_host_togroups(hostname, groups)
         return 'host added', 200
 
     def put(self):
-        args = parser.parse_args()
-        hostname = args['hostname']
-        ansiblevars = args['vars']
-        groups = args['groups']
-        delete_host(hostname)
-        add_host(hostname, ansiblevars)
-        add_host_togroups(hostname, groups)
-        return '', 200
+        data = request.json
+        hostname = data['hostname']
+        ansiblevars = data['vars']
+        groups = data['groups']
+        common.delete_host(hostname)
+        common.add_host(hostname, ansiblevars)
+        common.add_host_togroups(hostname, groups)
+        return 'host updated', 200
+
 
 class DeleteHostAPI(Resource):
     def delete(self, hostname):
         exists = [str(item) for item in common.getSearchHosts(hostname)]
         if exists:
-            delete_host(hostname)
+            common.delete_host(hostname)
             return 'host deleted', 200
         else:
             return 'host does not exist', 201
+
 
 class GetHostVarsAPI(Resource):
     def get(self, hostname):
@@ -93,7 +69,7 @@ class GetHostVarsAPI(Resource):
             data = {"vars": ansiblevars}
         else:
             data = {"vars": ""}
-        return data
+        return data, 200
 
 
 class GetHostGroupsAPI(Resource):
