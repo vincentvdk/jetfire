@@ -1,0 +1,210 @@
+= JetFire API
+Philippe Delodder <lodder@delodder.be>
+
+== Description
+The API use JSON to pass the data.
+
+== Host
+
+=== Get List
+
++/api/v1.0/hosts+
+
+=== Get Vars
+
++/api/v1.0/hosts/{hostname}/vars+
+
+|===
+|Parameters|Data Type
+
+|hostname
+|string
+
+|===
+
+=== Get Groups
+
++/api/v1.0/hosts/{hostname}/groups+
+
+|===
+|Parameters|Data Type
+
+|hostname
+|string
+
+|===
+
+=== Get Search
+
++/api/v1.0/search/{search_term}+
+
+|===
+|Parameters|Data Type
+
+|search_term
+|string
+
+|===
+
+=== Delete
+
++/api/v1.0/hosts/{hostname}+
+
+|===
+|Parameters|Data Type
+
+|hostname
+|string
+
+|===
+
+=== Post
+
++/api/v1.0/hosts+
+
+|===
+|Parameters|Data Type
+
+|hostname
+|string
+
+|vars
+|dict
+
+|groups
+|list
+
+|===
+
+=== Put
+
++/api/v1.0/hosts+
+
+|===
+|Parameters|Data Type
+
+|hostname
+|string
+
+|vars
+|dict
+
+|groups
+|list
+
+|===
+
+== Group
+
+=== Get List
+
++/api/v1.0/groups+
+
+=== Get Children
+
++/api/v1.0/groups/{groupname/children+
+
+|===
+|Parameters|Data Type
+
+|groupname
+|string
+
+|===
+
+=== Get Vars
+
++/api/v1.0/groups/{groupname/vars+
+
+|===
+Parameters|Data Type
+
+|groupname
+|string
+
+|===
+
+=== Get Hosts
+
++/api/v1.0/groups/{groupname/hosts+
+
+|===
+|Parameters|Data Type
+
+|groupname
+|string
+
+|===
+
+=== Delete
+
++/api/v1.0/groups/{groupname}+
+
+|===
+|Parameters|Data Type
+
+|groupname
+|string
+
+|===
+
+=== Post
+
++/api/v1.0/groups
+
+|===
+|Parameters|Data Type
+
+|groupname
+|string
+
+|vars
+|dict
+
+|children
+|list
+
+|hosts
+|list
+
+|===
+
+=== Put
+
++/api/v1.0/groups
+
+|===
+|Parameters|Data Type
+
+|groupname
+|string
+
+|vars
+|dict
+
+|children
+|list
+
+|hosts
+|list
+
+|===
+
+== Data Type Examples
+
+|===
+|Data Type|Description|Example
+
+|string
+|define a string to a parameter
+|"groupname" : "group-x"
+
+|dict
+|define a dict to a parameter
+|"vars" : { "ansible_ssh_port" : 222, "users" : [ "vincent", "chris" ] }
+
+|list
+|define a list to a parameter
+|"children" : [ "sapr-dco", "sapr-dco-ftp" ]
+
+|===
