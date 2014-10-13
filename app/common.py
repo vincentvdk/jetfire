@@ -66,6 +66,30 @@ def add_host_togroups(hostname, groups):
         db.groups.update({'groupname': group}, {'$push': {'hosts': hostname}}, upsert=False, multi=False)
 
 
+def add_group(groupname, ansiblevars, children, hosts):
+    if ansiblevars:
+        j = json.dumps(ansiblevars, sort_keys=True, indent=2)
+        y = yaml.load(j)
+    else:
+        y = {}
+
+    c = [str(child) for child in children]
+    h = [str(host) for host in hosts]
+    post = dict(groupname=groupname, hosts=h, vars=y, children=c)
+
+    try:
+        db.groups.insert(post)
+    except:
+        pass
+
+
+def delete_group(groupname):
+    db.groups.remove({'groupname': groupname})
+    parentgroups = db.groups.find({'children': groupname}).distinct('groupname')
+    for item in parentgroups:
+        db.groups.update({"groupname": item}, {"$pull": {"children": groupname}})
+
+
 def hostExists(hostname):
     if db.hosts.find({"hostname": hostname}).count() > 0:
         return True

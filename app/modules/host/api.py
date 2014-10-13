@@ -33,7 +33,7 @@ class HostsAPI(Resource):
         exists = [str(item) for item in common.getSearchHosts(hostname)]
         if exists:
             return 'Host already exists', 201
-        if type(groups).__name__!='list':
+        if type(groups).__name__ != 'list':
             return 'hosts is not of type list', 201
         else:
             common.add_host(hostname, ansiblevars)
@@ -41,6 +41,7 @@ class HostsAPI(Resource):
         return 'host added', 200
 
     def put(self):
+    # changing hostname results in 2 hosts. 1 new + 1 original. ->bug
         data = request.json
         hostname = data['hostname']
         ansiblevars = data['vars']

@@ -1,6 +1,7 @@
 from flask.ext.restful import reqparse, abort, Resource, Api
-from flask import json
-import yaml
+from flask import request
+#from flask import json
+#import yaml
 from app import common
 
 # commented until API stable
@@ -47,24 +48,34 @@ class GroupsAPI(Resource):
         if exists:
             return 'Group already exists', 201
 
-        add_group(groupname, ansiblevars, children, hosts)
-        return '', 200
+        common.add_group(groupname, ansiblevars, children, hosts)
+        return 'group added', 200
 
     def put(self):
-        args = parser.parse_args()
-        groupname = args['groupname']
-        ansiblevars = args['vars']
-        children = args['children']
-        hosts = args['hosts']
-        delete_group(groupname)
-        add_group(groupname, ansiblevars, children, hosts)
-        return '', 200
+        data = request.json
+        groupname = data['groupname']
+        ansiblevars = data['vars']
+        children = data['children']
+        hosts = data['hosts']
+        common.delete_group(groupname)
+        common.add_group(groupname, ansiblevars, children, hosts)
+        return 'group updated', 200
 
-    def delete(self):
-        args = parser.parse_args()
-        groupname = args['groupname']
-        delete_group(groupname)
-        return '', 200
+#    def delete(self):
+#        data = request.json
+#        groupname = data['groupname']
+#        common.delete_group(groupname)
+#        return 'group deleted', 200
+
+
+class DeleteGroupAPI(Resource):
+    def delete(self, groupname):
+        exists = [str(item) for item in common.getSearchGroups(groupname)]
+        if exists:
+            common.delete_group(groupname)
+            return 'group deleted', 200
+        else:
+            return 'group does not exist', 201
 
 
 class GetGroupVarsAPI(Resource):
