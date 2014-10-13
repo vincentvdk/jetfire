@@ -3,16 +3,6 @@ from flask import jsonify
 from flask import request
 from app import common
 
-# commented until API is stable. then we'll use API for webinterface
-#
-#
-#def add_host_togroups(hostname, groups):
-#    selectgroups = [str(group) for group in groups]
-#    print selectgroups
-#    for group in selectgroups:
-#        common.db.groups.update({'groupname': group}, {'$push': {'hosts': hostname}}, upsert=False, multi=False)
-
-
 class HostsAPI(Resource):
 
     def get(self):

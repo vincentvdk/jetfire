@@ -24,16 +24,17 @@ app.config.from_pyfile('../config.cfg')
 from flask.ext.restful import Resource, Api
 api = Api(app)
 
-from app.modules.host.api import GetHostVarsAPI, HostsAPI, GetHostsSearchAPI, GetHostGroupsAPI, DeleteHostAPI
-from app.modules.group.api import GroupsAPI, GetGroupsSearchAPI, GetGroupVarsAPI, \
-GetGroupChildrenAPI, GetGroupHostsAPI, DeleteGroupAPI
+from app.modules.host.api import GetHostVarsAPI, HostsAPI, GetHostsSearchAPI,\
+    GetHostGroupsAPI, DeleteHostAPI
+from app.modules.group.api import GroupsAPI, GetGroupsSearchAPI,\
+    GetGroupVarsAPI, GetGroupChildrenAPI, \
+    GetGroupHostsAPI, DeleteGroupAPI
 from app.modules.host.add_host import AddHost
 from app.modules.host.get_host import GetHost, GetAllHosts
 from app.modules.group.get_group import GetGroup, GetAllGroups
 from app.modules.group.add_group import AddGroup
 from app.modules.host.edit_host import EditHost, EditHostSubmit
 from app.modules.group.edit_group import EditGroup, EditGroupSubmit
-#from remove import RemoveGroup, RemoveHost
 from remove import Remove
 
 
@@ -46,15 +47,18 @@ class Main(flask.views.MethodView):
 
 api.add_resource(GetHostVarsAPI, '/api/v1.0/hosts/<string:hostname>/vars')
 api.add_resource(GetHostGroupsAPI, '/api/v1.0/hosts/<string:hostname>/groups')
-api.add_resource(GetHostsSearchAPI, '/api/v1.0/hosts/search/<string:search_term>')
+api.add_resource(GetHostsSearchAPI,
+                 '/api/v1.0/hosts/search/<string:search_term>')
 api.add_resource(DeleteHostAPI, '/api/v1.0/hosts/<string:hostname>')
 api.add_resource(HostsAPI, '/api/v1.0/hosts')
 
 
-api.add_resource(GetGroupChildrenAPI, '/api/v1.0/groups/<string:groupname>/children')
+api.add_resource(GetGroupChildrenAPI,
+                 '/api/v1.0/groups/<string:groupname>/children')
 api.add_resource(GetGroupVarsAPI, '/api/v1.0/groups/<string:groupname>/vars')
 api.add_resource(GetGroupHostsAPI, '/api/v1.0/groups/<string:groupname>/hosts')
-api.add_resource(GetGroupsSearchAPI, '/api/v1.0/groups/search/<string:search_term>')
+api.add_resource(GetGroupsSearchAPI,
+                 '/api/v1.0/groups/search/<string:search_term>')
 api.add_resource(DeleteGroupAPI, '/api/v1.0/groups/<string:groupname>')
 api.add_resource(GroupsAPI, '/api/v1.0/groups')
 
