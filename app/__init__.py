@@ -35,6 +35,8 @@ from app.modules.group.get_group import GetGroup, GetAllGroups
 from app.modules.group.add_group import AddGroup
 from app.modules.host.edit_host import EditHost, EditHostSubmit
 from app.modules.group.edit_group import EditGroup, EditGroupSubmit
+from app.modules.ansible.api import ansibleAPI
+
 from remove import Remove
 
 
@@ -61,6 +63,8 @@ api.add_resource(GetGroupsSearchAPI,
                  '/api/v1.0/groups/search/<string:search_term>')
 api.add_resource(DeleteGroupAPI, '/api/v1.0/groups/<string:groupname>')
 api.add_resource(GroupsAPI, '/api/v1.0/groups')
+
+api.add_resource(ansibleAPI, '/api/v1.0/playbook')
 
 app.add_url_rule('/',
                  view_func=Main.as_view('index'),

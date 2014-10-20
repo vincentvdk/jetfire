@@ -1,10 +1,10 @@
-from flask.ext.restful import reqparse, abort, Resource, Api
+from flask.ext.restful import Resource
 from flask import jsonify
 from flask import request
 from app import common
 
-class HostsAPI(Resource):
 
+class HostsAPI(Resource):
     def get(self):
         result = common.getAllHosts()
         if result:

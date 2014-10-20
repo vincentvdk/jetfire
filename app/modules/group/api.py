@@ -1,32 +1,6 @@
-from flask.ext.restful import reqparse, abort, Resource, Api
+from flask.ext.restful import Resource
 from flask import request
-#from flask import json
-#import yaml
 from app import common
-
-# commented until API stable
-#def add_group(groupname, ansiblevars, children, hosts):
-#    if ansiblevars:
-#        j = json.dumps(ansiblevars, sort_keys=True, indent=2)
-#        y = yaml.load(j)
-#    else:
-#        y = {}
-#
-#    c = [str(child) for child in children]
-#    h = [str(host) for host in hosts]
-#    post = dict(groupname=groupname, hosts=h, vars=y, children=c)
-#
-#    try:
-#        common.db.groups.insert(post)
-#    except:
-#        pass
-
-
-#def delete_group(groupname):
-#    common.db.groups.remove({'groupname': groupname})
-#    parentgroups = common.db.groups.find({'children': groupname}).distinct('groupname')
-#    for item in parentgroups:
-#        common.db.groups.update({"groupname": item}, {"$pull": {"children": groupname}})
 
 
 class GroupsAPI(Resource):
@@ -60,12 +34,6 @@ class GroupsAPI(Resource):
         common.delete_group(groupname)
         common.add_group(groupname, ansiblevars, children, hosts)
         return 'group updated', 200
-
-#    def delete(self):
-#        data = request.json
-#        groupname = data['groupname']
-#        common.delete_group(groupname)
-#        return 'group deleted', 200
 
 
 class DeleteGroupAPI(Resource):
