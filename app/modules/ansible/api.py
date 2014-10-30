@@ -20,10 +20,14 @@ class ansibleAPI(Resource):
     def post(self):
         data = request.json
         process = Popen("ansible-playbook -i " + inventory + " "
-                        + data['play'] + " -u " + data['user'], shell=True)
+                        + playdir + "/" + data['play'] + " -u " + data['user'], 
+                        shell=True)
         process.communicate()
         exitcode = process.wait()
+        #print exitcode
         if exitcode == 0:
             return 'playbook %s successfully completed' % data['play'], 201
         elif exitcode == 1:
-            return 'playbook %s failed' % data['play'], 201
+            return 'playbook %s failed' % data['play'], 500
+        elif exitcode == 3:
+            return 'something went wrong. check logfile', 500
