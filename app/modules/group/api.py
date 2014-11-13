@@ -26,13 +26,16 @@ class GroupsAPI(Resource):
         return 'group added', 200
 
     def put(self):
+        '''for now we only allow update of vars. further logic needs to
+        be in common'''
         data = request.json
         groupname = data['groupname']
         ansiblevars = data['vars']
-        children = data['children']
-        hosts = data['hosts']
-        common.delete_group(groupname)
-        common.add_group(groupname, ansiblevars, children, hosts)
+        #children = data['children']
+        #hosts = data['hosts']
+        #common.delete_group(groupname)
+        #common.add_group(groupname, ansiblevars, children, hosts)
+        common.edit_group(groupname, ansiblevars)
         return 'group updated', 200
 
 

@@ -29,15 +29,16 @@ from app.modules.host.api import GetHostVarsAPI, HostsAPI, GetHostsSearchAPI,\
 from app.modules.group.api import GroupsAPI, GetGroupsSearchAPI,\
     GetGroupVarsAPI, GetGroupChildrenAPI, \
     GetGroupHostsAPI, DeleteGroupAPI
-from app.modules.host.add_host import AddHost
-from app.modules.host.get_host import GetHost, GetAllHosts
-from app.modules.group.get_group import GetGroup, GetAllGroups
-from app.modules.group.add_group import AddGroup
-from app.modules.host.edit_host import EditHost, EditHostSubmit
-from app.modules.group.edit_group import EditGroup, EditGroupSubmit
 from app.modules.ansible.api import ansibleAPI
+#from app.modules.host.add_host import AddHost
+#from app.modules.host.get_host import GetHost, GetAllHosts
+#from app.modules.group.get_group import GetGroup, GetAllGroups
+#from app.modules.group.add_group import AddGroup
+#from app.modules.host.edit_host import EditHost, EditHostSubmit
+#from app.modules.group.edit_group import EditGroup, EditGroupSubmit
 
-from remove import Remove
+
+#from remove import Remove
 
 
 class Main(flask.views.MethodView):
@@ -66,50 +67,50 @@ api.add_resource(GroupsAPI, '/api/v1.0/groups')
 
 api.add_resource(ansibleAPI, '/api/v1.0/playbook')
 
-app.add_url_rule('/',
-                 view_func=Main.as_view('index'),
-                 methods=['GET', 'POST'])
+#app.add_url_rule('/',
+#                 view_func=Main.as_view('index'),
+#                 methods=['GET', 'POST'])
 
-app.add_url_rule('/addhost',
-                 view_func=AddHost.as_view('addhost'),
-                 methods=['GET', 'POST'])
+#app.add_url_rule('/addhost',
+#                 view_func=AddHost.as_view('addhost'),
+#                 methods=['GET', 'POST'])
 
-app.add_url_rule('/gethostinfo',
-                 view_func=GetHost.as_view('gethostinfo'),
-                 methods=['GET', 'POST'])
+#app.add_url_rule('/gethostinfo',
+#                 view_func=GetHost.as_view('gethostinfo'),
+#                 methods=['GET', 'POST'])
 
-app.add_url_rule('/getallhosts',
-                 view_func=GetAllHosts.as_view('getallhosts'),
-                 methods=['POST', 'GET'])
+#app.add_url_rule('/getallhosts',
+#                 view_func=GetAllHosts.as_view('getallhosts'),
+#                 methods=['POST', 'GET'])
 
-app.add_url_rule('/edithost',
-                 view_func=EditHost.as_view('edithost'),
-                 methods=['GET', 'POST'])
+#app.add_url_rule('/edithost',
+#                 view_func=EditHost.as_view('edithost'),
+#                 methods=['GET', 'POST'])
 
-app.add_url_rule('/edithostsubmit',
-                 view_func=EditHostSubmit.as_view('edithostsubmit'),
-                 methods=['GET', 'POST'])
+#app.add_url_rule('/edithostsubmit',
+#                 view_func=EditHostSubmit.as_view('edithostsubmit'),
+#                 methods=['GET', 'POST'])
 
-app.add_url_rule('/editgroup',
-                 view_func=EditGroup.as_view('editgroup'),
-                 methods=['GET', 'POST'])
+#app.add_url_rule('/editgroup',
+#                 view_func=EditGroup.as_view('editgroup'),
+#                 methods=['GET', 'POST'])
 
-app.add_url_rule('/editgroupsubmit',
-                 view_func=EditGroupSubmit.as_view('editgroupsubmit'),
-                 methods=['GET', 'POST'])
+#app.add_url_rule('/editgroupsubmit',
+#                 view_func=EditGroupSubmit.as_view('editgroupsubmit'),
+#                 methods=['GET', 'POST'])
 
-app.add_url_rule('/getgroup',
-                 view_func=GetGroup.as_view('getgroup'),
-                 methods=['GET', 'POST'])
+#app.add_url_rule('/getgroup',
+#                 view_func=GetGroup.as_view('getgroup'),
+#                 methods=['GET', 'POST'])
 
-app.add_url_rule('/getallgroups',
-                 view_func=GetAllGroups.as_view('getallgroups'),
-                 methods=['POST', 'GET'])
+#app.add_url_rule('/getallgroups',
+#                 view_func=GetAllGroups.as_view('getallgroups'),
+#                 methods=['POST', 'GET'])
 
-app.add_url_rule('/addgroups',
-                 view_func=AddGroup.as_view('addgroup'),
-                 methods=['GET', 'POST'])
+#app.add_url_rule('/addgroups',
+#                 view_func=AddGroup.as_view('addgroup'),
+#                 methods=['GET', 'POST'])
 
-app.add_url_rule('/remove',
-                 view_func=Remove.as_view('remove'),
-                 methods=['GET', 'POST'])
+#app.add_url_rule('/remove',
+#                 view_func=Remove.as_view('remove'),
+#                 methods=['GET', 'POST'])

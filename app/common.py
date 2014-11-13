@@ -63,7 +63,8 @@ def add_host_togroups(hostname, groups):
     selectgroups = [str(group) for group in groups]
     print selectgroups
     for group in selectgroups:
-        db.groups.update({'groupname': group}, {'$push': {'hosts': hostname}}, upsert=False, multi=False)
+        db.groups.update({'groupname': group}, {'$push': {'hosts': hostname}},
+                         upsert=False, multi=False)
 
 
 def add_group(groupname, ansiblevars, children, hosts):
@@ -88,6 +89,12 @@ def delete_group(groupname):
     parentgroups = db.groups.find({'children': groupname}).distinct('groupname')
     for item in parentgroups:
         db.groups.update({"groupname": item}, {"$pull": {"children": groupname}})
+
+
+def edit_group(groupname, ansiblevars):
+    db.groups.update({"groupname": groupname}, {"$set": {'vars': ansiblevars}},
+                     upsert=False, multi=False)
+    pass
 
 
 def hostExists(hostname):
@@ -147,7 +154,8 @@ def getGroupVariables(groupname):
 
 def getPagedGroups(skip, numberOfItems, filterGroupname=None):
     if filterGroupname:
-        return db.groups.find({'groupname': {'$regex': filterGroupname}}).skip(skip).limit(numberOfItems)
+        return db.groups.find({'groupname': {'$regex': filterGroupname}}).skip
+        (skip).limit(numberOfItems)
     else:
         return db.groups.find().skip(skip).limit(numberOfItems)
 
