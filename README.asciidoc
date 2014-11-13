@@ -1,6 +1,6 @@
 == jetfire
 
-An Ansible inventory tool.
+An Ansible API.
 
 === Overview
 Jetfire is a web based Flask application with a MongoDB backend to manage an Ansible inventory.
