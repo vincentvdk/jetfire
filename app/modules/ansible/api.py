@@ -20,7 +20,7 @@ class ansibleAPI(Resource):
     def post(self):
         data = request.json
         process = Popen("ansible-playbook -i " + inventory + " "
-                        + playdir + "/" + data['play'] + " -u " + data['user'], 
+                        + playdir + "/" + data['play'] + " -u " + data['user'],
                         shell=True)
         process.communicate()
         exitcode = process.wait()

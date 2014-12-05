@@ -86,9 +86,11 @@ def add_group(groupname, ansiblevars, children, hosts):
 
 def delete_group(groupname):
     db.groups.remove({'groupname': groupname})
-    parentgroups = db.groups.find({'children': groupname}).distinct('groupname')
+    parentgroups = db.groups.find({'children':
+                                   groupname}).distinct('groupname')
     for item in parentgroups:
-        db.groups.update({"groupname": item}, {"$pull": {"children": groupname}})
+        db.groups.update({"groupname": item}, {"$pull": {"children":
+                                               groupname}})
 
 
 def edit_group(groupname, ansiblevars):
@@ -112,7 +114,8 @@ def countHosts(filterHostname=None):
 
 def countGroups(filterGroupname=None):
     if filterGroupname:
-        return db.groups.find({'groupname': {'$regex': filterGroupname}}).count()
+        return db.groups.find({'groupname':
+                              {'$regex': filterGroupname}}).count()
     else:
         return db.groups.find().count()
 
@@ -131,7 +134,8 @@ def getSearchHosts(search_term):
 
 def getPagedHosts(skip, numberOfItems, filterHostname=None):
     if filterHostname:
-        return db.hosts.find({'hostname': {'$regex': filterHostname}}).skip(skip).limit(numberOfItems)
+        return db.hosts.find({'hostname': {'$regex': filterHostname}}).skip
+        (skip).limit(numberOfItems)
     else:
         return db.hosts.find().skip(skip).limit(numberOfItems)
 
