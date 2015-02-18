@@ -23,13 +23,32 @@
       <div id="page-content-wrapper">
         <div class="container-fluid">
           <div class="page"></div>
+          <!-- add host -->
+            <script type="text/template" id="addhost-template">
+              <form role="form">
+                <legend>Add host</legend>
+                <div class="form-group">
+                  <label>Hostname</label>
+                  <input class="form-control" type="text" name="hostname" />
+                </div>
+                <div class="form-group">
+                  <label>Select group(s)</label>
+                  <select class="form-control" type="text" multiple="multiple" name="groups" />
+                </div>
+                <div class="form-group">
+                  <label>Host variables</label>
+                  <textarea class="form-control" type="textarea" style="height: 200px" name="hostvars" />
+                </div>
+                <button type="submit" class="btn btn-default">Create host</button>
+              </form>
+            </script>
+          <!-- #/add host -->
           <!-- Host list -->
             <script type="text/template" id="host-list-template">
               <table class="table striped">
                 <thead>
                   <tr>
                     <th><b>Hosts</b></th>
-                    <th><b>Groups</b></th>
                     <th></th>
                   </tr>
                 </thead>
@@ -40,7 +59,6 @@
                   <% for(var i = 0; i < array.length; i++) { %>
                     <tr>
                       <td><%= array[i] %></td>
-                      <td>dummy data</td>
                       <td></td>
                     </tr>
                   <% } %>

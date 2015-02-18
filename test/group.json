@@ -9,11 +9,11 @@
             ]
          },
       "hosts":[
-         "hhg-01.test.btr.local",
-         "hhg-02.test.btr.local"
+         "host-01.test.local",
+         "host-02.test.local"
       ],
       "children":[
-         "sapr-dco",
-         "sapr-dco-ftp"
+         "group01",
+         "group02"
       ]
 }

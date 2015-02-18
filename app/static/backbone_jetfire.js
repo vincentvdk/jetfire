@@ -23,6 +23,14 @@ var HostList = Backbone.View.extend ({
   }
 });
 
+var AddHost = Backbone.View.extend ({
+  el: '.page',
+  render: function() {
+    var template = _.template($('#addhost-template').html());
+    this.$el.html(template);
+  }
+});
+
 var GroupList = Backbone.View.extend ({
   el: '.page',
   render: function() {
@@ -35,13 +43,15 @@ var GroupList = Backbone.View.extend ({
 // Instantiate view objects
 var hostList = new HostList();
 var groupList = new GroupList();
+var addHost = new AddHost();
 
 // Routes
 var Router  = Backbone.Router.extend ({
   routes: {
     '': 'home',
     'hosts': 'hosts',
-    'groups': 'groups'
+    'groups': 'groups',
+    'addhost':'addhost'
   }
 });
 
@@ -58,7 +68,10 @@ router.on('route:groups', function(){
   console.log('we have loaded the groupslist page');
   groupList.render();
 });
-
+router.on('route:addhost', function(){
+  console.log('we have loaded the addhost page');
+  addHost.render();
+});
 
 //Start Backbone history a necessary step for bookmarkable URL's
 Backbone.history.start();

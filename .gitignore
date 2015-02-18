@@ -1,3 +1,4 @@
 *.pyc
 config.cfg
 mongo_filler.py
+test/connective_dump
