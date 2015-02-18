@@ -1,0 +1,5 @@
+Flask==0.10.1
+Flask-RESTful==0.2.12
+PyYAML==3.10
+flask-paginate==0.2.1
+pymongo==2.6.3

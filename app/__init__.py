@@ -15,38 +15,32 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-import flask
-import flask.views
+from flask import Flask
+from flask.views import MethodView
+from flask import Blueprint
 
-app = flask.Flask('app')
+app = Flask('app')
+#app = Flask(__name__)
 app.config.from_pyfile('../config.cfg')
 
-from flask.ext.restful import Resource, Api
+from flask_restful import Resource, Api
 api = Api(app)
 
-from app.modules.host.api import GetHostVarsAPI, HostsAPI, GetHostsSearchAPI,\
-    GetHostGroupsAPI, DeleteHostAPI
-from app.modules.group.api import GroupsAPI, GetGroupsSearchAPI,\
-    GetGroupVarsAPI, GetGroupChildrenAPI, \
-    GetGroupHostsAPI, DeleteGroupAPI
-from app.modules.ansible.api import ansibleAPI
-#from app.modules.host.add_host import AddHost
-#from app.modules.host.get_host import GetHost, GetAllHosts
-#from app.modules.group.get_group import GetGroup, GetAllGroups
-#from app.modules.group.add_group import AddGroup
-#from app.modules.host.edit_host import EditHost, EditHostSubmit
-#from app.modules.group.edit_group import EditGroup, EditGroupSubmit
+# Import api Classes
+
+from restapi.hosts import GetHostVarsAPI, GetHostGroupsAPI, GetHostGroupsAPI,\
+    GetHostGroupsAPI, DeleteHostAPI, HostsAPI, GetHostsSearchAPI
+from restapi.groups import GetGroupChildrenAPI, GetGroupVarsAPI,\
+    GetGroupHostsAPI, GetGroupHostsAPI, GetGroupsSearchAPI, DeleteGroupAPI,\
+    GroupsAPI
+from restapi.ansible import ansibleAPI
+
+# import and register blueprints
+from app.frontend.views import frontend_blueprint
+app.register_blueprint(frontend_blueprint)
 
 
-#from remove import Remove
-
-
-class Main(flask.views.MethodView):
-    def get(self):
-        return flask.render_template('index.html')
-
-    def post(self):
-        pass
+# REST api routes
 
 api.add_resource(GetHostVarsAPI, '/api/v1.0/hosts/<string:hostname>/vars')
 api.add_resource(GetHostGroupsAPI, '/api/v1.0/hosts/<string:hostname>/groups')
@@ -54,8 +48,6 @@ api.add_resource(GetHostsSearchAPI,
                  '/api/v1.0/hosts/search/<string:search_term>')
 api.add_resource(DeleteHostAPI, '/api/v1.0/hosts/<string:hostname>')
 api.add_resource(HostsAPI, '/api/v1.0/hosts')
-
-
 api.add_resource(GetGroupChildrenAPI,
                  '/api/v1.0/groups/<string:groupname>/children')
 api.add_resource(GetGroupVarsAPI, '/api/v1.0/groups/<string:groupname>/vars')
@@ -67,11 +59,25 @@ api.add_resource(GroupsAPI, '/api/v1.0/groups')
 
 api.add_resource(ansibleAPI, '/api/v1.0/playbook')
 
+
+# Old views
+# frontend in a seperate blueprint
+
+#class Main(flask.views.MethodView):
+#    def get(self):
+#        return flask.render_template('frontend/templates/index.html')
+#
+#    def post(self):
+#        pass
+
 #app.add_url_rule('/',
 #                 view_func=Main.as_view('index'),
 #                 methods=['GET', 'POST'])
 
-#app.add_url_rule('/addhost',
+
+
+
+# app.add_url_rule('/addhost',
 #                 view_func=AddHost.as_view('addhost'),
 #                 methods=['GET', 'POST'])
 

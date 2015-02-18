@@ -1,0 +1,15 @@
+db:
+  image: mongo
+
+jetfire:
+  build: .
+  links:
+    - db:mongosrv
+  ports:
+    - 5000:5000
+      #- 80:80
+  volumes:
+    - /home/vincent/repositories/jetfire/app/:/opt/jetfire/app
+      #- /home/vincent/repositories/jetfire/app/:/var/www/html/jetfire/app
+      #- /home/vincent/repositories/jetfire/client/:/opt/jetfire/client
+      #- /home/vincent/repositories/jetfire/client/:/var/www/html/jetfire/client

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8">
+    <title>Jetfire</title>
+
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="static/css/simple-sidebar.css">
+
+  </head>
+
+  <body>
+    <div id="wrapper">
+      <!-- sidebar -->
+      <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+          <li class="sidebar-brand"><a href="/"><b>JetFire</b></a></li>
+          <li><a href="#hosts">Hosts</a></li>
+          <li><a href="#groups">Groups</a></li>
+        </ul>
+      </div>
+      <!-- #/sidebar -->
+      <!-- content-wrapper -->
+      <div id="page-content-wrapper">
+        <div class="container-fluid">
+          <div class="page"></div>
+          <!-- Host list -->
+            <script type="text/template" id="host-list-template">
+              <table class="table striped">
+                <thead>
+                  <tr>
+                    <th><b>Hosts</b></th>
+                    <th><b>Groups</b></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- fetch hosts JSON and loop over items in hosts -->
+                  <% _.each(hosts, function(hostlist) { %>
+                  <% var array = hostlist.get('hosts') %>
+                  <% for(var i = 0; i < array.length; i++) { %>
+                    <tr>
+                      <td><%= array[i] %></td>
+                      <td>dummy data</td>
+                      <td></td>
+                    </tr>
+                  <% } %>
+                  <% }); %>
+                </tbody>
+              </table>
+            </script>
+            <script type="text/template" id="group-list-template">
+              <h1>groups</h1>
+            </script>
+        </div>
+      </div>
+      <!-- #/content-wrapper -->
+
+    </div>
+    <!-- main wrapper -->
+
+
+    <script src="static/libs/underscore-min.js"></script>
+    <script src="static/libs/jquery-1.11.2.js"></script>
+    <script src="static/libs/backbone-min.js"></script>
+
+    <script src="static/backbone_jetfire.js"></script>
+
+    <script src="static/libs/bootstrap.min.js"></script>
+    <script>
+      $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+      });
+    </script>
+  </body>
+
+</html>

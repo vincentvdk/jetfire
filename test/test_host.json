@@ -1,5 +1,5 @@
 {
-      "hostname":"test.philippe2",
+      "hostname":"host-01.test.local",
       "vars":
          {
             "ansible_ssh_port":22003,

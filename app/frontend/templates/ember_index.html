@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html data-ng-app="jetFire">
+  <head>
+    <meta charset="utf-8">
+    <title>Jetfire</title>
+
+<link rel="stylesheet" type="text/css" href="static/css/bootstrap.css">
+<script src="static/libs/handlebars-v2.0.0.js"></script>
+<script src="static/libs/jquery-1.11.2.js"></script>
+<script src="static/libs/ember.js"></script>
+<script src="http://builds.emberjs.com/beta/ember-data.js"></script>
+
+<script src="static/ember_jetfire.js"></script>
+<!--<script src="static/router.js"></script>-->
+
+
+
+  </head>
+
+  <body>
+<!-- default page -->
+    <script type="text/x-handlebars">
+        <h2>Welcome to Jetfire</h2>
+        <ul>
+          <li>{{#link-to 'hosts'}}Hosts{{/link-to}}</li>
+          <li>{{#link-to 'groups'}}Groups{{/link-to}}</li>
+        </ul>
+        {{outlet}}
+    </script>
+
+<!-- start Ember templates -->
+<!-- host info -->
+    <script type="text/x-handlebars" id="hosts">
+      <h1>Host details</h1>
+      {{model}}
+      {{#each item in model}}
+      {{item.hosts}}
+      {{/each}}
+    </script>
+
+<!-- group info -->
+<script type="text/x-handlebars" id="groups">
+  <h1>Group details</h1>
+    <ul>
+    {{#each item in model}}
+      <li>{{item.groupname}}</li>
+    {{/each}}
+    </ul>
+</script>
+
+<!-- end Ember templates -->
+
+  </body>
+
+</html>

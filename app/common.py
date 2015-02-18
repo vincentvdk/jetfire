@@ -56,7 +56,7 @@ def add_host(hostname, ansiblevars):
         db.hosts.insert(post)
     except:
         print "insert error"
-        pass
+#        pass
 
 
 def add_host_togroups(hostname, groups):
