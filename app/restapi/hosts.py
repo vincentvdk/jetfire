@@ -6,6 +6,7 @@ from app import common
 
 class HostsAPI(Resource):
     def get(self):
+        print "test get"
         result = common.getAllHosts()
         if result:
             #data = {"hosts": [host for host in result]}
@@ -18,20 +19,20 @@ class HostsAPI(Resource):
         return resp
 
     def post(self):
-        print "data"
         data = request.json
+        print "data"
         hostname = data['hostname']
         ansiblevars = data['vars']
         groups = data['groups']
         exists = [str(item) for item in common.getSearchHosts(hostname)]
         if exists:
-            return 'Host already exists', 201
+            return 'Host already exists', 400
         if type(groups).__name__ != 'list':
-            return 'hosts is not of type list', 201
+            return 'hosts is not of type list', 400
         else:
             common.add_host(hostname, ansiblevars)
             common.add_host_togroups(hostname, groups)
-        return 'host added', 200
+        return 'host added', 201
 
     def put(self):
     # changing hostname results in 2 hosts. 1 new + 1 original. ->bug

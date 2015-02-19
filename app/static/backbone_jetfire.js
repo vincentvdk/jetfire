@@ -3,6 +3,36 @@ var Hosts = Backbone.Collection.extend({
   url: '/api/v1.0/hosts'
 });
 
+/*var Host = Backbone.Model.extend({
+  sync: function (method, model, options) {
+    if (method === 'create' || method === 'update') {
+      return $.ajax({
+        dataType: 'json',
+        url: '/api/v1.0/hosts',
+        data: {
+          hostname: (this.get('hostname') || ''),
+          groups: (this.get('groups') || ''),
+          hostvars: (this.get('hostvars') || '')
+        },
+        success: function (data) {
+          var newhost = data;
+          data.save();
+        }
+      });
+    }
+  }
+});*/
+
+var Host = Backbone.Model.extend({
+  urlRoot: '/api/v1.0/hosts',
+  dataType: 'json',
+  defaults: {
+    hostname: '',
+    vars: '',
+    groups: []
+  }
+});
+
 var Groups = Backbone.Collection.extend({
   url: '/api/v1.0/groups'
 });
@@ -28,8 +58,23 @@ var AddHost = Backbone.View.extend ({
   render: function() {
     var template = _.template($('#addhost-template').html());
     this.$el.html(template);
+  },
+  events: {
+    'submit .add-host-form': 'saveHost'
+  },
+  saveHost: function(event) {
+    var newhostmodel = new Host ({
+      hostname: $('#hostname').val(),
+      //groups: $('#groups').val(),
+      vars: $('#hostvars').val()
+    });
+    //console.log(newhostmodel.get('hostvars'));
+    newhostmodel.save();
+    // stay on the form page
+    return false;
   }
 });
+
 
 var GroupList = Backbone.View.extend ({
   el: '.page',
@@ -45,13 +90,17 @@ var hostList = new HostList();
 var groupList = new GroupList();
 var addHost = new AddHost();
 
+//# endviews
+
+
 // Routes
 var Router  = Backbone.Router.extend ({
   routes: {
     '': 'home',
     'hosts': 'hosts',
     'groups': 'groups',
-    'addhost':'addhost'
+    'addhost': 'addhost',
+    'hosts/:id/vars': 'hostvars'
   }
 });
 
