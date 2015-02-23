@@ -39,7 +39,7 @@
                   <label>Host variables</label>
                   <textarea class="form-control" type="textarea" style="height: 200px" name="hostvars" id="hostvars"/>
                 </div>
-                <button type="submit" class="btn btn-default">Create host</button>
+                <button type="submit" id=addhost-btn class="btn btn-default">Create host</button>
               </form>
             </script>
           <!-- #/add host -->
@@ -61,15 +61,46 @@
                   <% for(var i = 0; i < array.length; i++) { %>
                     <tr>
                       <td><%= array[i] %></td>
-                      <td></td>
+                      <td>
+                        <form role="form" class="remove-host">
+                        <button class="btn btn-danger btn-small" onclick="window.location.href='#hosts/<%= array[i] %>'">
+                        <li class="glyphicon glyphicon-trash"></li></button>
+                      </form>
+                      </td>
                     </tr>
                   <% } %>
                   <% }); %>
                 </tbody>
               </table>
             </script>
+          <!-- #/end host list -->
+          <!-- Group list -->
             <script type="text/template" id="group-list-template">
-              <h1>groups</h1>
+              <table class="table striped">
+                <thead>
+                  <tr>
+                    <th><b>Groups</b></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- fetch hosts JSON and loop over items in hosts -->
+                  <% _.each(groups, function(groupslist) { %>
+                  <% var array = groupslist.get('groups') %>
+                  <% for(var i = 0; i < array.length; i++) { %>
+                    <tr>
+                      <td><%= array[i] %></td>
+                      <td>
+                        <form role="form" class="remove-group">
+                        <button class="btn btn-danger btn-small" onclick="window.location.href='#groups/<%= array[i] %>'">
+                        <li class="glyphicon glyphicon-trash"></li></button>
+                      </form>
+                      </td>
+                    </tr>
+                  <% } %>
+                  <% }); %>
+                </tbody>
+              </table>
             </script>
         </div>
       </div>
