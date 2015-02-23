@@ -41,7 +41,7 @@ var DeleteHost = Backbone.Model.extend({
 
 var Groups = Backbone.Collection.extend({
   url: '/api/v1.0/groups',
-  idAttribute: "groups"
+  //idAttribute: "groups"
 });
 
 
@@ -63,8 +63,15 @@ var HostList = Backbone.View.extend ({
 var AddHost = Backbone.View.extend ({
   el: '.page',
   render: function() {
-    var template = _.template($('#addhost-template').html());
-    this.$el.html(template);
+    var self = this;
+    var groups = new Groups();
+    groups.fetch({
+      success: function(groups) {
+        var template = _.template($('#addhost-template').html());
+        self.$el.html(template({groups: groups.models}));
+        //console.log(groups.models);
+      }
+    });
   },
   events: {
     //'click .add-host-form': 'saveHost'

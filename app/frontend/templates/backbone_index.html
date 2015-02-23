@@ -33,7 +33,15 @@
                 </div>
                 <div class="form-group">
                   <label>Select group(s)</label>
-                  <select class="form-control" type="text" multiple="multiple" name="groups" id="groups" />
+                  <select class="form-control" type="text" multiple="multiple" name="groups" id="groups">
+                  <% _.each(groups, function(grouplist) { %>
+                  <% console.log(grouplist.get('groups')) %>
+                  <% var array = grouplist.get('groups') %>
+                  <% for(var i = 0; i < array.length; i++) { %>
+                  <option value="<%= array[i] %>"><%= array[i] %></option>
+                  <% } %>
+                  <% }); %>
+                </select>
                 </div>
                 <div class="form-group">
                   <label>Host variables</label>
