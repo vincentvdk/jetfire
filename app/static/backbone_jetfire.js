@@ -44,8 +44,26 @@ var Groups = Backbone.Collection.extend({
   //idAttribute: "groups"
 });
 
+var Group = Backbone.Model.extend({
+  urlRoot: '/api/v1.0/groups',
+  dataType: 'json',
+  defaults: {
+    groupname: '',
+    vars: '',
+    children: [],
+    hosts: []
+  }
+});
 
+var DeleteGroup = Backbone.Model.extend({
+  urlRoot: '/api/v1.0/groups',
+});
+
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 // Views
+
 var HostList = Backbone.View.extend ({
   el: '.page',
   render: function() {
@@ -74,7 +92,6 @@ var AddHost = Backbone.View.extend ({
     });
   },
   events: {
-    //'click .add-host-form': 'saveHost'
     'click button#addhost-btn': 'saveHost'
   },
   saveHost: function(event) {
@@ -89,6 +106,35 @@ var AddHost = Backbone.View.extend ({
     return false;
   }
 });
+
+var AddGroup = Backbone.View.extend ({
+  el: '.page',
+  render: function() {
+    var self = this;
+    var hosts = new Hosts();
+    hosts.fetch({
+      success: function(hosts) {
+        var template = _.template($('#addgroup-template').html());
+        self.$el.html(template({hosts: hosts.models}));
+      }
+    });
+  },
+  events: {
+    'click button#addgroup-btn': 'saveGroup'
+  },
+  saveGroup: function(event) {
+    var newgroupmodel = new Group ({
+      groupname: $('#groupname').val(),
+      //groups: $('#groups').val(),
+      vars: $('#groupvars').val()
+    });
+    console.log(newgroupmodel.get('groupname'));
+    newgroupmodel.save();
+    // stay on the form page
+    return false;
+  }
+});
+
 
 /*var RemoveHost = Backbone.View.extend ({
   el: '.page',
@@ -124,10 +170,12 @@ var GroupList = Backbone.View.extend ({
 var hostList = new HostList();
 var groupList = new GroupList();
 var addHost = new AddHost();
+var addGroup = new AddGroup();
 //var removeHost = new RemoveHost();
 
-// # endviews ####################
+// -----------------------------------------------------------------------------
 
+// -----------------------------------------------------------------------------
 // Routes
 var Router  = Backbone.Router.extend ({
   routes: {
@@ -135,8 +183,10 @@ var Router  = Backbone.Router.extend ({
     'hosts': 'hosts',
     'groups': 'groups',
     'addhost': 'addhost',
+    'addgroup': 'addgroup',
     'hosts/:id/vars': 'hostvars',
-    'hosts/:id': 'removehost'
+    'hosts/:id': 'removehost',
+    'groups/:id': 'removegroup'
   }
 });
 
@@ -169,6 +219,15 @@ router.on('route:removehost', function(id){
   console.log('/api/v1.0/hosts/', id);
   var hostremovemodel = new DeleteHost({id: id});
   hostremovemodel.destroy();
+});
+router.on('route:addgroup', function(){
+  console.log('we loaded the add group pasge');
+  addGroup.render();
+});
+router.on('route:removegroup', function(id){
+  console.log('/api/v1.0/groups/', id);
+  var groupremovemodel = new DeleteGroup({id: id});
+  groupremovemodel.destroy();
 });
 
 //Start Backbone history a necessary step for bookmarkable URL's
