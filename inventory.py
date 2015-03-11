@@ -32,7 +32,7 @@ def getlist():
 # get host variables
 
 
-def getdetails(host): 
+def getdetails(host):
     varlist = {}
     vars = db.hosts.find({"hostname": host}, {"_id": 0, "hostname": 0})
     for item in vars:

@@ -59,6 +59,11 @@ var DeleteGroup = Backbone.Model.extend({
   urlRoot: '/api/v1.0/groups',
 });
 
+var ChildGroups = Backbone.Model.extend({
+  urlroot: function(){
+    return 'groups/'+this.options.group/+'children';
+  }
+})
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -112,6 +117,12 @@ var AddGroup = Backbone.View.extend ({
   render: function() {
     var self = this;
     var hosts = new Hosts();
+    var childgroups = new ChildGroups();
+    childgroups.fetch({
+      success: function(childgroups) {
+        console.log('childgroups', childgroups.models)
+      }
+    });
     hosts.fetch({
       success: function(hosts) {
         var template = _.template($('#addgroup-template').html());
@@ -186,7 +197,8 @@ var Router  = Backbone.Router.extend ({
     'addgroup': 'addgroup',
     'hosts/:id/vars': 'hostvars',
     'hosts/:id': 'removehost',
-    'groups/:id': 'removegroup'
+    'groups/:id': 'removegroup',
+    'groups/:id/children': 'childgroups'
   }
 });
 
@@ -222,6 +234,13 @@ router.on('route:removehost', function(id){
 });
 router.on('route:addgroup', function(){
   console.log('we loaded the add group pasge');
+  // get childgroups
+  // var childgroupsmodel = new ChildGroups()
+  // childgroups function(id){
+    // console.log('trying to get childgroups', id);
+    // var childgroupsmodel = new ChildGroups()
+  // },
+  // end childgroups
   addGroup.render();
 });
 router.on('route:removegroup', function(id){
@@ -229,6 +248,10 @@ router.on('route:removegroup', function(id){
   var groupremovemodel = new DeleteGroup({id: id});
   groupremovemodel.destroy();
 });
+
+// router.on('route:childgroups', function(id){
+//   console.log('loaded childgroups', id);
+// });
 
 //Start Backbone history a necessary step for bookmarkable URL's
 Backbone.history.start();

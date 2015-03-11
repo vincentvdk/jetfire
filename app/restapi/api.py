@@ -28,7 +28,7 @@ class GroupsAPI(Resource):
         hosts = data['hosts']
         exists = [str(item) for item in common.getSearchGroups(groupname)]
         if exists:
-            return 'Group already exists', 201
+            return 'Group already exists', 400
 
         common.add_group(groupname, ansiblevars, children, hosts)
         return 'group added', 200
@@ -39,10 +39,10 @@ class GroupsAPI(Resource):
         data = request.json
         groupname = data['groupname']
         ansiblevars = data['vars']
-        #children = data['children']
-        #hosts = data['hosts']
-        #common.delete_group(groupname)
-        #common.add_group(groupname, ansiblevars, children, hosts)
+        # children = data['children']
+        # hosts = data['hosts']
+        # common.delete_group(groupname)
+        # common.add_group(groupname, ansiblevars, children, hosts)
         common.edit_group(groupname, ansiblevars)
         return 'group updated', 200
 
@@ -125,7 +125,7 @@ class HostsAPI(Resource):
         return 'host added', 200
 
     def put(self):
-    # changing hostname results in 2 hosts. 1 new + 1 original. ->bug
+        # changing hostname results in 2 hosts. 1 new + 1 original. ->bug
         data = request.json
         hostname = data['hostname']
         ansiblevars = data['vars']
@@ -143,7 +143,7 @@ class DeleteHostAPI(Resource):
             common.delete_host(hostname)
             return 'host deleted', 200
         else:
-            return 'host does not exist', 201
+            return 'host does not exist', 400
 
 
 class GetHostVarsAPI(Resource):
