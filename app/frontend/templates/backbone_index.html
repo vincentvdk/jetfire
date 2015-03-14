@@ -93,14 +93,26 @@
                 <div class="form-group">
                   <label>Select host(s)</label>
                   <select class="form-control" type="text" multiple="multiple" name="hosts" id="hosts">
-                  <% _.each(hosts, function(hostlist) { %>
-                  <% console.log(hostlist.get('hosts')) %>
-                  <% var array = hostlist.get('hosts') %>
-                  <% for(var i = 0; i < array.length; i++) { %>
+                    <% _.each(hosts, function(hostlist) { %>
+                    <% console.log(hostlist.get('hosts')) %>
+                    <% var array = hostlist.get('hosts') %>
+                    <% for(var i = 0; i < array.length; i++) { %>
                   <option value="<%= array[i] %>"><%= array[i] %></option>
                   <% } %>
                   <% }); %>
-                </select>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Select child groups</label>
+                  <select class="form-control" type="text" multiple="multiple" name="childgroups" id="childgroups">
+                    <% _.each(childgroups, function(childgrouplist) { %>
+                    <% console.log(childgrouplist.get('groups')) %>
+                    <% var array = childgrouplist.get('groups') %>
+                    <% for(var i = 0; i < array.length; i++) { %>
+                  <option value="<%= array[i] %>"><%= array[i] %></option>
+                  <% } %>
+                  <% }); %>
+                  </select>
                 </div>
                 <div class="form-group">
                   <label>Group variables</label>

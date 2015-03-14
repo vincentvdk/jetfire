@@ -59,11 +59,14 @@ var DeleteGroup = Backbone.Model.extend({
   urlRoot: '/api/v1.0/groups',
 });
 
-var ChildGroups = Backbone.Model.extend({
-  urlroot: function(){
-    return 'groups/'+this.options.group/+'children';
-  }
-})
+// var ChildGroups = Backbone.Model.extend({
+//   urlroot: '/api/v1.0/groups',
+//   url: function(){
+//     var url = this.urlRoot + this.options.group + '/children';
+//     return url;
+//   }
+// });
+
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -116,18 +119,33 @@ var AddGroup = Backbone.View.extend ({
   el: '.page',
   render: function() {
     var self = this;
+    //var hosts = new Hosts();
+    //var groups = new Groups();
+    // groups.fetch({
+    //   success: function(groups) {
+    //     var template = _.template($('#addgroup-template').html());
+    //     self.$el.html(template({groups: groups.models}));
+    //     console.log('groups', groups.models);
+    //   }
+    // });
+    // hosts.fetch({
+    //   success: function(hosts) {
+    //     var template = _.template($('#addgroup-template').html());
+    //     self.$el.html(template({hosts: hosts.models}));
+    //   }
+    // });
+    // fetch the hosts and groups collections
     var hosts = new Hosts();
-    var childgroups = new ChildGroups();
-    childgroups.fetch({
-      success: function(childgroups) {
-        console.log('childgroups', childgroups.models)
-      }
-    });
-    hosts.fetch({
-      success: function(hosts) {
-        var template = _.template($('#addgroup-template').html());
-        self.$el.html(template({hosts: hosts.models}));
-      }
+    var groups = new Groups();
+
+    // fetch host and group collections
+    $.when(hosts.fetch(),groups.fetch()).done(function(){
+      // console.log('hosts-fetch : ', hosts.models);
+      // console.log('groups-fetch : ', groups.models);
+      var template = _.template($('#addgroup-template').html());
+      self.$el.html(template({hosts: hosts.models, childgroups: groups.models}));
+    }).fail(function(){
+      alert("error, couldn't load data"); //if either API failed, it will alert
     });
   },
   events: {
@@ -233,7 +251,7 @@ router.on('route:removehost', function(id){
   hostremovemodel.destroy();
 });
 router.on('route:addgroup', function(){
-  console.log('we loaded the add group pasge');
+  console.log('we loaded the add group page');
   // get childgroups
   // var childgroupsmodel = new ChildGroups()
   // childgroups function(id){
